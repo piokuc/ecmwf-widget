@@ -48,7 +48,7 @@ PAGE = r"""<!DOCTYPE html>
     --muted: #6b7785;
     --line: #e3e8ee;
     --accent: #1d6fb8;
-    --rain: #0b9af8;
+    --rain: #0aa6ff;
     --sun: #e8a33d;
     --shadow: 0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.06);
   }
@@ -60,7 +60,7 @@ PAGE = r"""<!DOCTYPE html>
       --muted: #8d99a8;
       --line: #2a313b;
       --accent: #5aa9e6;
-      --rain: #2fb0ff;
+      --rain: #38b9ff;
       --sun: #f0b95c;
       --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.28);
     }
@@ -72,7 +72,7 @@ PAGE = r"""<!DOCTYPE html>
     --muted: #8d99a8;
     --line: #2a313b;
     --accent: #5aa9e6;
-    --rain: #2fb0ff;
+    --rain: #38b9ff;
     --sun: #f0b95c;
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.28);
   }
@@ -157,6 +157,18 @@ PAGE = r"""<!DOCTYPE html>
   .condition { margin-left: auto; text-align: center; flex: none; padding-left: 10px; }
   .condition svg, .condition img.icon { display: block; margin: 0 auto 2px; }
   .condition .label { font-size: 12px; color: var(--muted); }
+  .banner {
+    display: flex; align-items: center; gap: 8px; margin: 16px 0 -4px;
+    font-size: 13px; color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 9%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    border-radius: 9px; padding: 6px 8px 6px 11px; width: fit-content;
+  }
+  .banner button {
+    margin-left: 6px; padding: 3px 9px; font-size: 12.5px;
+    background: transparent; color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 38%, transparent);
+  }
   .now {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 10px; margin: 18px 0 20px;
@@ -210,6 +222,10 @@ PAGE = r"""<!DOCTYPE html>
     border-bottom: 1px solid var(--line);
   }
   thead tr.times th.now-col { color: var(--accent); font-weight: 700; }
+  thead tr.times th.clickable { cursor: pointer; }
+  thead tr.times th.clickable:hover { color: var(--accent); }
+  thead tr.times th.clickable::after { content: ""; }
+  thead tr.times th.now-col { background: color-mix(in srgb, var(--accent) 7%, transparent); }
   tbody th {
     text-align: left; font-weight: 500; font-size: 14.5px; color: var(--muted);
     position: sticky; left: 0; background: var(--card); padding-right: 16px;
@@ -225,8 +241,8 @@ PAGE = r"""<!DOCTYPE html>
   .pp { display: inline-flex; align-items: flex-end; gap: 6px; }
   .pp .num { font-variant-numeric: tabular-nums; line-height: 20px; }
   .pp .gauge {
-    width: 9px; height: 20px; border-radius: 2px;
-    background: var(--line); opacity: .5;
+    width: 12px; height: 20px; border-radius: 3px;
+    background: var(--line); opacity: .55;
     display: flex; align-items: flex-end; overflow: hidden;
     flex: none;
   }
@@ -234,7 +250,7 @@ PAGE = r"""<!DOCTYPE html>
      shrink inside the gauge. */
   .pp .gauge i {
     display: block; width: 100%; background: var(--rain);
-    border-radius: 2px; flex: none;
+    border-radius: 3px; flex: none;
   }
   .foot { color: var(--muted); font-size: 12px; text-align: center; margin-top: 26px; }
   .empty { color: var(--muted); padding: 40px; text-align: center; }
@@ -442,6 +458,8 @@ const state = {
   visible: new Set(),
   data: null,
   catalogue: [],
+  // The step the user picked, or null to follow the current hour.
+  selected: null,
 };
 
 function colourFor(key, index) {
@@ -479,7 +497,7 @@ function syncUrl() {
 // --------------------------------------------------------------------------- //
 // The chart
 // --------------------------------------------------------------------------- //
-function drawChart(place, series, keys, nowIndex, hoverIndex) {
+function drawChart(place, series, keys, selected, select) {
   const drawn = keys
     .map((key) => series[key])
     .filter((entry) => entry && entry.values.some((v) => v !== null));
@@ -547,23 +565,27 @@ function drawChart(place, series, keys, nowIndex, hoverIndex) {
 
   });
 
-  // The marker for the selected step.
-  const marker = hoverIndex >= 0 ? hoverIndex : nowIndex;
-  if (marker >= 0) {
-    add("line", {
-      x1: x(marker), x2: x(marker), y1: padT - 4, y2: H - padB + 4,
-      stroke: (style.getPropertyValue("--accent") || "#1d6fb8").trim(),
-      "stroke-width": 1.5, "stroke-dasharray": "3 3"
-    });
-  }
+  // The marker for the selected step. It moves with the mouse while
+  // hovering and stays where it was clicked.
+  const marker = add("line", {
+    x1: x(selected), x2: x(selected), y1: padT - 4, y2: H - padB + 4,
+    stroke: (style.getPropertyValue("--accent") || "#1d6fb8").trim(),
+    "stroke-width": 1.5, "stroke-dasharray": "3 3"
+  });
 
   // Time labels. The day is shown whenever it changes, so the times are
   // never ambiguous.
   const every = Math.max(1, Math.ceil(n / 12));
+  const shown = [];
+  for (let i = 0; i < n; i += every) shown.push(i);
+  if (shown[shown.length - 1] !== n - 1) {
+    // The last column gets a label too, but not on top of the one before it.
+    if (n - 1 - shown[shown.length - 1] < every) shown.pop();
+    shown.push(n - 1);
+  }
   let lastDay = "";
-  place.times.forEach((label, i) => {
-    if (i % every !== 0 && i !== n - 1) return;
-    const parts = label.split(" ");
+  shown.forEach((i) => {
+    const parts = place.times[i].split(" ");
     const day = parts[0];
     const hour = parts.slice(1).join(" ");
     const showDay = day !== lastDay;
@@ -577,21 +599,36 @@ function drawChart(place, series, keys, nowIndex, hoverIndex) {
 
   // Where the mouse is, so the tooltip can follow.
   const overlay = add("rect", { x: padL, y: 0, width: W - padL - padR, height: H, fill: "transparent", style: "cursor:crosshair" });
-  overlay.addEventListener("mousemove", (event) => {
+  let hovered = -1;
+
+  const nearest = (clientX) => {
     const box = root.getBoundingClientRect();
-    const ratio = (event.clientX - box.left) / box.width;
-    const px = ratio * W;
+    const px = ((clientX - box.left) / box.width) * W;
     let best = 0, bestDistance = Infinity;
     for (let i = 0; i < n; i++) {
       const distance = Math.abs(x(i) - px);
       if (distance < bestDistance) { bestDistance = distance; best = i; }
     }
+    return best;
+  };
+
+  overlay.addEventListener("mousemove", (event) => {
+    const best = nearest(event.clientX);
+    hovered = best;
+    // The marker follows the mouse, so it is clear which time is shown.
+    marker.setAttribute("x1", x(best));
+    marker.setAttribute("x2", x(best));
     showTip(place, series, keys, best, event);
-    root.dispatchEvent(new CustomEvent("hover", { detail: best }));
   });
   overlay.addEventListener("mouseleave", () => {
+    hovered = -1;
+    marker.setAttribute("x1", x(selected));
+    marker.setAttribute("x2", x(selected));
     hideTip();
-    root.dispatchEvent(new CustomEvent("hover", { detail: -1 }));
+  });
+  overlay.addEventListener("click", (event) => {
+    const best = hovered >= 0 ? hovered : nearest(event.clientX);
+    select(best);
   });
 
   return root;
@@ -636,7 +673,8 @@ function renderPlace(place, nowStep, order) {
   const series = place.series;
   const steps = place.steps;
   const index = steps.indexOf(nowStep);
-  const current = index >= 0 ? index : 0;
+  const nowIndex = index >= 0 ? index : 0;
+  const current = state.selected !== null && state.selected < steps.length ? state.selected : nowIndex;
 
   const visible = [...state.visible].filter(key => series[key]);
   const chartKeys = visible.filter(key => key !== "precip_increment");
@@ -665,6 +703,21 @@ function renderPlace(place, nowStep, order) {
   conditionBox.appendChild(el("div", "label", condition.label));
   head.appendChild(conditionBox);
   card.appendChild(head);
+
+  // A banner when the user has picked a step.
+  if (state.selected !== null) {
+    const banner = el("div", "banner");
+    banner.appendChild(icon("clock", 16));
+    banner.appendChild(el("span", null, "Showing " + place.times[state.selected]));
+    const back = el("button", null, "Back to now");
+    back.addEventListener("click", (event) => {
+      event.stopPropagation();
+      state.selected = null;
+      render();
+    });
+    banner.appendChild(back);
+    card.appendChild(banner);
+  }
 
   // Summary strip.
   const get = (key) => {
@@ -707,7 +760,10 @@ function renderPlace(place, nowStep, order) {
     });
     card.appendChild(legend);
 
-    const chart = drawChart(place, series, chartKeys, current, -1);
+    const chart = drawChart(place, series, chartKeys, current, (index) => {
+      state.selected = state.selected === index ? null : index;
+      render();
+    });
     if (chart) {
       const box = el("div", "chart");
       box.appendChild(chart);
@@ -736,7 +792,14 @@ function renderPlace(place, nowStep, order) {
     if (spans > 1) head.colSpan = spans;
     dayRow.appendChild(head);
     for (let i = at; i <= end; i++) {
-      timeRow.appendChild(el("th", i === current ? "now-col" : null, place.times[i].split(" ")[1]));
+      const cell = el("th", i === current ? "now-col" : null, place.times[i].split(" ")[1]);
+      cell.classList.add("clickable");
+      cell.title = "Click to show this hour";
+      cell.addEventListener("click", () => {
+        state.selected = state.selected === i ? null : i;
+        render();
+      });
+      timeRow.appendChild(cell);
     }
     at = end + 1;
   }
@@ -905,6 +968,7 @@ function fillPlaceList(filter) {
 
 function choosePlace(id) {
   state.place = id;
+  state.selected = null;
   picker.classList.remove("open");
   const item = state.catalogue.find(p => p.id === id);
   if (item) {
