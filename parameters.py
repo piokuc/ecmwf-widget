@@ -133,6 +133,30 @@ PRESSURE_PARAMETERS: dict[str, Parameter] = {
     ]
 }
 
+#: The order the parameters are shown in.
+#:
+#: This follows what the big weather services do. yr.no puts the condition
+#: first, then temperature and what it feels like, then the precipitation,
+#: then the wind, and only afterwards the less important things. Breezy
+#: Weather and OSS Weather order their blocks the same way, and Windy calls
+#: temperature, precipitation, wind and pressure "the three or four basic
+#: weather elements".
+#:
+#: The condition itself is not in the list, it is always the first row.
+DISPLAY_ORDER: tuple[str, ...] = (
+    "2t",  # Temperature
+    "temperature_adjusted",  # Temperature at height, when the place is above the grid
+    "apparent_temperature",  # Feels like
+    "precip_increment",  # Precipitation
+    "tp",  # Precipitation, total since the run
+    "wind_speed",  # Wind speed
+    "wind_dir",  # Wind direction
+    "gust",  # Gusts
+    "tcc",  # Cloud cover
+    "2d",  # Dew point
+    "msl",  # Pressure
+)
+
 #: The subset a widget normally shows. Surface parameters only, so the
 #: service does not have to pull the much larger pressure level files.
 BASIC_PARAMETERS: tuple[str, ...] = tuple(name for name, p in PARAMETERS.items() if p.basic)
@@ -171,6 +195,18 @@ DERIVED: dict[str, Derived] = {
         ),
         Derived("wind_speed_pl", "Wind speed", "m s-1", "wind", ("u", "v"), basic=False),
         Derived("wind_dir_pl", "Wind direction", "deg", "wind", ("u", "v"), basic=False),
+        # Computed from the total precipitation, not requested from ECMWF.
+        Derived("precip_increment", "Precipitation", "mm", "precipitation", (), basic=False),
+        # The temperature at the real height of the place, corrected for the
+        # difference to the height of the model grid.
+        Derived(
+            "temperature_adjusted",
+            "Temperature at height",
+            "K",
+            "temperature",
+            (),
+            basic=False,
+        ),
     ]
 }
 

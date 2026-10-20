@@ -624,7 +624,7 @@ function hideTip() { tip.classList.remove("on"); }
 // --------------------------------------------------------------------------- //
 const HIDDEN = new Set(["z", "model_elevation"]);
 
-function renderPlace(place, nowStep) {
+function renderPlace(place, nowStep, order) {
   const card = el("section", "place");
   const series = place.series;
   const steps = place.steps;
@@ -638,7 +638,7 @@ function renderPlace(place, nowStep) {
   const head = el("div", "place-head");
   const title = el("div");
   const h2 = el("h2");
-  h2.appendChild(icon("pin", 19));
+  h2.appendChild(icon("pin", 22));
   h2.appendChild(document.createTextNode(place.name));
   if (place.flag) h2.appendChild(el("span", null, place.flag));
   title.appendChild(h2);
@@ -654,7 +654,7 @@ function renderPlace(place, nowStep) {
 
   const condition = conditionFor(series, current);
   const conditionBox = el("div", "condition");
-  conditionBox.appendChild(icon(condition.key, 60));
+  conditionBox.appendChild(icon(condition.key, 68));
   conditionBox.appendChild(el("div", "label", condition.label));
   head.appendChild(conditionBox);
   card.appendChild(head);
@@ -669,16 +669,18 @@ function renderPlace(place, nowStep) {
   if (temp !== null) now.appendChild(stat("Temp", temp.toFixed(1), "°C", "thermo", true));
   const apparent = get("apparent_temperature");
   if (apparent !== null) now.appendChild(stat("Feels like", apparent.toFixed(1), "°C", "thermo"));
+  const rain = get("precip_increment");
+  if (rain !== null) now.appendChild(stat("Precip", rain.toFixed(1), series["precip_increment"].unit, "drop"));
   const wind = get("wind_speed");
   if (wind !== null) now.appendChild(stat("Wind", Math.round(wind), series["wind_speed"].unit, "wind"));
   const gust = get("gust");
   if (gust !== null) now.appendChild(stat("Gusts", Math.round(gust), series["gust"].unit, "wind"));
-  const pressure = get("msl");
-  if (pressure !== null) now.appendChild(stat("Pressure", Math.round(pressure), series["msl"].unit, "gauge"));
-  const rain = get("precip_increment");
-  if (rain !== null) now.appendChild(stat("Precip", rain.toFixed(1), series["precip_increment"].unit, "drop"));
   const cloud = get("tcc");
   if (cloud !== null) now.appendChild(stat("Cloud", Math.round(cloud), "%", "cloud"));
+  const dew = get("2d");
+  if (dew !== null) now.appendChild(stat("Dew point", dew.toFixed(1), "°C", "drop"));
+  const pressure = get("msl");
+  if (pressure !== null) now.appendChild(stat("Pressure", Math.round(pressure), series["msl"].unit, "gauge"));
   if (now.children.length) card.appendChild(now);
 
   // Legend and chart.
@@ -722,17 +724,22 @@ function renderPlace(place, nowStep) {
 
   const condRow = el("tr", "conds");
   const condHead = el("th");
-  condHead.appendChild(icon("clock", 16));
+  condHead.appendChild(icon("clock", 18));
   condHead.appendChild(document.createTextNode("Condition"));
   condRow.appendChild(condHead);
   steps.forEach((_, i) => {
     const cell = el("td", i === current ? "now-col" : null);
-    cell.appendChild(icon(conditionFor(series, i).key, 30));
+    cell.appendChild(icon(conditionFor(series, i).key, 34));
     condRow.appendChild(cell);
   });
   tbody.appendChild(condRow);
 
-  const keys = visible.length ? visible : Object.keys(series);
+  // The payload lists the parameters in the order they should be shown.
+  const rank = (key) => {
+    const index = order.indexOf(key);
+    return index === -1 ? 999 : index;
+  };
+  const keys = (visible.length ? visible : Object.keys(series)).slice().sort((a, b) => rank(a) - rank(b));
 
   // Each precipitation row is scaled to its own largest value, so the bars
   // show the shape of that row rather than being comparable across rows.
@@ -750,7 +757,7 @@ function renderPlace(place, nowStep) {
     const swatch = el("i");
     swatch.style.background = colourFor(s.param, index);
     label.appendChild(swatch);
-    label.appendChild(icon(PARAM_ICON[key] || "cloud", 18));
+    label.appendChild(icon(PARAM_ICON[key] || "cloud", 21));
     label.appendChild(document.createTextNode(s.label));
     row.appendChild(label);
     s.values.forEach((value, i) => {
@@ -790,7 +797,7 @@ function renderPlace(place, nowStep) {
 function stat(label, value, unit, iconName, big) {
   const box = el("div", "stat" + (big ? " big" : ""));
   const key = el("div", "k");
-  if (iconName) key.appendChild(icon(iconName, 15));
+  if (iconName) key.appendChild(icon(iconName, 17));
   key.appendChild(document.createTextNode(label));
   box.appendChild(key);
   const v = el("div", "v");
@@ -926,7 +933,8 @@ function render() {
     content.appendChild(el("div", "empty", "Nothing to show for this place yet."));
     return;
   }
-  data.places.forEach(item => content.appendChild(renderPlace(item, data.now_step)));
+  const order = data.params.map(p => p.key);
+  data.places.forEach(item => content.appendChild(renderPlace(item, data.now_step, order)));
 }
 
 // The static build embeds the forecast instead of fetching it.

@@ -43,12 +43,13 @@ OUTPUT_DIR = os.environ.get("ICON_DIR", "assets/icons")
 SIZE = 256
 RESOLUTION = 1024
 
+#: The same style description for every icon, so the set looks like a set.
 STYLE = (
-    "flat vector illustration, modern app icon design, bold rounded shapes, "
-    "flat vibrant colours, high contrast, clean and modern, single centred "
-    "subject filling the frame, isolated on a plain solid white background, "
-    "no text, no letters, no numbers, no border, no frame, no drop shadow, "
-    "square icon"
+    "weather app icon, flat vector illustration, one single subject centred "
+    "and filling the frame, bold rounded shapes, thick smooth outlines, "
+    "solid flat colours with no gradients, no shading, no 3d, no texture, "
+    "no drop shadow, bright and high contrast, plain pure white background, "
+    "square, no text, no letters, no numbers, no border, no frame"
 )
 
 #: key -> prompt describing what to draw.
@@ -56,18 +57,18 @@ ICONS: dict[str, str] = {
     # Weather conditions.
     "sun": "a bright cheerful yellow sun with a warm orange glow and short rounded rays",
     "partly": "a yellow sun peeking out from behind a soft white fluffy cloud",
-    "cloud": "a single soft white fluffy cloud",
-    "rain": "a light grey cloud with several blue raindrops falling below it",
+    "cloud": "a single soft white fluffy cloud with a clear pale blue outline",
+    "rain": "a light grey cloud with three bright blue raindrops falling below it",
     "snow": "a white cloud with pale blue snowflakes falling below it",
     "sleet": "a grey cloud with both blue raindrops and white snowflakes falling",
     "storm": "a dark charcoal storm cloud with a bright yellow lightning bolt",
     "wind": "three curved blue wind swirls blowing sideways",
     # Parameters.
     "thermo": "a red liquid thermometer standing upright",
-    "drop": "a single glossy blue water droplet",
-    "gauge": "a round blue pressure gauge dial with a needle",
+    "drop": "a single bright blue water droplet",
+    "gauge": "a round pressure gauge with a dial face, tick marks and a needle pointing up",
     "rain-drop": "a large blue raindrop with a small splash underneath",
-    "cloud-cover": "a bright white cloud with a small blue sky behind it",
+    "cloud-cover": "a bright white cloud in front of a pale blue circle of sky",
     "feels": "a red thermometer wrapped in a small blue scarf",
     "gust": "three strong curved teal wind gust lines blowing hard",
 }

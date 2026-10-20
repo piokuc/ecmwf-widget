@@ -24,19 +24,7 @@ __all__ = ["ForecastReader", "local_time", "render_text"]
 
 
 #: Order the parameters are shown in.
-_DISPLAY_ORDER = [
-    "temperature_adjusted",
-    "apparent_temperature",
-    "2t",
-    "2d",
-    "wind_speed",
-    "wind_dir",
-    "gust",
-    "msl",
-    "tp",
-    "precip_increment",
-    "tcc",
-]
+_DISPLAY_ORDER = list(parameters.DISPLAY_ORDER)
 
 #: Overrides for the label of a parameter.
 _LABELS = {
@@ -100,9 +88,14 @@ def local_label(moment: dt.datetime, timezone: str) -> str:
 
 
 def _parameter_catalogue(available: set[str]) -> list[dict]:
-    """Describe the parameters that can be switched on and off."""
+    """Describe the parameters that can be switched on and off.
+
+    They come out in the order they should be displayed, with anything that
+    is not in the catalogue last.
+    """
+    order = {name: index for index, name in enumerate(parameters.DISPLAY_ORDER)}
     catalogue = []
-    for key in sorted(available):
+    for key in sorted(available, key=lambda name: (order.get(name, 999), name)):
         try:
             spec = parameters.get(key)
         except KeyError:
