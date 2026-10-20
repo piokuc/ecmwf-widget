@@ -55,14 +55,6 @@ def build(out_dir: str, config_path: str = "places.yml", max_places: int | None 
         for payload in embedded.values():
             payload["places"] = payload["places"][:max_places]
 
-    # The spread is only there for the ensemble, so it is dropped elsewhere.
-    for payload in embedded.values():
-        for place in payload["places"]:
-            for entry in place["series"].values():
-                spreads = entry.get("spreads")
-                if spreads and not any(spread is not None for spread in spreads):
-                    entry.pop("spreads", None)
-
     os.makedirs(out_dir, exist_ok=True)
     icons_out = os.path.join(out_dir, "icons")
     if os.path.isdir(icons_out):

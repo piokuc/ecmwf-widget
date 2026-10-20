@@ -228,7 +228,6 @@ class ForecastReader:
                             "valid": _valid_time(run, row["step"]).isoformat(),
                             "value": None,
                             "raw": None,
-                            "spread": row["spread"],
                             "units": "",
                         }
                     )
@@ -240,7 +239,6 @@ class ForecastReader:
                         "valid": _valid_time(run, row["step"]).isoformat(),
                         "value": display_value,
                         "raw": row["value"],
-                        "spread": row["spread"],
                         "units": display_unit,
                     }
                 )
@@ -312,7 +310,6 @@ class ForecastReader:
                     "valid": orography["points"][0]["valid"],
                     "value": model_elevation,
                     "raw": model_elevation,
-                    "spread": None,
                     "units": "m",
                 }
             ],
@@ -337,7 +334,6 @@ class ForecastReader:
                     "valid": point["valid"],
                     "value": corrected - 273.15,
                     "raw": corrected,
-                    "spread": point.get("spread"),
                     "units": "degC",
                 }
             )
@@ -371,7 +367,6 @@ class ForecastReader:
                     "valid": point["valid"],
                     "value": max(value - previous, 0.0),
                     "raw": point["raw"],
-                    "spread": point.get("spread"),
                     "units": "mm",
                 }
             )
@@ -444,8 +439,6 @@ class ForecastReader:
                     "short": spec.short if spec else info.model,
                     "resolution": spec.resolution if spec else info.resol,
                     "description": spec.description if spec else "",
-                    "ensemble": spec.ensemble if spec else False,
-                    "members": spec.members if spec else 1,
                     "run": info.run,
                     "cycle": f"{info.cycle[:4]}-{info.cycle[4:6]}-{info.cycle[6:]} {info.time}:00 UTC",
                     "status": info.status,
@@ -516,14 +509,12 @@ class ForecastReader:
                 if key in ("model_elevation", "z"):
                     continue
                 by_step = {point["step"]: point["value"] for point in entry["points"]}
-                spreads = {point["step"]: point.get("spread") for point in entry["points"]}
                 payload_series[key] = {
                     "param": entry["param"],
                     "level": entry["level"],
                     "label": entry["label"],
                     "unit": entry["units"],
                     "values": [by_step.get(step) for step in place_steps],
-                    "spreads": [spreads.get(step) for step in place_steps],
                 }
                 available.add(key)
 

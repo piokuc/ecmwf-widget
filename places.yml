@@ -58,7 +58,7 @@ catalogue: [region:europe, kind:peak]
 #   ifs025   - the same forecast on the 0.25° grid, available sooner
 #   aifs     - the artificial intelligence forecast
 #   aifs_ens - the artificial intelligence ensemble, with the spread
-models: [ifs, ifs025, aifs, aifs_ens]
+models: [ifs, ifs025, aifs]
 
 # Which parameters to fetch. Use:
 #   basic  - the small set a widget normally shows

@@ -530,14 +530,6 @@ function drawChart(place, series, keys, nowIndex, hoverIndex) {
       add("circle", { cx: x(p.i), cy: y(p.v), r: 2.6, fill: colour, stroke: "none" });
     });
 
-    // The ensemble range, when there is one.
-    const spreads = entry.spreads || [];
-    const withSpread = points.filter(p => spreads[p.i] !== null && spreads[p.i] !== undefined);
-    if (withSpread.length > 1) {
-      const topPath = withSpread.map((p, k) => `${k ? "L" : "M"}${x(p.i).toFixed(1)},${y(p.v + spreads[p.i] / 2).toFixed(1)}`).join(" ");
-      const bottomPath = withSpread.slice().reverse().map(p => `L${x(p.i).toFixed(1)},${y(p.v - spreads[p.i] / 2).toFixed(1)}`).join(" ");
-      add("path", { d: `${topPath} ${bottomPath} Z`, fill: colour, opacity: 0.16, stroke: "none" });
-    }
   });
 
   // The marker for the selected step.
@@ -597,16 +589,6 @@ function showTip(place, series, keys, index, event) {
     const strong = el("b", null, value === null || value === undefined ? "–" : format(entry, value));
     row.appendChild(strong);
     tip.appendChild(row);
-    const spreads = entry.spreads || [];
-    if (spreads[index]) {
-      const spreadRow = el("div", "r");
-      const swatch2 = el("i");
-      swatch2.style.background = "transparent";
-      spreadRow.appendChild(swatch2);
-      spreadRow.appendChild(el("span", null, "spread"));
-      spreadRow.appendChild(el("b", null, "±" + (spreads[index] / 2).toFixed(1) + " " + entry.unit));
-      tip.appendChild(spreadRow);
-    }
   });
   tip.classList.add("on");
   const pad = 14;

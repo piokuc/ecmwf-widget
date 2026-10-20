@@ -7,12 +7,10 @@ without any registration.
     The high resolution deterministic forecast. This is the model the 0.1
     degree tier is made from, and the one to use for detailed forecasts.
 ``ifs025``
-    The same forecast on the coarser 0.25 degree grid.
+    The same forecast on the coarser 0.25 degree grid. It is published
+    sooner, so it is useful while the 0.1 degree tier is still on its way.
 ``aifs``
     The artificial intelligence forecast, a single deterministic run.
-``aifs_ens``
-    The artificial intelligence ensemble. The open data publishes all the
-    perturbed members in one file, so the spread can be computed.
 """
 
 from __future__ import annotations
@@ -33,30 +31,12 @@ class Model:
     resol: str
     stream: str
     type: str = "fc"
-    ensemble: bool = False
     description: str = ""
-    #: How many ensemble members to use. Zero means all of them.
-    members_limit: int = 0
 
     @property
     def resolution(self) -> str:
         """Human readable resolution."""
         return "0.1° (~9 km)" if self.resol == "0p1" else "0.25° (~25 km)"
-
-    @property
-    def members(self) -> int:
-        """Number of ensemble members, 1 for a deterministic model."""
-        if not self.ensemble:
-            return 1
-        return self.members_limit or 50
-
-    def member_numbers(self) -> list[str] | None:
-        """The members to download, or None for every member."""
-        if not self.ensemble:
-            return None
-        if not self.members_limit:
-            return None
-        return [str(number) for number in range(1, self.members_limit + 1)]
 
 
 MODELS: dict[str, Model] = {
@@ -91,18 +71,6 @@ MODELS: dict[str, Model] = {
             stream="oper",
             type="fc",
             description="Artificial intelligence forecast, a single deterministic run.",
-        ),
-        Model(
-            key="aifs_ens",
-            label="AIFS ensemble",
-            short="AIFS ens",
-            model="aifs-ens",
-            resol="0p25",
-            stream="enfo",
-            type="pf",
-            ensemble=True,
-            description="Artificial intelligence ensemble with 50 perturbed members, so the spread can be shown.",
-            members_limit=8,
         ),
     ]
 }

@@ -16,7 +16,6 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import os
-import statistics
 import sys
 import time
 from dataclasses import dataclass, field
@@ -76,7 +75,6 @@ class Service:
         levtype: str,
         params: list[str],
         levels: list[int] | None,
-        members: list[str] | None = None,
     ) -> str | None:
         """Download one step, trying the mirrors in order."""
         suffix = "sfc" if levtype in ("sfc", "sol") else "pl"
@@ -89,7 +87,6 @@ class Service:
                     source=candidate,
                     param=params,
                     levelist=levels,
-                    number=members,
                     levtype=levtype,
                     out=os.path.join(
                         self.config.cache_dir,
@@ -162,21 +159,9 @@ class Service:
             if not wanted:
                 continue
 
-            # An ensemble file holds every member, so only the ones that are
-            # wanted are pulled out of it.
-            members = model.member_numbers()
-            if members is not None:
-                wanted_entries = [
-                    entry
-                    for entry in entries
-                    if entry.param in wanted and entry.number in members
-                ]
-                if not wanted_entries:
-                    continue
-
             try:
                 path = self._download(
-                    self.config.source, model, run, step, levtype, wanted, levels, members
+                    self.config.source, model, run, step, levtype, wanted, levels
                 )
             except eod.OpenDataError as exc:
                 report.errors.append(f"step {step} {levtype}: {exc}")
@@ -199,65 +184,14 @@ class Service:
                 report.errors.append(f"step {step} {levtype}: {exc}")
                 continue
 
-            spreads: dict[tuple, float] = {}
-            if model.ensemble:
-                values, spreads = self._aggregate(values)
-
             values = values + self._derived(values, step)
-            report.values_stored += self.store.store_values(
-                run, values, model=model.key, spreads=spreads
-            )
+            report.values_stored += self.store.store_values(run, values, model=model.key)
             report.steps_ingested += 1
             report.bytes_downloaded += os.path.getsize(path)
 
         status = "complete" if report.steps_ingested >= len(jobs) else "partial"
         self.store.set_run_status(run, status, model=model.key)
         return report
-
-    @staticmethod
-    def _aggregate(values: list[PointValue]):
-        """Average the ensemble members and work out the spread.
-
-        The spread is the range between the 10th and the 90th percentile of
-        the members, which is the usual "likely range" of an ensemble.
-        """
-        groups: dict[tuple, list[float]] = {}
-        for value in values:
-            if value.value is None:
-                continue
-            key = (value.place_id, value.param, value.level, value.step)
-            groups.setdefault(key, []).append(value.value)
-
-        means: dict[tuple, float] = {}
-        spreads: dict[tuple, float] = {}
-        for key, members in groups.items():
-            means[key] = statistics.fmean(members)
-            if len(members) > 1:
-                ordered = sorted(members)
-                low = ordered[max(0, int(0.1 * len(ordered)) - 1)]
-                high = ordered[min(len(ordered) - 1, int(0.9 * len(ordered)))]
-                spreads[key] = high - low
-
-        averaged = [
-            PointValue(
-                place_id=value.place_id,
-                param=value.param,
-                level=value.level,
-                step=value.step,
-                value=means.get((value.place_id, value.param, value.level, value.step)),
-                units=value.units,
-                method=value.method,
-                levtype=value.levtype,
-            )
-            for value in values
-        ]
-        # Keep one row per parameter, not one per member.
-        unique: dict[tuple, PointValue] = {}
-        for value in averaged:
-            unique.setdefault(
-                (value.place_id, value.param, value.level, value.step), value
-            )
-        return list(unique.values()), spreads
 
     def _derived(self, values: list[PointValue], step: int) -> list[PointValue]:
         """Compute the derived quantities for one step."""

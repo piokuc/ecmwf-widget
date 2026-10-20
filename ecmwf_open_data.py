@@ -361,13 +361,11 @@ def select_entries(
     param: Sequence[str] | None = None,
     levelist: Sequence[int | str] | None = None,
     levtype: Sequence[str] | None = None,
-    number: Sequence[int | str] | None = None,
 ) -> list[IndexEntry]:
-    """Filter index entries by parameter, level, level type and member."""
+    """Filter index entries by parameter, level and level type."""
     wanted_params = {p.lower() for p in param} if param else None
     wanted_levels = {str(lvl) for lvl in levelist} if levelist else None
     wanted_levtypes = {lt.lower() for lt in levtype} if levtype else None
-    wanted_numbers = {str(n) for n in number} if number else None
 
     selected = []
     for entry in entries:
@@ -376,8 +374,6 @@ def select_entries(
         if wanted_levels is not None and str(entry.levelist) not in wanted_levels:
             continue
         if wanted_levtypes is not None and entry.levtype.lower() not in wanted_levtypes:
-            continue
-        if wanted_numbers is not None and entry.number not in wanted_numbers:
             continue
         selected.append(entry)
     return selected
@@ -518,7 +514,6 @@ def download_step(
     source: str = "ecmwf",
     param: Sequence[str] | None = None,
     levelist: Sequence[int | str] | None = None,
-    number: Sequence[int | str] | None = None,
     levtype: str = "sfc",
     out: str | os.PathLike[str] | None = None,
     whole_file: bool = False,

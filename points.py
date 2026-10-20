@@ -81,7 +81,6 @@ class PointValue:
     units: str
     method: str = "bilinear"
     levtype: str = "sfc"
-    member: str = ""
 
     @property
     def key(self) -> str:
@@ -210,7 +209,6 @@ def extract_points(
     method: str = "bilinear",
     levtype: str | None = None,
     step: int | None = None,
-    member: str | None = None,
 ) -> list[PointValue]:
     """Extract the requested fields at every place.
 
@@ -228,8 +226,6 @@ def extract_points(
         ``bilinear`` or ``nearest``.
     levtype
         ``sfc`` or ``pl``. Inferred from the file name when not given.
-    member
-        Ensemble member to keep. ``None`` keeps every member.
     step
         Forecast step to record. ECMWF publishes the 3 hourly maximum and
         minimum in the file of the preceding step, and its own index lists
@@ -244,7 +240,6 @@ def extract_points(
     eccodes = _eccodes()
     wanted = set(params) if params else None
     wanted_levels = set(levels) if levels else None
-    wanted_member = str(member) if member is not None else None
     if levtype is None:
         levtype = "pl" if path.endswith("-pl.grib2") else "sfc"
     results: list[PointValue] = []
@@ -276,12 +271,6 @@ def extract_points(
 
                 units = _units_of(message_id, short_name)
                 missing = _missing_value(message_id)
-                try:
-                    member = str(eccodes.codes_get(message_id, "number"))
-                except Exception:  # noqa: BLE001 - not every message has one
-                    member = ""
-                if member is not None and wanted_member is not None and member != wanted_member:
-                    continue
                 values = eccodes.codes_get_values(message_id)
                 grid = Grid(geometry, values)
 
@@ -299,7 +288,6 @@ def extract_points(
                             units=units,
                             method=method,
                             levtype=levtype,
-                            member=member,
                         )
                     )
             finally:

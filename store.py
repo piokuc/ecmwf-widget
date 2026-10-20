@@ -28,7 +28,7 @@ from points import Place, PointValue
 
 __all__ = ["ForecastStore", "RunInfo"]
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 
 def _synchronized(method):
@@ -124,7 +124,6 @@ class ForecastStore:
                 level    INTEGER NOT NULL,
                 step     INTEGER NOT NULL,
                 value    REAL,
-                spread   REAL,
                 units    TEXT,
                 method   TEXT,
                 PRIMARY KEY (model, run, place_id, param, level, step)
@@ -290,9 +289,7 @@ class ForecastStore:
         run: str,
         values: Iterable[PointValue],
         model: str = "ifs",
-        spreads: dict[tuple, float] | None = None,
     ) -> int:
-        spreads = spreads or {}
         rows = [
             (
                 model,
@@ -305,7 +302,6 @@ class ForecastStore:
                 value.level if value.levtype == "pl" and value.level is not None else -1,
                 value.step,
                 value.value,
-                spreads.get((value.place_id, value.param, value.level, value.step)),
                 value.units,
                 value.method,
             )
@@ -315,11 +311,10 @@ class ForecastStore:
             return 0
         self.connection.executemany(
             """
-            INSERT INTO point_values (model, run, place_id, param, level, step, value, spread, units, method)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO point_values (model, run, place_id, param, level, step, value, units, method)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(model, run, place_id, param, level, step) DO UPDATE SET
                 value  = excluded.value,
-                spread = excluded.spread,
                 units  = excluded.units,
                 method = excluded.method
             """,
@@ -432,7 +427,7 @@ class ForecastStore:
         with open(path, "w", newline="") as handle:
             writer = csv.writer(handle)
             writer.writerow(
-                ["model", "run", "place_id", "param", "level", "step", "value", "spread", "units", "method"]
+                ["model", "run", "place_id", "param", "level", "step", "value", "units", "method"]
             )
             for row in rows:
                 writer.writerow(
@@ -444,7 +439,6 @@ class ForecastStore:
                         "" if row["level"] < 0 else row["level"],
                         row["step"],
                         row["value"],
-                        row["spread"],
                         row["units"],
                         row["method"],
                     ]
