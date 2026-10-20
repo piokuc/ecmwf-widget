@@ -1,0 +1,97 @@
+# Configuration for the ECMWF 0.1 deg point forecast service.
+#
+# Add a place by copying an entry and changing the id, name and coordinates.
+# The id must be unique and is used as the key in the database.
+#
+# Coordinates are decimal degrees (WGS84). Elevation is the ground elevation
+# in metres; it is only used for display, the forecast values are taken from
+# the model grid.
+
+# Your own places. These are always followed.
+places:
+  - id: gliwice
+    name: Gliwice
+    latitude: 50.29417
+    longitude: 18.66583
+    elevation: 230
+    timezone: Europe/Warsaw
+    country: Poland
+    note: City centre, on the Kłodnica river
+    country: Poland
+    country_code: PL
+    flag: 🇵🇱
+
+  - id: gorki-wielkie
+    name: Górki Wielkie
+    latitude: 49.77281
+    longitude: 18.85401
+    elevation: 328
+    timezone: Europe/Warsaw
+    country: Poland
+    note: Village in gmina Brenna, Cieszyn County, Beskids
+    country: Poland
+    country_code: PL
+    flag: 🇵🇱
+
+  # A second village of a similar name sits in gmina Opatów, Świętokrzyskie
+  # Voivodeship. Uncomment to follow it as well.
+  # - id: gorki-wielkie-opatow
+  #   name: Gorki Wielkie (Opatów)
+  #   latitude: 50.08890
+  #   longitude: 18.52580
+  #   elevation: 261
+  #   timezone: Europe/Warsaw
+  #   country: Poland
+
+# Which world places to follow on top of your own. The catalogue lives in
+# world_places.yml and holds every capital, a lot of major cities and some
+# notable peaks.
+#   all   - the whole catalogue
+#   none  - only your own places
+#   a list of place ids, for example [warsaw, zurich, sniezka]
+catalogue: none
+
+# Which models to download.
+#   ifs      - the high resolution forecast, about 9 km (0.1°)
+#   ifs025   - the same forecast on the 0.25° grid, available sooner
+#   aifs     - the artificial intelligence forecast
+#   aifs_ens - the artificial intelligence ensemble, with the spread
+models: [ifs]
+
+# Which parameters to fetch. Use:
+#   basic  - the small set a widget normally shows
+#   all    - every parameter the 0.1 deg tier publishes
+#   a list - explicit parameter names, e.g. [2t, msl, tp]
+# Derived quantities (wind_speed, wind_dir, apparent_temperature, ...) are
+# computed from the parameters above and can be listed here too.
+parameters: basic
+
+# Pressure levels to fetch when pressure level parameters are selected.
+pressure_levels: [1000, 925, 850, 700, 500, 300]
+
+# Forecast steps in hours. 0 is the analysis (model run time).
+steps: [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 96, 120, 144]
+
+# Where to get the data. The ECMWF portal is the primary source; the cloud
+# mirrors are identical copies and are used as a fallback when the portal is
+# busy or unreachable.
+source: ecmwf
+fallback_sources: [aws, google]
+
+# How often the service checks for a new run, in seconds.
+poll_interval: 900
+
+# How the value at a point is taken from the model grid.
+#   bilinear - interpolate between the four surrounding grid points (default)
+#   nearest  - take the closest grid point, about 5 km away
+method: bilinear
+
+# Temperature correction for points that sit above the model's own terrain,
+# in K per km. The model grid is about 9 km across, so for a summit the
+# forecast refers to the height of the surrounding cell. 6.5 is the usual
+# environmental lapse rate; 0 disables the correction.
+lapse_rate: 6.5
+
+# Where the database and the downloaded GRIB files live.
+database: data/forecast.sqlite
+cache_dir: data/grib

@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.ruff_cache/
+data/
+cities.json
+wc.json
+.env
+.DS_Store
