@@ -463,7 +463,9 @@ class ForecastReader:
         # Every place that can be chosen.
         place_list = []
         seen_places: set[str] = set()
-        for item in list(self.places(run)) + list(self.catalogue):
+        # The configured order comes first, so the page opens on the place
+        # the user cares about most.
+        for item in list(self.catalogue) + list(self.places(run)):
             if item.id in seen_places:
                 continue
             seen_places.add(item.id)
