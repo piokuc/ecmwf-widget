@@ -48,6 +48,7 @@ PAGE = r"""<!DOCTYPE html>
     --muted: #6b7785;
     --line: #e3e8ee;
     --accent: #1d6fb8;
+    --rain: #0b9af8;
     --sun: #e8a33d;
     --shadow: 0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.06);
   }
@@ -59,6 +60,7 @@ PAGE = r"""<!DOCTYPE html>
       --muted: #8d99a8;
       --line: #2a313b;
       --accent: #5aa9e6;
+      --rain: #2fb0ff;
       --sun: #f0b95c;
       --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.28);
     }
@@ -70,6 +72,7 @@ PAGE = r"""<!DOCTYPE html>
     --muted: #8d99a8;
     --line: #2a313b;
     --accent: #5aa9e6;
+    --rain: #2fb0ff;
     --sun: #f0b95c;
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.28);
   }
@@ -218,15 +221,15 @@ PAGE = r"""<!DOCTYPE html>
   .pp { display: inline-flex; align-items: flex-end; gap: 6px; }
   .pp .num { font-variant-numeric: tabular-nums; line-height: 20px; }
   .pp .gauge {
-    width: 7px; height: 20px; border-radius: 2px;
-    background: var(--line); opacity: .45;
+    width: 9px; height: 20px; border-radius: 2px;
+    background: var(--line); opacity: .5;
     display: flex; align-items: flex-end; overflow: hidden;
     flex: none;
   }
   /* The bar must keep the height it is given, so it is not allowed to
      shrink inside the gauge. */
   .pp .gauge i {
-    display: block; width: 100%; background: var(--accent);
+    display: block; width: 100%; background: var(--rain);
     border-radius: 2px; flex: none;
   }
   .foot { color: var(--muted); font-size: 12px; text-align: center; margin-top: 26px; }
@@ -324,7 +327,7 @@ const PARAM_COLOUR = {
   "2t": "#e4572e", "temperature_adjusted": "#b8332a", "apparent_temperature": "#d9739a",
   "2d": "#17a2a2", "wind_speed": "#1d6fb8", "wind_dir": "#6c5ce7", "gust": "#0e9aa7",
   "10fg": "#0e9aa7", "10u": "#6c8ebf", "10v": "#8fa8d8", "msl": "#7d5ba6",
-  "tp": "#0b3d91", "precip_increment": "#2b6cb0", "tcc": "#7b8794",
+  "tp": "#0b9af8", "precip_increment": "#0b9af8", "tcc": "#7b8794",
 };
 const PALETTE = ["#e4572e", "#1d6fb8", "#17a2a2", "#7d5ba6", "#c98a1b", "#2e8b57", "#b8332a", "#6c5ce7"];
 
@@ -767,7 +770,7 @@ function renderPlace(place, nowStep) {
         inner.appendChild(el("span", "num", value.toFixed(1)));
         const gauge = el("span", "gauge");
         const fill = el("i");
-        fill.style.height = (value > 0 ? Math.max(2, value / rainScale[s.param] * 20) : 0) + "px";
+        fill.style.height = (value > 0 ? Math.max(3, value / rainScale[s.param] * 20) : 0) + "px";
         gauge.appendChild(fill);
         inner.appendChild(gauge);
         cell.appendChild(inner);
