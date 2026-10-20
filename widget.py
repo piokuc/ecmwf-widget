@@ -233,6 +233,8 @@ PAGE = r"""<!DOCTYPE html>
   tbody th svg, tbody th img.icon { vertical-align: -3px; margin-right: 6px; opacity: .85; }
   tbody th i { width: 9px; height: 9px; border-radius: 3px; display: inline-block; margin-right: 7px; }
   tbody td { border-top: 1px solid var(--line); font-size: 15px; }
+  tbody td.clickable { cursor: pointer; }
+  tbody td.clickable:hover { color: var(--accent); }
   tbody td.now-col { background: color-mix(in srgb, var(--accent) 7%, transparent); font-weight: 600; }
   tbody tr:hover td { background: color-mix(in srgb, var(--accent) 4%, transparent); }
   /* Precipitation is drawn as a small column chart, so the column keeps the
@@ -615,15 +617,17 @@ function drawChart(place, series, keys, selected, select) {
   overlay.addEventListener("mousemove", (event) => {
     const best = nearest(event.clientX);
     hovered = best;
-    // The marker follows the mouse, so it is clear which time is shown.
+    // The marker follows the mouse, and the cards show that hour.
     marker.setAttribute("x1", x(best));
     marker.setAttribute("x2", x(best));
+    updateSummary(series, best);
     showTip(place, series, keys, best, event);
   });
   overlay.addEventListener("mouseleave", () => {
     hovered = -1;
     marker.setAttribute("x1", x(selected));
     marker.setAttribute("x2", x(selected));
+    updateSummary(series, selected);
     hideTip();
   });
   overlay.addEventListener("click", (event) => {
@@ -742,21 +746,21 @@ function renderPlace(place, nowStep, order) {
   };
   const now = el("div", "now");
   const temp = get("2t");
-  if (temp !== null) now.appendChild(stat("Temp", temp.toFixed(1), "°C", "thermo", true));
+  if (temp !== null) now.appendChild(stat("Temp", temp.toFixed(1), "°C", "thermo", true, "2t"));
   const apparent = get("apparent_temperature");
-  if (apparent !== null) now.appendChild(stat("Feels like", apparent.toFixed(1), "°C", "thermo"));
+  if (apparent !== null) now.appendChild(stat("Feels like", apparent.toFixed(1), "°C", "thermo", false, "apparent_temperature"));
   const rain = get("precip_increment");
-  if (rain !== null) now.appendChild(stat("Precip", rain.toFixed(1), series["precip_increment"].unit, "drop"));
+  if (rain !== null) now.appendChild(stat("Precip", rain.toFixed(1), series["precip_increment"].unit, "drop", false, "precip_increment"));
   const wind = get("wind_speed");
-  if (wind !== null) now.appendChild(stat("Wind", Math.round(wind), series["wind_speed"].unit, "wind"));
+  if (wind !== null) now.appendChild(stat("Wind", Math.round(wind), series["wind_speed"].unit, "wind", false, "wind_speed"));
   const gust = get("gust");
-  if (gust !== null) now.appendChild(stat("Gusts", Math.round(gust), series["gust"].unit, "wind"));
+  if (gust !== null) now.appendChild(stat("Gusts", Math.round(gust), series["gust"].unit, "wind", false, "gust"));
   const cloud = get("tcc");
-  if (cloud !== null) now.appendChild(stat("Cloud", Math.round(cloud), "%", "cloud"));
+  if (cloud !== null) now.appendChild(stat("Cloud", Math.round(cloud), "%", "cloud", false, "tcc"));
   const dew = get("2d");
-  if (dew !== null) now.appendChild(stat("Dew point", dew.toFixed(1), "°C", "drop"));
+  if (dew !== null) now.appendChild(stat("Dew point", dew.toFixed(1), "°C", "drop", false, "2d"));
   const pressure = get("msl");
-  if (pressure !== null) now.appendChild(stat("Pressure", Math.round(pressure), series["msl"].unit, "gauge"));
+  if (pressure !== null) now.appendChild(stat("Pressure", Math.round(pressure), series["msl"].unit, "gauge", false, "msl"));
   if (now.children.length) card.appendChild(now);
 
   // Legend and chart.
@@ -865,6 +869,12 @@ function renderPlace(place, nowStep, order) {
     row.appendChild(label);
     s.values.forEach((value, i) => {
       const cell = el("td", i === current ? "now-col" : null);
+      cell.classList.add("clickable");
+      cell.title = "Click to show this hour";
+      cell.addEventListener("click", () => {
+        state.selected = state.selected === i ? null : i;
+        render();
+      });
       if (value === null || value === undefined) {
         cell.textContent = "–";
       } else if (["2t", "temperature_adjusted", "apparent_temperature"].includes(s.param)) {
@@ -895,17 +905,38 @@ function renderPlace(place, nowStep, order) {
   return card;
 }
 
-function stat(label, value, unit, iconName, big) {
+function stat(label, value, unit, iconName, big, paramKey) {
   const box = el("div", "stat" + (big ? " big" : ""));
+  if (paramKey) box.dataset.param = paramKey;
   const key = el("div", "k");
   if (iconName) key.appendChild(icon(iconName, 17));
   key.appendChild(document.createTextNode(label));
   box.appendChild(key);
   const v = el("div", "v");
-  v.appendChild(document.createTextNode(value));
+  const num = el("span", "num", value);
+  v.appendChild(num);
   if (unit) v.appendChild(el("small", null, unit));
   box.appendChild(v);
   return box;
+}
+
+// The value of a parameter without its unit, the way the cards show it.
+function formatValue(entry, value) {
+  if (value === null || value === undefined) return "\u2013";
+  if (["2t", "temperature_adjusted", "apparent_temperature", "2d", "tp", "precip_increment"].includes(entry.param)) {
+    return value.toFixed(1);
+  }
+  return String(Math.round(value));
+}
+
+// Update the cards in place, so hovering the chart shows that hour.
+function updateSummary(series, index) {
+  document.querySelectorAll(".stat[data-param]").forEach((card) => {
+    const entry = series[card.dataset.param];
+    if (!entry) return;
+    const target = card.querySelector(".v .num");
+    if (target) target.textContent = formatValue(entry, entry.values[index]);
+  });
 }
 
 // --------------------------------------------------------------------------- //
