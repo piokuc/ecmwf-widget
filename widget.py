@@ -196,25 +196,29 @@ PAGE = r"""<!DOCTYPE html>
   /* Table -------------------------------------------------------------- */
   .grid { overflow-x: auto; scrollbar-width: thin; }
   table { border-collapse: collapse; width: 100%; min-width: 640px; }
-  th, td { padding: 6px 7px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  th, td { padding: 7px 9px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
   thead th {
-    color: var(--muted); font-size: 11.5px; font-weight: 500;
-    border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--card);
+    color: var(--muted); font-weight: 500; position: sticky; background: var(--card);
   }
-  thead th.now-col { color: var(--accent); font-weight: 700; }
+  thead tr.days th {
+    font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--muted); padding-bottom: 1px; text-align: center;
+  }
+  thead tr.days th.now-col { color: var(--accent); }
+  thead tr.times th {
+    font-size: 13.5px; font-weight: 500; padding-top: 1px; padding-bottom: 7px;
+    border-bottom: 1px solid var(--line);
+  }
+  thead tr.times th.now-col { color: var(--accent); font-weight: 700; }
   tbody th {
-    text-align: left; font-weight: 500; font-size: 13px; color: var(--muted);
-    position: sticky; left: 0; background: var(--card); padding-right: 14px;
+    text-align: left; font-weight: 500; font-size: 14.5px; color: var(--muted);
+    position: sticky; left: 0; background: var(--card); padding-right: 16px;
   }
   tbody th svg, tbody th img.icon { vertical-align: -3px; margin-right: 6px; opacity: .85; }
   tbody th i { width: 9px; height: 9px; border-radius: 3px; display: inline-block; margin-right: 7px; }
-  tbody td { border-top: 1px solid var(--line); font-size: 13.5px; }
+  tbody td { border-top: 1px solid var(--line); font-size: 15px; }
   tbody td.now-col { background: color-mix(in srgb, var(--accent) 7%, transparent); font-weight: 600; }
   tbody tr:hover td { background: color-mix(in srgb, var(--accent) 4%, transparent); }
-  .temp {
-    border-radius: 5px; padding: 2px 5px; display: inline-block; min-width: 50px;
-    color: #10202f; font-weight: 550;
-  }
   /* Precipitation is drawn as a small column chart, so the column keeps the
      same width as every other one. */
   td.precip { padding: 4px 7px; }
@@ -404,13 +408,6 @@ function conditionFor(series, index) {
   return { key: "sun", label: "Clear" };
 }
 
-function tempColour(value) {
-  const t = Math.max(-25, Math.min(40, value));
-  const hue = 215 - ((t + 25) / 65) * 215;
-  const light = 92 - Math.abs(t - 8) * 0.28;
-  return `hsl(${hue.toFixed(0)} 70% ${Math.max(66, Math.min(94, light)).toFixed(0)}%)`;
-}
-
 function format(series, value) {
   if (value === null || value === undefined) return "–";
   switch (series.param) {
@@ -560,12 +557,22 @@ function drawChart(place, series, keys, nowIndex, hoverIndex) {
     });
   }
 
-  // Time labels.
+  // Time labels. The day is shown whenever it changes, so the times are
+  // never ambiguous.
   const every = Math.max(1, Math.ceil(n / 12));
+  let lastDay = "";
   place.times.forEach((label, i) => {
     if (i % every !== 0 && i !== n - 1) return;
-    const text = add("text", { x: x(i), y: H - 8, "text-anchor": "middle", fill: mutedColour, "font-size": 11.5, "font-family": "inherit" });
-    text.textContent = label.replace(/^\w{3}\s/, "");
+    const parts = label.split(" ");
+    const day = parts[0];
+    const hour = parts.slice(1).join(" ");
+    const showDay = day !== lastDay;
+    lastDay = day;
+    const text = add("text", {
+      x: x(i), y: H - 8, "text-anchor": "middle",
+      fill: mutedColour, "font-size": 11.5, "font-family": "inherit",
+    });
+    text.textContent = showDay ? day + " " + hour : hour;
   });
 
   // Where the mouse is, so the tooltip can follow.
@@ -712,12 +719,29 @@ function renderPlace(place, nowStep, order) {
   const wrap = el("div", "grid");
   const table = el("table");
   const thead = el("thead");
-  const hrow = el("tr");
-  hrow.appendChild(el("th", null, ""));
-  place.times.forEach((time, i) => {
-    hrow.appendChild(el("th", i === current ? "now-col" : null, time));
-  });
-  thead.appendChild(hrow);
+  // The days are one row, the times of the day below them, the way yr.no
+  // and the Met Office lay it out.
+  const dayRow = el("tr", "days");
+  const timeRow = el("tr", "times");
+  const corner = el("th", null, "");
+  corner.rowSpan = 2;
+  dayRow.appendChild(corner);
+  let at = 0;
+  while (at < place.times.length) {
+    const day = place.times[at].split(" ")[0];
+    let end = at;
+    while (end + 1 < place.times.length && place.times[end + 1].split(" ")[0] === day) end++;
+    const spans = end - at + 1;
+    const head = el("th", null, day);
+    if (spans > 1) head.colSpan = spans;
+    dayRow.appendChild(head);
+    for (let i = at; i <= end; i++) {
+      timeRow.appendChild(el("th", i === current ? "now-col" : null, place.times[i].split(" ")[1]));
+    }
+    at = end + 1;
+  }
+  thead.appendChild(dayRow);
+  thead.appendChild(timeRow);
   table.appendChild(thead);
 
   const tbody = el("tbody");
@@ -765,9 +789,7 @@ function renderPlace(place, nowStep, order) {
       if (value === null || value === undefined) {
         cell.textContent = "–";
       } else if (["2t", "temperature_adjusted", "apparent_temperature"].includes(s.param)) {
-        const chip = el("span", "temp", value.toFixed(1) + "°");
-        chip.style.background = tempColour(value);
-        cell.appendChild(chip);
+        cell.textContent = value.toFixed(1) + "°";
       } else if (s.param === "wind_dir") {
         cell.appendChild(arrow(value));
         cell.appendChild(document.createTextNode(" " + Math.round(value) + "°"));
