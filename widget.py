@@ -676,7 +676,8 @@ function renderPlace(place, nowStep, order) {
   const nowIndex = index >= 0 ? index : 0;
   const current = state.selected !== null && state.selected < steps.length ? state.selected : nowIndex;
 
-  const visible = [...state.visible].filter(key => series[key]);
+  const chosen = state.visible.size ? state.visible : defaultSelection(state.data);
+  const visible = [...chosen].filter(key => series[key]);
   const chartKeys = visible.filter(key => key !== "precip_increment");
 
   // Head.
@@ -703,6 +704,21 @@ function renderPlace(place, nowStep, order) {
   conditionBox.appendChild(el("div", "label", condition.label));
   head.appendChild(conditionBox);
   card.appendChild(head);
+
+  // Nothing of the chosen parameters exists at this place.
+  if (!visible.length) {
+    const empty = el("div", "empty");
+    empty.appendChild(el("p", null, "None of the chosen parameters are available for " + place.name + "."));
+    const button = el("button", null, "Use the default set");
+    button.addEventListener("click", () => {
+      state.visible = defaultSelection(state.data);
+      saveState();
+      render();
+    });
+    empty.appendChild(button);
+    card.appendChild(empty);
+    return card;
+  }
 
   // A banner when the user has picked a step.
   if (state.selected !== null) {
@@ -826,7 +842,7 @@ function renderPlace(place, nowStep, order) {
     const index = order.indexOf(key);
     return index === -1 ? 999 : index;
   };
-  const keys = (visible.length ? visible : Object.keys(series)).slice().sort((a, b) => rank(a) - rank(b));
+  const keys = visible.slice().sort((a, b) => rank(a) - rank(b));
 
   // Each precipitation row is scaled to its own largest value, so the bars
   // show the shape of that row rather than being comparable across rows.
@@ -1025,6 +1041,17 @@ function render() {
 
 // The static build embeds the forecast instead of fetching it.
 const EMBEDDED = window.FORECAST_DATA || null;
+
+// What is shown when nothing has been picked.
+const DEFAULT_PARAMS = ["2t", "wind_speed", "msl", "tp"];
+
+function defaultSelection(data) {
+  const set = new Set();
+  DEFAULT_PARAMS.forEach((key) => {
+    if (data && data.params.some(p => p.key === key)) set.add(key);
+  });
+  return set;
+}
 
 async function load(run, place) {
   let data;
