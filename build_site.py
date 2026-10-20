@@ -17,6 +17,7 @@ import json
 import os
 import shutil
 
+import models
 import widget
 from config import load_config
 from forecast import ForecastReader
@@ -34,8 +35,12 @@ def build(out_dir: str, config_path: str = "places.yml", max_places: int | None 
     for info in store.runs():
         if info.run > newest.get(info.model, ""):
             newest[info.model] = info.run
-    for model, run in newest.items():
-        payload = reader.widget_payload(run=run, model=model)
+    # The order decides which model the page shows first, so keep the order
+    # of the model catalogue.
+    for model in models.MODELS:
+        if model not in newest:
+            continue
+        payload = reader.widget_payload(run=newest[model], model=model)
         if not payload["places"]:
             continue
         embedded[model] = payload

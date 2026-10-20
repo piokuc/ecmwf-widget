@@ -927,7 +927,9 @@ const EMBEDDED = window.FORECAST_DATA || null;
 async function load(run, place) {
   let data;
   if (EMBEDDED) {
-    const key = state.model && EMBEDDED[state.model] ? state.model : Object.keys(EMBEDDED)[0];
+    const keys = Object.keys(EMBEDDED);
+    if (!state.model && keys.length) state.model = keys[0];
+    const key = state.model && EMBEDDED[state.model] ? state.model : keys[0];
     data = JSON.parse(JSON.stringify(EMBEDDED[key]));
     if (state.model) {
       const model = (data.models || []).find(m => m.key === state.model);

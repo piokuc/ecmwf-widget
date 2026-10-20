@@ -234,6 +234,15 @@ def normalise_units(units: str) -> str:
     return units.replace("**", "").strip() if units else ""
 
 
+#: Parameters that are a depth of water. ECMWF publishes them in metres for
+#: the IFS model and in kilograms per square metre, which is the same as
+#: millimetres, for the AI models.
+_WATER_PARAMS = {"tp", "cp", "sf", "sd", "ro"}
+
+#: Parameters that are a fraction. ECMWF publishes the cloud cover as a
+#: fraction for the IFS model and as a percentage for the AI models.
+_FRACTION_PARAMS = {"tcc", "hcc", "mcc", "lcc", "asn"}
+
 #: How a parameter is shown: display unit, scale and offset applied to the
 #: value stored in the GRIB message. Parameters that are not listed keep
 #: their own unit.
@@ -243,18 +252,8 @@ _DISPLAY: dict[str, tuple[str, float, float]] = {
     "apparent_temperature": ("degC", 1.0, -273.15),
     "msl": ("hPa", 0.01, 0.0),
     "sp": ("hPa", 0.01, 0.0),
-    "tp": ("mm", 1000.0, 0.0),
-    "cp": ("mm", 1000.0, 0.0),
-    "sf": ("mm", 1000.0, 0.0),
-    "sd": ("mm", 1000.0, 0.0),
-    "ro": ("mm", 1000.0, 0.0),
     "wind_speed": ("km/h", 3.6, 0.0),
     "gust": ("km/h", 3.6, 0.0),
-    "tcc": ("%", 100.0, 0.0),
-    "hcc": ("%", 100.0, 0.0),
-    "mcc": ("%", 100.0, 0.0),
-    "lcc": ("%", 100.0, 0.0),
-    "asn": ("%", 100.0, 0.0),
     "lsm": ("%", 100.0, 0.0),
     "slor": ("", 1.0, 0.0),
     "q": ("g/kg", 1000.0, 0.0),
@@ -264,16 +263,29 @@ _DISPLAY: dict[str, tuple[str, float, float]] = {
 }
 
 
-def display_for(param: str) -> tuple[str, float, float]:
-    """Display unit, scale and offset of a parameter."""
+def display_for(param: str, units: str = "") -> tuple[str, float, float]:
+    """Display unit, scale and offset of a parameter.
+
+    The unit the value is stored in matters, because ECMWF publishes the same
+    parameter in different units depending on the model: the IFS total
+    precipitation is in metres and the AI model publishes it in kilograms per
+    square metre, which is millimetres.
+    """
+    unit = normalise_units(units)
+
+    if param in _WATER_PARAMS:
+        return "mm", (1.0 if unit == "kg m-2" else 1000.0), 0.0
+
+    if param in _FRACTION_PARAMS:
+        return "%", (1.0 if unit == "%" else 100.0), 0.0
+
     if param in _DISPLAY:
         return _DISPLAY[param]
     try:
         spec = get(param)
     except KeyError:
-        return "", 1.0, 0.0
-    units = normalise_units(getattr(spec, "units", ""))
-    return units, 1.0, 0.0
+        return unit, 1.0, 0.0
+    return normalise_units(getattr(spec, "units", "")), 1.0, 0.0
 
 
 def label_for(param: str, level: int | None = None) -> str:
@@ -326,10 +338,8 @@ def to_display(value: float, units: str, param: str | None = None) -> tuple[floa
     the unit alone decides.
     """
     if param is not None:
-        display, scale, offset = display_for(param)
-        if display:
-            return value * scale + offset, display
-        return value, display
+        display, scale, offset = display_for(param, units)
+        return value * scale + offset, display
     key = normalise_units(units)
     if key in _CONVERSIONS:
         scale, offset, display = _CONVERSIONS[key]
