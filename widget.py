@@ -170,10 +170,9 @@ PAGE = r"""<!DOCTYPE html>
     border-color: color-mix(in srgb, var(--accent) 38%, transparent);
   }
   .stamp {
-    display: flex; align-items: center; gap: 6px; margin: 16px 0 8px;
-    font-size: 13px; color: var(--muted);
+    margin: 2px 0 2px; font-size: 27px; font-weight: 620; letter-spacing: -.02em;
+    color: var(--fg); line-height: 1.15;
   }
-  .stamp svg { opacity: .8; }
   .now {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 10px; margin: 0 0 20px;
@@ -212,8 +211,10 @@ PAGE = r"""<!DOCTYPE html>
 
   /* Table -------------------------------------------------------------- */
   .grid { overflow-x: auto; scrollbar-width: thin; }
-  table { border-collapse: collapse; width: 100%; min-width: 640px; }
-  th, td { padding: 7px 9px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  /* Fixed columns, so the chart can be drawn on exactly the same grid. */
+  table { border-collapse: collapse; width: 100%; min-width: 640px; table-layout: fixed; }
+  thead th:first-child, tbody th { width: 190px; min-width: 190px; }
+  th, td { padding: 7px 6px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
   thead th {
     color: var(--muted); font-weight: 500; position: sticky; background: var(--card);
   }
@@ -237,7 +238,7 @@ PAGE = r"""<!DOCTYPE html>
   }
   tbody th svg, tbody th img.icon { vertical-align: -3px; margin-right: 6px; opacity: .85; }
   tbody th i { width: 9px; height: 9px; border-radius: 3px; display: inline-block; margin-right: 7px; }
-  tbody td { border-top: 1px solid var(--line); font-size: 15px; }
+  tbody td { border-top: 1px solid var(--line); font-size: 14.5px; }
   tbody td.clickable { cursor: pointer; }
   tbody td.clickable:hover { color: var(--accent); }
   tbody td.now-col { background: color-mix(in srgb, var(--accent) 7%, transparent); font-weight: 600; }
@@ -504,18 +505,25 @@ function syncUrl() {
 // --------------------------------------------------------------------------- //
 // The chart
 // --------------------------------------------------------------------------- //
-function drawChart(place, series, keys, selected, select) {
+function drawChart(place, series, keys, selected, select, box, labelWidth) {
   const drawn = keys
     .map((key) => series[key])
     .filter((entry) => entry && entry.values.some((v) => v !== null));
   if (!drawn.length) return null;
 
-  const W = 1000, padL = 152, padR = 16, padT = 8, padB = 26;
+  // The chart is drawn in the same pixels as the table, so the columns of
+  // the two line up exactly.
+  const W = Math.max(640, box.clientWidth || 1000);
+  const padL = labelWidth;
+  const padR = 0;
+  const padT = 8, padB = 26;
   const bandHeight = 52, gap = 10;
   const n = place.steps.length;
   const H = padT + drawn.length * (bandHeight + gap) + padB;
 
-  const x = (i) => padL + (n === 1 ? 0 : i * (W - padL - padR) / (n - 1));
+  // The points sit in the middle of the columns, like the table does.
+  const column = (W - padL - padR) / n;
+  const x = (i) => padL + (i + 0.5) * column;
 
   const root = svg("", 1);
   root.setAttribute("viewBox", `0 0 ${W} ${H}`);
@@ -697,6 +705,11 @@ function renderPlace(place, nowStep, order) {
   h2.appendChild(document.createTextNode(place.name));
   if (place.flag) h2.appendChild(el("span", null, place.flag));
   title.appendChild(h2);
+
+  // The time the values below belong to, big and clear.
+  const stamp = el("div", "stamp");
+  stamp.appendChild(el("span", null, localStamp(place.run, place.steps[current], place.timezone)));
+  title.appendChild(stamp);
   const bits = [place.latitude.toFixed(4) + ", " + place.longitude.toFixed(4)];
   if (place.country) bits.push(place.country);
   if (place.elevation !== null && place.elevation !== undefined) bits.push(place.elevation + " m");
@@ -726,7 +739,7 @@ function renderPlace(place, nowStep, order) {
     });
     empty.appendChild(button);
     card.appendChild(empty);
-    return card;
+    return { card, chartBox: null, table: null, place, series, chartKeys: [], current };
   }
 
   // A banner when the user has picked a step.
@@ -743,12 +756,6 @@ function renderPlace(place, nowStep, order) {
     banner.appendChild(back);
     card.appendChild(banner);
   }
-
-  // The date and time the cards are showing.
-  const stamp = el("div", "stamp");
-  stamp.appendChild(icon("clock", 15));
-  stamp.appendChild(el("span", null, localStamp(place.run, place.steps[current], place.timezone)));
-  card.appendChild(stamp);
 
   // Summary strip.
   const get = (key) => {
@@ -790,20 +797,15 @@ function renderPlace(place, nowStep, order) {
       legend.appendChild(item);
     });
     card.appendChild(legend);
-
-    const chart = drawChart(place, series, chartKeys, current, (index) => {
-      state.selected = state.selected === index ? null : index;
-      render();
-    });
-    if (chart) {
-      const box = el("div", "chart");
-      box.appendChild(chart);
-      card.appendChild(box);
-    }
   }
 
-  // Table.
+  // The chart and the table share one scroll container, so they always have
+  // the same width and the columns line up.
   const wrap = el("div", "grid");
+  const chartBox = el("div", "chart");
+  wrap.appendChild(chartBox);
+
+  // Table.
   const table = el("table");
   const thead = el("thead");
   // The days are one row, the times of the day below them, the way yr.no
@@ -913,7 +915,7 @@ function renderPlace(place, nowStep, order) {
   table.appendChild(tbody);
   wrap.appendChild(table);
   card.appendChild(wrap);
-  return card;
+  return { card, chartBox, table, wrap, place, series, chartKeys, current };
 }
 
 function stat(label, value, unit, iconName, big, paramKey) {
@@ -1099,7 +1101,29 @@ function render() {
     return;
   }
   const order = data.params.map(p => p.key);
-  data.places.forEach(item => content.appendChild(renderPlace(item, data.now_step, order)));
+  data.places.forEach((item) => {
+    const built = renderPlace(item, data.now_step, order);
+    content.appendChild(built.card);
+    if (!built.table || !built.chartBox) return;
+    // Now that the card has a width, the chart can be drawn on exactly the
+    // same columns as the table.
+    const labelWidth = built.table.querySelector("tbody th")
+      ? built.table.querySelector("tbody th").getBoundingClientRect().width
+      : 190;
+    // Every column needs room for a value like "1024 hPa".
+    const column = Math.max(70, (built.wrap.clientWidth - labelWidth) / built.place.steps.length);
+    built.wrap.style.minWidth = Math.ceil(labelWidth + column * built.place.steps.length) + "px";
+    const chart = drawChart(
+      built.place, built.series, built.chartKeys, built.current,
+      (index) => {
+        state.selected = state.selected === index ? null : index;
+        render();
+      },
+      built.chartBox,
+      labelWidth
+    );
+    if (chart) built.chartBox.appendChild(chart);
+  });
 }
 
 // The static build embeds the forecast instead of fetching it.
