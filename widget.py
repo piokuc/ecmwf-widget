@@ -328,10 +328,13 @@ function svg(markup, size, cls) {
   return node;
 }
 
+// Icons live next to the page, which is not always at the root of the site.
+const ICON_BASE = new URL("icons/", window.location.href).href;
+
 function icon(name, size, cls) {
   const fallback = SVG_FALLBACK[name] || "cloud";
   const picture = document.createElement("img");
-  picture.src = "/icons/" + name + ".png";
+  picture.src = ICON_BASE + name + ".png";
   picture.width = size || 16;
   picture.height = size || 16;
   picture.alt = "";
