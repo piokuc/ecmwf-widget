@@ -169,9 +169,14 @@ PAGE = r"""<!DOCTYPE html>
     background: transparent; color: var(--accent);
     border-color: color-mix(in srgb, var(--accent) 38%, transparent);
   }
+  .stamp {
+    display: flex; align-items: center; gap: 6px; margin: 16px 0 8px;
+    font-size: 13px; color: var(--muted);
+  }
+  .stamp svg { opacity: .8; }
   .now {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 10px; margin: 18px 0 20px;
+    gap: 10px; margin: 0 0 20px;
   }
   .stat {
     background: var(--bg); border: 1px solid var(--line); border-radius: 11px;
@@ -620,14 +625,14 @@ function drawChart(place, series, keys, selected, select) {
     // The marker follows the mouse, and the cards show that hour.
     marker.setAttribute("x1", x(best));
     marker.setAttribute("x2", x(best));
-    updateSummary(series, best);
+    updateSummary(place, series, best);
     showTip(place, series, keys, best, event);
   });
   overlay.addEventListener("mouseleave", () => {
     hovered = -1;
     marker.setAttribute("x1", x(selected));
     marker.setAttribute("x2", x(selected));
-    updateSummary(series, selected);
+    updateSummary(place, series, selected);
     hideTip();
   });
   overlay.addEventListener("click", (event) => {
@@ -738,6 +743,12 @@ function renderPlace(place, nowStep, order) {
     banner.appendChild(back);
     card.appendChild(banner);
   }
+
+  // The date and time the cards are showing.
+  const stamp = el("div", "stamp");
+  stamp.appendChild(icon("clock", 15));
+  stamp.appendChild(el("span", null, localStamp(place.run, place.steps[current], place.timezone)));
+  card.appendChild(stamp);
 
   // Summary strip.
   const get = (key) => {
@@ -920,6 +931,25 @@ function stat(label, value, unit, iconName, big, paramKey) {
   return box;
 }
 
+// The local date and time of a forecast step.
+function localStamp(run, step, timezone) {
+  if (!run) return "";
+  const base = new Date(Date.UTC(
+    Number(run.slice(0, 4)), Number(run.slice(4, 6)) - 1,
+    Number(run.slice(6, 8)), Number(run.slice(8, 10))
+  ));
+  base.setUTCHours(base.getUTCHours() + step);
+  try {
+    return new Intl.DateTimeFormat("en-GB", {
+      timeZone: timezone || "UTC",
+      weekday: "short", day: "2-digit", month: "short",
+      hour: "2-digit", minute: "2-digit",
+    }).format(base);
+  } catch (e) {
+    return base.toISOString().slice(0, 16).replace("T", " ");
+  }
+}
+
 // The value of a parameter without its unit, the way the cards show it.
 function formatValue(entry, value) {
   if (value === null || value === undefined) return "\u2013";
@@ -930,13 +960,15 @@ function formatValue(entry, value) {
 }
 
 // Update the cards in place, so hovering the chart shows that hour.
-function updateSummary(series, index) {
+function updateSummary(place, series, index) {
   document.querySelectorAll(".stat[data-param]").forEach((card) => {
     const entry = series[card.dataset.param];
     if (!entry) return;
     const target = card.querySelector(".v .num");
     if (target) target.textContent = formatValue(entry, entry.values[index]);
   });
+  const stamp = document.querySelector(".stamp span");
+  if (stamp) stamp.textContent = localStamp(place.run, place.steps[index], place.timezone);
 }
 
 // --------------------------------------------------------------------------- //

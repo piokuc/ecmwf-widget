@@ -521,6 +521,7 @@ class ForecastReader:
                     "flag": item.flag,
                     "country": item.country,
                     "country_code": item.country_code,
+                    "run": run,
                     "latitude": item.latitude,
                     "longitude": item.longitude,
                     "elevation": item.elevation,
