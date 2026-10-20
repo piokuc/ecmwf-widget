@@ -24,7 +24,9 @@ up to date.
 | `ifs` | The high resolution deterministic forecast, 0.1° (about 9 km) |
 | `ifs025` | The same forecast on the 0.25° grid, published sooner |
 | `aifs` | The artificial intelligence forecast |
-| `aifs_ens` | The AI ensemble, with the spread between the members |
+
+The AI ensemble is not set up at the moment. ECMWF serves it, and the
+service can ingest an ensemble again by adding the model back to `models.py`.
 
 ## Getting started
 
