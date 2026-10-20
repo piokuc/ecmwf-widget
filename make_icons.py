@@ -74,7 +74,7 @@ ICONS: dict[str, str] = {
 
 # Icons that are not generated with the model. The fog symbol is white on
 # white, which the background removal cannot handle, so it stays drawn.
-DRAWN_ONLY = ("fog",)
+DRAWN_ONLY = ("fog", "pin", "clock")
 
 
 # --------------------------------------------------------------------------- #

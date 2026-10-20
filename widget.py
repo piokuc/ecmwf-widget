@@ -331,8 +331,13 @@ function svg(markup, size, cls) {
 // Icons live next to the page, which is not always at the root of the site.
 const ICON_BASE = new URL("icons/", window.location.href).href;
 
+// A few symbols are drawn instead of generated, because they are simpler
+// as a line drawing than as a picture.
+const DRAWN_ONLY = new Set(["pin", "clock"]);
+
 function icon(name, size, cls) {
   const fallback = SVG_FALLBACK[name] || "cloud";
+  if (DRAWN_ONLY.has(name)) return svg(ICONS[fallback] || ICONS.cloud, size, cls);
   const picture = document.createElement("img");
   picture.src = ICON_BASE + name + ".png";
   picture.width = size || 16;

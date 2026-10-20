@@ -1,4 +1,5 @@
 {
+  "clock": "clock.png",
   "cloud": "cloud.png",
   "cloud-cover": "cloud-cover.png",
   "drop": "drop.png",
@@ -6,6 +7,7 @@
   "gauge": "gauge.png",
   "gust": "gust.png",
   "partly": "partly.png",
+  "pin": "pin.png",
   "rain": "rain.png",
   "rain-drop": "rain-drop.png",
   "sleet": "sleet.png",
