@@ -147,14 +147,15 @@ PAGE = r"""<!DOCTYPE html>
     box-shadow: var(--shadow); padding: 20px 22px 22px; margin-bottom: 20px;
     position: relative;
   }
-  .place-head { display: flex; align-items: flex-start; gap: 18px; }
+  .place-head { display: flex; align-items: center; gap: 20px; }
+  .place-head > div:first-child { flex: 1; min-width: 0; }
   .place-head h2 {
     font-size: 19px; font-weight: 640; margin: 0; letter-spacing: -.01em;
     display: flex; align-items: center; gap: 7px;
   }
   .place-head h2 svg, .place-head h2 img.icon { flex: none; }
   .sub { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
-  .condition { margin-left: auto; text-align: center; flex: none; padding-left: 10px; }
+  .condition { text-align: center; flex: none; }
   .condition svg, .condition img.icon { display: block; margin: 0 auto 2px; }
   .condition .label { font-size: 12px; color: var(--muted); }
   .banner {
@@ -169,9 +170,11 @@ PAGE = r"""<!DOCTYPE html>
     background: transparent; color: var(--accent);
     border-color: color-mix(in srgb, var(--accent) 38%, transparent);
   }
+  /* The time sits on the right of the place, vertically centred. */
+  .when { flex: none; text-align: right; }
   .stamp {
-    margin: 2px 0 2px; font-size: 27px; font-weight: 620; letter-spacing: -.02em;
-    color: var(--fg); line-height: 1.15;
+    font-size: 25px; font-weight: 600; letter-spacing: -.015em;
+    color: var(--fg); line-height: 1.2; white-space: nowrap;
   }
   .now {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -268,8 +271,11 @@ PAGE = r"""<!DOCTYPE html>
   @media (max-width: 620px) {
     body { padding: 16px 12px 40px; }
     .place { padding: 16px 14px 18px; border-radius: 12px; }
-    .place-head { flex-wrap: wrap; }
-    .condition { margin-left: 0; text-align: left; padding-left: 0; }
+    .place-head { flex-wrap: wrap; gap: 10px 14px; }
+    .place-head > div:first-child { flex: 1 1 100%; }
+    .when { flex: 1; text-align: left; order: 3; }
+    .stamp { font-size: 21px; white-space: normal; }
+    .condition { order: 2; margin-left: auto; text-align: right; }
     .panel { right: 8px; left: 8px; width: auto; }
   }
 </style>
@@ -705,11 +711,6 @@ function renderPlace(place, nowStep, order) {
   h2.appendChild(document.createTextNode(place.name));
   if (place.flag) h2.appendChild(el("span", null, place.flag));
   title.appendChild(h2);
-
-  // The time the values below belong to, big and clear.
-  const stamp = el("div", "stamp");
-  stamp.appendChild(el("span", null, localStamp(place.run, place.steps[current], place.timezone)));
-  title.appendChild(stamp);
   const bits = [place.latitude.toFixed(4) + ", " + place.longitude.toFixed(4)];
   if (place.country) bits.push(place.country);
   if (place.elevation !== null && place.elevation !== undefined) bits.push(place.elevation + " m");
@@ -720,8 +721,16 @@ function renderPlace(place, nowStep, order) {
   title.appendChild(el("div", "sub", bits.join("  ·  ")));
   head.appendChild(title);
 
+  // The time the values below belong to, big and clear, on the right.
+  const when = el("div", "when");
+  const stamp = el("div", "stamp");
+  stamp.appendChild(el("span", null, localStamp(place.run, place.steps[current], place.timezone)));
+  when.appendChild(stamp);
+  head.appendChild(when);
+
   const condition = conditionFor(series, current);
   const conditionBox = el("div", "condition");
+  conditionBox.dataset.role = "condition";
   conditionBox.appendChild(icon(condition.key, 68));
   conditionBox.appendChild(el("div", "label", condition.label));
   head.appendChild(conditionBox);
@@ -826,6 +835,7 @@ function renderPlace(place, nowStep, order) {
     dayRow.appendChild(head);
     for (let i = at; i <= end; i++) {
       const cell = el("th", i === current ? "now-col" : null, place.times[i].split(" ")[1]);
+      cell.dataset.col = i;
       cell.classList.add("clickable");
       cell.title = "Click to show this hour";
       cell.addEventListener("click", () => {
@@ -849,6 +859,7 @@ function renderPlace(place, nowStep, order) {
   condRow.appendChild(condHead);
   steps.forEach((_, i) => {
     const cell = el("td", i === current ? "now-col" : null);
+    cell.dataset.col = i;
     cell.appendChild(icon(conditionFor(series, i).key, 34));
     condRow.appendChild(cell);
   });
@@ -882,6 +893,7 @@ function renderPlace(place, nowStep, order) {
     row.appendChild(label);
     s.values.forEach((value, i) => {
       const cell = el("td", i === current ? "now-col" : null);
+      cell.dataset.col = i;
       cell.classList.add("clickable");
       cell.title = "Click to show this hour";
       cell.addEventListener("click", () => {
@@ -944,7 +956,7 @@ function localStamp(run, step, timezone) {
   try {
     return new Intl.DateTimeFormat("en-GB", {
       timeZone: timezone || "UTC",
-      weekday: "short", day: "2-digit", month: "short",
+      weekday: "long", day: "numeric", month: "long", year: "numeric",
       hour: "2-digit", minute: "2-digit",
     }).format(base);
   } catch (e) {
@@ -961,7 +973,8 @@ function formatValue(entry, value) {
   return String(Math.round(value));
 }
 
-// Update the cards in place, so hovering the chart shows that hour.
+// Update everything that shows a single hour: the cards, the time, the
+// weather icon and the highlighted column.
 function updateSummary(place, series, index) {
   document.querySelectorAll(".stat[data-param]").forEach((card) => {
     const entry = series[card.dataset.param];
@@ -971,6 +984,20 @@ function updateSummary(place, series, index) {
   });
   const stamp = document.querySelector(".stamp span");
   if (stamp) stamp.textContent = localStamp(place.run, place.steps[index], place.timezone);
+
+  // The big icon shows the weather of that hour.
+  const box = document.querySelector('[data-role="condition"]');
+  if (box) {
+    const state = conditionFor(series, index);
+    box.innerHTML = "";
+    box.appendChild(icon(state.key, 68));
+    box.appendChild(el("div", "label", state.label));
+  }
+
+  // And the column of that hour is the highlighted one.
+  document.querySelectorAll("[data-col]").forEach((cell) => {
+    cell.classList.toggle("now-col", Number(cell.dataset.col) === index);
+  });
 }
 
 // --------------------------------------------------------------------------- //
