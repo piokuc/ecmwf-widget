@@ -35,6 +35,8 @@ class Model:
     type: str = "fc"
     ensemble: bool = False
     description: str = ""
+    #: How many ensemble members to use. Zero means all of them.
+    members_limit: int = 0
 
     @property
     def resolution(self) -> str:
@@ -44,7 +46,17 @@ class Model:
     @property
     def members(self) -> int:
         """Number of ensemble members, 1 for a deterministic model."""
-        return 51 if self.ensemble else 1
+        if not self.ensemble:
+            return 1
+        return self.members_limit or 50
+
+    def member_numbers(self) -> list[str] | None:
+        """The members to download, or None for every member."""
+        if not self.ensemble:
+            return None
+        if not self.members_limit:
+            return None
+        return [str(number) for number in range(1, self.members_limit + 1)]
 
 
 MODELS: dict[str, Model] = {
@@ -90,6 +102,7 @@ MODELS: dict[str, Model] = {
             type="pf",
             ensemble=True,
             description="Artificial intelligence ensemble with 50 perturbed members, so the spread can be shown.",
+            members_limit=8,
         ),
     ]
 }

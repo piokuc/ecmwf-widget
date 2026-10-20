@@ -10,6 +10,7 @@ places:
     elevation: null
     flag: 🇦🇫
     kind: capital
+    region: Asia
   - id: tirana
     name: Tirana
     country: Albania
@@ -19,6 +20,7 @@ places:
     elevation: null
     flag: 🇦🇱
     kind: capital
+    region: Europe
   - id: algiers
     name: Algiers
     country: Algeria
@@ -28,6 +30,7 @@ places:
     elevation: null
     flag: 🇩🇿
     kind: capital
+    region: Africa
   - id: pago-pago
     name: Pago Pago
     country: American Samoa
@@ -37,6 +40,7 @@ places:
     elevation: null
     flag: 🇦🇸
     kind: capital
+    region: Oceania
   - id: andorra-la-vella
     name: Andorra la Vella
     country: Andorra
@@ -46,6 +50,7 @@ places:
     elevation: null
     flag: 🇦🇩
     kind: capital
+    region: Europe
   - id: andorra-la-vella-2
     name: Andorra la Vella
     country: Andorra
@@ -55,6 +60,7 @@ places:
     elevation: null
     flag: 🇦🇩
     kind: city
+    region: Europe
   - id: luanda
     name: Luanda
     country: Angola
@@ -64,6 +70,7 @@ places:
     elevation: null
     flag: 🇦🇴
     kind: capital
+    region: Africa
   - id: the-valley
     name: The Valley
     country: Anguilla
@@ -73,6 +80,7 @@ places:
     elevation: null
     flag: 🇦🇮
     kind: capital
+    region: Americas
   - id: saint-john-s
     name: Saint John's
     country: Antigua and Barbuda
@@ -82,6 +90,7 @@ places:
     elevation: null
     flag: 🇦🇬
     kind: capital
+    region: Americas
   - id: aconcagua
     name: Aconcagua
     country: Argentina
@@ -91,6 +100,7 @@ places:
     elevation: 6961
     flag: 🇦🇷
     kind: peak
+    region: Americas
   - id: bariloche
     name: Bariloche
     country: Argentina
@@ -100,6 +110,7 @@ places:
     elevation: null
     flag: 🇦🇷
     kind: city
+    region: Americas
   - id: buenos-aires
     name: Buenos Aires
     country: Argentina
@@ -109,6 +120,7 @@ places:
     elevation: null
     flag: 🇦🇷
     kind: capital
+    region: Americas
   - id: cordoba
     name: Cordoba
     country: Argentina
@@ -118,6 +130,7 @@ places:
     elevation: null
     flag: 🇦🇷
     kind: city
+    region: Americas
   - id: mendoza
     name: Mendoza
     country: Argentina
@@ -127,6 +140,7 @@ places:
     elevation: null
     flag: 🇦🇷
     kind: city
+    region: Americas
   - id: yerevan
     name: Yerevan
     country: Armenia
@@ -136,6 +150,7 @@ places:
     elevation: null
     flag: 🇦🇲
     kind: capital
+    region: Asia
   - id: oranjestad
     name: Oranjestad
     country: Aruba
@@ -145,6 +160,7 @@ places:
     elevation: null
     flag: 🇦🇼
     kind: capital
+    region: Americas
   - id: brisbane
     name: Brisbane
     country: Australia
@@ -154,6 +170,7 @@ places:
     elevation: null
     flag: 🇦🇺
     kind: city
+    region: Oceania
   - id: canberra
     name: Canberra
     country: Australia
@@ -163,6 +180,7 @@ places:
     elevation: null
     flag: 🇦🇺
     kind: capital
+    region: Oceania
   - id: darwin
     name: Darwin
     country: Australia
@@ -172,6 +190,7 @@ places:
     elevation: null
     flag: 🇦🇺
     kind: city
+    region: Oceania
   - id: melbourne
     name: Melbourne
     country: Australia
@@ -181,6 +200,7 @@ places:
     elevation: null
     flag: 🇦🇺
     kind: city
+    region: Oceania
   - id: mount-kosciuszko
     name: Mount Kosciuszko
     country: Australia
@@ -190,6 +210,7 @@ places:
     elevation: 2228
     flag: 🇦🇺
     kind: peak
+    region: Oceania
   - id: perth
     name: Perth
     country: Australia
@@ -199,6 +220,7 @@ places:
     elevation: null
     flag: 🇦🇺
     kind: city
+    region: Oceania
   - id: sydney
     name: Sydney
     country: Australia
@@ -208,6 +230,7 @@ places:
     elevation: null
     flag: 🇦🇺
     kind: city
+    region: Oceania
   - id: innsbruck
     name: Innsbruck
     country: Austria
@@ -217,6 +240,7 @@ places:
     elevation: null
     flag: 🇦🇹
     kind: city
+    region: Europe
   - id: salzburg
     name: Salzburg
     country: Austria
@@ -226,6 +250,7 @@ places:
     elevation: null
     flag: 🇦🇹
     kind: city
+    region: Europe
   - id: vienna
     name: Vienna
     country: Austria
@@ -235,6 +260,7 @@ places:
     elevation: null
     flag: 🇦🇹
     kind: capital
+    region: Europe
   - id: vienna-2
     name: Vienna
     country: Austria
@@ -244,6 +270,7 @@ places:
     elevation: null
     flag: 🇦🇹
     kind: city
+    region: Europe
   - id: baku
     name: Baku
     country: Azerbaijan
@@ -253,6 +280,7 @@ places:
     elevation: null
     flag: 🇦🇿
     kind: capital
+    region: Asia
   - id: nassau
     name: Nassau
     country: Bahamas
@@ -262,6 +290,7 @@ places:
     elevation: null
     flag: 🇧🇸
     kind: capital
+    region: Americas
   - id: manama
     name: Manama
     country: Bahrain
@@ -271,6 +300,7 @@ places:
     elevation: null
     flag: 🇧🇭
     kind: capital
+    region: Asia
   - id: dhaka
     name: Dhaka
     country: Bangladesh
@@ -280,6 +310,7 @@ places:
     elevation: null
     flag: 🇧🇩
     kind: capital
+    region: Asia
   - id: bridgetown
     name: Bridgetown
     country: Barbados
@@ -289,6 +320,7 @@ places:
     elevation: null
     flag: 🇧🇧
     kind: capital
+    region: Americas
   - id: minsk
     name: Minsk
     country: Belarus
@@ -298,6 +330,7 @@ places:
     elevation: null
     flag: 🇧🇾
     kind: capital
+    region: Europe
   - id: brussels
     name: Brussels
     country: Belgium
@@ -307,6 +340,7 @@ places:
     elevation: null
     flag: 🇧🇪
     kind: capital
+    region: Europe
   - id: belmopan
     name: Belmopan
     country: Belize
@@ -316,6 +350,7 @@ places:
     elevation: null
     flag: 🇧🇿
     kind: capital
+    region: Americas
   - id: porto-novo
     name: Porto-Novo
     country: Benin
@@ -325,6 +360,7 @@ places:
     elevation: null
     flag: 🇧🇯
     kind: capital
+    region: Africa
   - id: hamilton
     name: Hamilton
     country: Bermuda
@@ -334,6 +370,7 @@ places:
     elevation: null
     flag: 🇧🇲
     kind: capital
+    region: Americas
   - id: thimphu
     name: Thimphu
     country: Bhutan
@@ -343,6 +380,7 @@ places:
     elevation: null
     flag: 🇧🇹
     kind: capital
+    region: Asia
   - id: sucre
     name: Sucre
     country: Bolivia
@@ -352,6 +390,7 @@ places:
     elevation: null
     flag: 🇧🇴
     kind: capital
+    region: Americas
   - id: sarajevo
     name: Sarajevo
     country: Bosnia and Herzegovina
@@ -361,6 +400,7 @@ places:
     elevation: null
     flag: 🇧🇦
     kind: capital
+    region: Europe
   - id: gaborone
     name: Gaborone
     country: Botswana
@@ -370,6 +410,7 @@ places:
     elevation: null
     flag: 🇧🇼
     kind: capital
+    region: Africa
   - id: brasilia-2
     name: Brasilia
     country: Brazil
@@ -379,6 +420,7 @@ places:
     elevation: null
     flag: 🇧🇷
     kind: city
+    region: Americas
   - id: brasilia
     name: Brasília
     country: Brazil
@@ -388,6 +430,7 @@ places:
     elevation: null
     flag: 🇧🇷
     kind: capital
+    region: Americas
   - id: foz-do-iguacu
     name: Foz do Iguacu
     country: Brazil
@@ -397,6 +440,7 @@ places:
     elevation: null
     flag: 🇧🇷
     kind: city
+    region: Americas
   - id: rio-de-janeiro
     name: Rio de Janeiro
     country: Brazil
@@ -406,6 +450,7 @@ places:
     elevation: null
     flag: 🇧🇷
     kind: city
+    region: Americas
   - id: salvador
     name: Salvador
     country: Brazil
@@ -415,6 +460,7 @@ places:
     elevation: null
     flag: 🇧🇷
     kind: city
+    region: Americas
   - id: diego-garcia
     name: Diego Garcia
     country: British Indian Ocean Territory
@@ -424,6 +470,7 @@ places:
     elevation: null
     flag: 🇮🇴
     kind: capital
+    region: 
   - id: road-town
     name: Road Town
     country: British Virgin Islands
@@ -433,6 +480,7 @@ places:
     elevation: null
     flag: 🇻🇬
     kind: capital
+    region: Americas
   - id: bandar-seri-begawan
     name: Bandar Seri Begawan
     country: Brunei
@@ -442,6 +490,7 @@ places:
     elevation: null
     flag: 🇧🇳
     kind: capital
+    region: Asia
   - id: sofia
     name: Sofia
     country: Bulgaria
@@ -451,6 +500,7 @@ places:
     elevation: null
     flag: 🇧🇬
     kind: capital
+    region: Europe
   - id: ouagadougou
     name: Ouagadougou
     country: Burkina Faso
@@ -460,6 +510,7 @@ places:
     elevation: null
     flag: 🇧🇫
     kind: capital
+    region: Africa
   - id: gitega
     name: Gitega
     country: Burundi
@@ -469,6 +520,7 @@ places:
     elevation: null
     flag: 🇧🇮
     kind: capital
+    region: Africa
   - id: phnom-penh
     name: Phnom Penh
     country: Cambodia
@@ -478,6 +530,7 @@ places:
     elevation: null
     flag: 🇰🇭
     kind: capital
+    region: Asia
   - id: siem-reap
     name: Siem Reap
     country: Cambodia
@@ -487,6 +540,7 @@ places:
     elevation: null
     flag: 🇰🇭
     kind: city
+    region: Asia
   - id: yaounde
     name: Yaoundé
     country: Cameroon
@@ -496,6 +550,7 @@ places:
     elevation: null
     flag: 🇨🇲
     kind: capital
+    region: Africa
   - id: calgary
     name: Calgary
     country: Canada
@@ -505,6 +560,7 @@ places:
     elevation: null
     flag: 🇨🇦
     kind: city
+    region: Americas
   - id: montreal
     name: Montreal
     country: Canada
@@ -514,6 +570,7 @@ places:
     elevation: null
     flag: 🇨🇦
     kind: city
+    region: Americas
   - id: ottawa
     name: Ottawa
     country: Canada
@@ -523,6 +580,7 @@ places:
     elevation: null
     flag: 🇨🇦
     kind: capital
+    region: Americas
   - id: toronto
     name: Toronto
     country: Canada
@@ -532,6 +590,7 @@ places:
     elevation: null
     flag: 🇨🇦
     kind: city
+    region: Americas
   - id: vancouver
     name: Vancouver
     country: Canada
@@ -541,6 +600,7 @@ places:
     elevation: null
     flag: 🇨🇦
     kind: city
+    region: Americas
   - id: praia
     name: Praia
     country: Cape Verde
@@ -550,6 +610,7 @@ places:
     elevation: null
     flag: 🇨🇻
     kind: capital
+    region: Africa
   - id: kralendijk
     name: Kralendijk
     country: Caribbean Netherlands
@@ -559,6 +620,7 @@ places:
     elevation: null
     flag: 
     kind: capital
+    region: Americas
   - id: george-town
     name: George Town
     country: Cayman Islands
@@ -568,6 +630,7 @@ places:
     elevation: null
     flag: 🇰🇾
     kind: capital
+    region: Americas
   - id: bangui
     name: Bangui
     country: Central African Republic
@@ -577,6 +640,7 @@ places:
     elevation: null
     flag: 🇨🇫
     kind: capital
+    region: Africa
   - id: n-djamena
     name: N'Djamena
     country: Chad
@@ -586,6 +650,7 @@ places:
     elevation: null
     flag: 🇹🇩
     kind: capital
+    region: Africa
   - id: punta-arenas
     name: Punta Arenas
     country: Chile
@@ -595,6 +660,7 @@ places:
     elevation: null
     flag: 🇨🇱
     kind: city
+    region: Americas
   - id: santiago
     name: Santiago
     country: Chile
@@ -604,6 +670,7 @@ places:
     elevation: null
     flag: 🇨🇱
     kind: capital
+    region: Americas
   - id: santiago-2
     name: Santiago
     country: Chile
@@ -613,6 +680,7 @@ places:
     elevation: null
     flag: 🇨🇱
     kind: city
+    region: Americas
   - id: valparaiso
     name: Valparaiso
     country: Chile
@@ -622,6 +690,7 @@ places:
     elevation: null
     flag: 🇨🇱
     kind: city
+    region: Americas
   - id: beijing
     name: Beijing
     country: China
@@ -631,6 +700,7 @@ places:
     elevation: null
     flag: 🇨🇳
     kind: capital
+    region: Asia
   - id: chengdu
     name: Chengdu
     country: China
@@ -640,6 +710,7 @@ places:
     elevation: null
     flag: 🇨🇳
     kind: city
+    region: Asia
   - id: guangzhou
     name: Guangzhou
     country: China
@@ -649,6 +720,7 @@ places:
     elevation: null
     flag: 🇨🇳
     kind: city
+    region: Asia
   - id: shanghai
     name: Shanghai
     country: China
@@ -658,6 +730,7 @@ places:
     elevation: null
     flag: 🇨🇳
     kind: city
+    region: Asia
   - id: shenzhen
     name: Shenzhen
     country: China
@@ -667,6 +740,7 @@ places:
     elevation: null
     flag: 🇨🇳
     kind: city
+    region: Asia
   - id: flying-fish-cove
     name: Flying Fish Cove
     country: Christmas Island
@@ -676,6 +750,7 @@ places:
     elevation: null
     flag: 🇨🇽
     kind: capital
+    region: Oceania
   - id: west-island
     name: West Island
     country: Cocos (Keeling) Islands
@@ -685,6 +760,7 @@ places:
     elevation: null
     flag: 🇨🇨
     kind: capital
+    region: Oceania
   - id: bogota-2
     name: Bogota
     country: Colombia
@@ -694,6 +770,7 @@ places:
     elevation: null
     flag: 🇨🇴
     kind: city
+    region: Americas
   - id: bogota
     name: Bogotá
     country: Colombia
@@ -703,6 +780,7 @@ places:
     elevation: null
     flag: 🇨🇴
     kind: capital
+    region: Americas
   - id: cartagena
     name: Cartagena
     country: Colombia
@@ -712,6 +790,7 @@ places:
     elevation: null
     flag: 🇨🇴
     kind: city
+    region: Americas
   - id: medellin
     name: Medellin
     country: Colombia
@@ -721,6 +800,7 @@ places:
     elevation: null
     flag: 🇨🇴
     kind: city
+    region: Americas
   - id: moroni
     name: Moroni
     country: Comoros
@@ -730,6 +810,7 @@ places:
     elevation: null
     flag: 🇰🇲
     kind: capital
+    region: Africa
   - id: avarua
     name: Avarua
     country: Cook Islands
@@ -739,6 +820,7 @@ places:
     elevation: null
     flag: 🇨🇰
     kind: capital
+    region: Oceania
   - id: san-jose
     name: San José
     country: Costa Rica
@@ -748,6 +830,7 @@ places:
     elevation: null
     flag: 🇨🇷
     kind: capital
+    region: Americas
   - id: dubrovnik
     name: Dubrovnik
     country: Croatia
@@ -757,6 +840,7 @@ places:
     elevation: null
     flag: 🇭🇷
     kind: city
+    region: Europe
   - id: zagreb
     name: Zagreb
     country: Croatia
@@ -766,6 +850,7 @@ places:
     elevation: null
     flag: 🇭🇷
     kind: capital
+    region: Europe
   - id: zagreb-2
     name: Zagreb
     country: Croatia
@@ -775,6 +860,7 @@ places:
     elevation: null
     flag: 🇭🇷
     kind: city
+    region: Europe
   - id: havana
     name: Havana
     country: Cuba
@@ -784,6 +870,7 @@ places:
     elevation: null
     flag: 🇨🇺
     kind: capital
+    region: Americas
   - id: willemstad
     name: Willemstad
     country: Curaçao
@@ -793,6 +880,7 @@ places:
     elevation: null
     flag: 🇨🇼
     kind: capital
+    region: Americas
   - id: nicosia
     name: Nicosia
     country: Cyprus
@@ -802,6 +890,7 @@ places:
     elevation: null
     flag: 🇨🇾
     kind: capital
+    region: Europe
   - id: nicosia-2
     name: Nicosia
     country: Cyprus
@@ -811,6 +900,7 @@ places:
     elevation: null
     flag: 🇨🇾
     kind: city
+    region: Europe
   - id: paphos
     name: Paphos
     country: Cyprus
@@ -820,6 +910,7 @@ places:
     elevation: null
     flag: 🇨🇾
     kind: city
+    region: Europe
   - id: brno
     name: Brno
     country: Czechia
@@ -829,6 +920,7 @@ places:
     elevation: null
     flag: 🇨🇿
     kind: city
+    region: Europe
   - id: ostrava
     name: Ostrava
     country: Czechia
@@ -838,6 +930,7 @@ places:
     elevation: null
     flag: 🇨🇿
     kind: city
+    region: Europe
   - id: prague
     name: Prague
     country: Czechia
@@ -847,6 +940,7 @@ places:
     elevation: null
     flag: 🇨🇿
     kind: capital
+    region: Europe
   - id: prague-2
     name: Prague
     country: Czechia
@@ -856,6 +950,7 @@ places:
     elevation: null
     flag: 🇨🇿
     kind: city
+    region: Europe
   - id: kinshasa
     name: Kinshasa
     country: DR Congo
@@ -865,6 +960,7 @@ places:
     elevation: null
     flag: 🇨🇩
     kind: capital
+    region: Africa
   - id: copenhagen
     name: Copenhagen
     country: Denmark
@@ -874,6 +970,7 @@ places:
     elevation: null
     flag: 🇩🇰
     kind: capital
+    region: Europe
   - id: djibouti
     name: Djibouti
     country: Djibouti
@@ -883,6 +980,7 @@ places:
     elevation: null
     flag: 🇩🇯
     kind: capital
+    region: Africa
   - id: roseau
     name: Roseau
     country: Dominica
@@ -892,6 +990,7 @@ places:
     elevation: null
     flag: 🇩🇲
     kind: capital
+    region: Americas
   - id: santo-domingo
     name: Santo Domingo
     country: Dominican Republic
@@ -901,6 +1000,7 @@ places:
     elevation: null
     flag: 🇩🇴
     kind: capital
+    region: Americas
   - id: quito
     name: Quito
     country: Ecuador
@@ -910,6 +1010,7 @@ places:
     elevation: null
     flag: 🇪🇨
     kind: capital
+    region: Americas
   - id: alexandria
     name: Alexandria
     country: Egypt
@@ -919,6 +1020,7 @@ places:
     elevation: null
     flag: 🇪🇬
     kind: city
+    region: Africa
   - id: cairo
     name: Cairo
     country: Egypt
@@ -928,6 +1030,7 @@ places:
     elevation: null
     flag: 🇪🇬
     kind: capital
+    region: Africa
   - id: luxor
     name: Luxor
     country: Egypt
@@ -937,6 +1040,7 @@ places:
     elevation: null
     flag: 🇪🇬
     kind: city
+    region: Africa
   - id: sharm-el-sheikh
     name: Sharm el Sheikh
     country: Egypt
@@ -946,6 +1050,7 @@ places:
     elevation: null
     flag: 🇪🇬
     kind: city
+    region: Africa
   - id: san-salvador
     name: San Salvador
     country: El Salvador
@@ -955,6 +1060,7 @@ places:
     elevation: null
     flag: 🇸🇻
     kind: capital
+    region: Americas
   - id: malabo
     name: Malabo
     country: Equatorial Guinea
@@ -964,6 +1070,7 @@ places:
     elevation: null
     flag: 🇬🇶
     kind: capital
+    region: Africa
   - id: asmara
     name: Asmara
     country: Eritrea
@@ -973,6 +1080,7 @@ places:
     elevation: null
     flag: 🇪🇷
     kind: capital
+    region: Africa
   - id: tallinn
     name: Tallinn
     country: Estonia
@@ -982,6 +1090,7 @@ places:
     elevation: null
     flag: 🇪🇪
     kind: capital
+    region: Europe
   - id: tallinn-2
     name: Tallinn
     country: Estonia
@@ -991,6 +1100,7 @@ places:
     elevation: null
     flag: 🇪🇪
     kind: city
+    region: Europe
   - id: tartu
     name: Tartu
     country: Estonia
@@ -1000,6 +1110,7 @@ places:
     elevation: null
     flag: 🇪🇪
     kind: city
+    region: Europe
   - id: lobamba
     name: Lobamba
     country: Eswatini
@@ -1009,6 +1120,7 @@ places:
     elevation: null
     flag: 🇸🇿
     kind: capital
+    region: Africa
   - id: addis-ababa
     name: Addis Ababa
     country: Ethiopia
@@ -1018,6 +1130,7 @@ places:
     elevation: null
     flag: 🇪🇹
     kind: capital
+    region: Africa
   - id: stanley
     name: Stanley
     country: Falkland Islands
@@ -1027,6 +1140,7 @@ places:
     elevation: null
     flag: 🇫🇰
     kind: capital
+    region: Americas
   - id: torshavn
     name: Tórshavn
     country: Faroe Islands
@@ -1036,6 +1150,7 @@ places:
     elevation: null
     flag: 🇫🇴
     kind: capital
+    region: Europe
   - id: suva
     name: Suva
     country: Fiji
@@ -1045,6 +1160,7 @@ places:
     elevation: null
     flag: 🇫🇯
     kind: capital
+    region: Oceania
   - id: suva-2
     name: Suva
     country: Fiji
@@ -1054,6 +1170,7 @@ places:
     elevation: null
     flag: 🇫🇯
     kind: city
+    region: Oceania
   - id: helsinki
     name: Helsinki
     country: Finland
@@ -1063,6 +1180,7 @@ places:
     elevation: null
     flag: 🇫🇮
     kind: capital
+    region: Europe
   - id: helsinki-2
     name: Helsinki
     country: Finland
@@ -1072,6 +1190,7 @@ places:
     elevation: null
     flag: 🇫🇮
     kind: city
+    region: Europe
   - id: rovaniemi
     name: Rovaniemi
     country: Finland
@@ -1081,6 +1200,7 @@ places:
     elevation: null
     flag: 🇫🇮
     kind: city
+    region: Europe
   - id: lyon
     name: Lyon
     country: France
@@ -1090,6 +1210,7 @@ places:
     elevation: null
     flag: 🇫🇷
     kind: city
+    region: Europe
   - id: marseille
     name: Marseille
     country: France
@@ -1099,6 +1220,7 @@ places:
     elevation: null
     flag: 🇫🇷
     kind: city
+    region: Europe
   - id: mont-blanc
     name: Mont Blanc
     country: France
@@ -1108,6 +1230,7 @@ places:
     elevation: 4808
     flag: 🇫🇷
     kind: peak
+    region: Europe
   - id: nice
     name: Nice
     country: France
@@ -1117,6 +1240,7 @@ places:
     elevation: null
     flag: 🇫🇷
     kind: city
+    region: Europe
   - id: paris
     name: Paris
     country: France
@@ -1126,6 +1250,7 @@ places:
     elevation: null
     flag: 🇫🇷
     kind: capital
+    region: Europe
   - id: strasbourg
     name: Strasbourg
     country: France
@@ -1135,6 +1260,7 @@ places:
     elevation: null
     flag: 🇫🇷
     kind: city
+    region: Europe
   - id: cayenne
     name: Cayenne
     country: French Guiana
@@ -1144,6 +1270,7 @@ places:
     elevation: null
     flag: 🇬🇫
     kind: capital
+    region: Americas
   - id: papeete
     name: Papeetē
     country: French Polynesia
@@ -1153,6 +1280,7 @@ places:
     elevation: null
     flag: 🇵🇫
     kind: capital
+    region: Oceania
   - id: port-aux-francais
     name: Port-aux-Français
     country: French Southern and Antarctic Lands
@@ -1162,6 +1290,7 @@ places:
     elevation: null
     flag: 🇹🇫
     kind: capital
+    region: Antarctic
   - id: libreville
     name: Libreville
     country: Gabon
@@ -1171,6 +1300,7 @@ places:
     elevation: null
     flag: 🇬🇦
     kind: capital
+    region: Africa
   - id: banjul
     name: Banjul
     country: Gambia
@@ -1180,6 +1310,7 @@ places:
     elevation: null
     flag: 🇬🇲
     kind: capital
+    region: Africa
   - id: tbilisi
     name: Tbilisi
     country: Georgia
@@ -1189,6 +1320,7 @@ places:
     elevation: null
     flag: 🇬🇪
     kind: capital
+    region: Asia
   - id: berlin
     name: Berlin
     country: Germany
@@ -1198,6 +1330,7 @@ places:
     elevation: null
     flag: 🇩🇪
     kind: capital
+    region: Europe
   - id: cologne
     name: Cologne
     country: Germany
@@ -1207,6 +1340,7 @@ places:
     elevation: null
     flag: 🇩🇪
     kind: city
+    region: Europe
   - id: dresden
     name: Dresden
     country: Germany
@@ -1216,6 +1350,7 @@ places:
     elevation: null
     flag: 🇩🇪
     kind: city
+    region: Europe
   - id: frankfurt
     name: Frankfurt
     country: Germany
@@ -1225,6 +1360,7 @@ places:
     elevation: null
     flag: 🇩🇪
     kind: city
+    region: Europe
   - id: hamburg
     name: Hamburg
     country: Germany
@@ -1234,6 +1370,7 @@ places:
     elevation: null
     flag: 🇩🇪
     kind: city
+    region: Europe
   - id: munich
     name: Munich
     country: Germany
@@ -1243,6 +1380,7 @@ places:
     elevation: null
     flag: 🇩🇪
     kind: city
+    region: Europe
   - id: zugspitze
     name: Zugspitze
     country: Germany
@@ -1252,6 +1390,7 @@ places:
     elevation: 2962
     flag: 🇩🇪
     kind: peak
+    region: Europe
   - id: accra
     name: Accra
     country: Ghana
@@ -1261,6 +1400,7 @@ places:
     elevation: null
     flag: 🇬🇭
     kind: capital
+    region: Africa
   - id: gibraltar
     name: Gibraltar
     country: Gibraltar
@@ -1270,6 +1410,7 @@ places:
     elevation: null
     flag: 🇬🇮
     kind: capital
+    region: Europe
   - id: athens
     name: Athens
     country: Greece
@@ -1279,6 +1420,7 @@ places:
     elevation: null
     flag: 🇬🇷
     kind: capital
+    region: Europe
   - id: athens-2
     name: Athens
     country: Greece
@@ -1288,6 +1430,7 @@ places:
     elevation: null
     flag: 🇬🇷
     kind: city
+    region: Europe
   - id: heraklion
     name: Heraklion
     country: Greece
@@ -1297,6 +1440,7 @@ places:
     elevation: null
     flag: 🇬🇷
     kind: city
+    region: Europe
   - id: thessaloniki
     name: Thessaloniki
     country: Greece
@@ -1306,6 +1450,7 @@ places:
     elevation: null
     flag: 🇬🇷
     kind: city
+    region: Europe
   - id: nuuk
     name: Nuuk
     country: Greenland
@@ -1315,6 +1460,7 @@ places:
     elevation: null
     flag: 🇬🇱
     kind: capital
+    region: Americas
   - id: nuuk-2
     name: Nuuk
     country: Greenland
@@ -1324,6 +1470,7 @@ places:
     elevation: null
     flag: 🇬🇱
     kind: city
+    region: Americas
   - id: st-george-s
     name: St. George's
     country: Grenada
@@ -1333,6 +1480,7 @@ places:
     elevation: null
     flag: 🇬🇩
     kind: capital
+    region: Americas
   - id: basse-terre
     name: Basse-Terre
     country: Guadeloupe
@@ -1342,6 +1490,7 @@ places:
     elevation: null
     flag: 🇬🇵
     kind: capital
+    region: Americas
   - id: hagatna
     name: Hagåtña
     country: Guam
@@ -1351,6 +1500,7 @@ places:
     elevation: null
     flag: 🇬🇺
     kind: capital
+    region: Oceania
   - id: guatemala-city
     name: Guatemala City
     country: Guatemala
@@ -1360,6 +1510,7 @@ places:
     elevation: null
     flag: 🇬🇹
     kind: capital
+    region: Americas
   - id: st-peter-port
     name: St. Peter Port
     country: Guernsey
@@ -1369,6 +1520,7 @@ places:
     elevation: null
     flag: 🇬🇬
     kind: capital
+    region: Europe
   - id: conakry
     name: Conakry
     country: Guinea
@@ -1378,6 +1530,7 @@ places:
     elevation: null
     flag: 🇬🇳
     kind: capital
+    region: Africa
   - id: bissau
     name: Bissau
     country: Guinea-Bissau
@@ -1387,6 +1540,7 @@ places:
     elevation: null
     flag: 🇬🇼
     kind: capital
+    region: Africa
   - id: georgetown
     name: Georgetown
     country: Guyana
@@ -1396,6 +1550,7 @@ places:
     elevation: null
     flag: 🇬🇾
     kind: capital
+    region: Americas
   - id: port-au-prince
     name: Port-au-Prince
     country: Haiti
@@ -1405,6 +1560,7 @@ places:
     elevation: null
     flag: 🇭🇹
     kind: capital
+    region: Americas
   - id: tegucigalpa
     name: Tegucigalpa
     country: Honduras
@@ -1414,6 +1570,7 @@ places:
     elevation: null
     flag: 🇭🇳
     kind: capital
+    region: Americas
   - id: city-of-victoria
     name: City of Victoria
     country: Hong Kong
@@ -1423,6 +1580,7 @@ places:
     elevation: null
     flag: 🇭🇰
     kind: capital
+    region: Asia
   - id: budapest
     name: Budapest
     country: Hungary
@@ -1432,6 +1590,7 @@ places:
     elevation: null
     flag: 🇭🇺
     kind: capital
+    region: Europe
   - id: budapest-2
     name: Budapest
     country: Hungary
@@ -1441,6 +1600,7 @@ places:
     elevation: null
     flag: 🇭🇺
     kind: city
+    region: Europe
   - id: eger
     name: Eger
     country: Hungary
@@ -1450,6 +1610,7 @@ places:
     elevation: null
     flag: 🇭🇺
     kind: city
+    region: Europe
   - id: keszthely
     name: Keszthely
     country: Hungary
@@ -1459,6 +1620,7 @@ places:
     elevation: null
     flag: 🇭🇺
     kind: city
+    region: Europe
   - id: reykjavik
     name: Reykjavik
     country: Iceland
@@ -1468,6 +1630,7 @@ places:
     elevation: null
     flag: 🇮🇸
     kind: capital
+    region: Europe
   - id: reykjavik-2
     name: Reykjavik
     country: Iceland
@@ -1477,6 +1640,7 @@ places:
     elevation: null
     flag: 🇮🇸
     kind: city
+    region: Europe
   - id: bangalore
     name: Bangalore
     country: India
@@ -1486,6 +1650,7 @@ places:
     elevation: null
     flag: 🇮🇳
     kind: city
+    region: Asia
   - id: chennai
     name: Chennai
     country: India
@@ -1495,6 +1660,7 @@ places:
     elevation: null
     flag: 🇮🇳
     kind: city
+    region: Asia
   - id: delhi
     name: Delhi
     country: India
@@ -1504,6 +1670,7 @@ places:
     elevation: null
     flag: 🇮🇳
     kind: city
+    region: Asia
   - id: kolkata
     name: Kolkata
     country: India
@@ -1513,6 +1680,7 @@ places:
     elevation: null
     flag: 🇮🇳
     kind: city
+    region: Asia
   - id: mumbai
     name: Mumbai
     country: India
@@ -1522,6 +1690,7 @@ places:
     elevation: null
     flag: 🇮🇳
     kind: city
+    region: Asia
   - id: new-delhi
     name: New Delhi
     country: India
@@ -1531,6 +1700,7 @@ places:
     elevation: null
     flag: 🇮🇳
     kind: capital
+    region: Asia
   - id: jakarta
     name: Jakarta
     country: Indonesia
@@ -1540,6 +1710,7 @@ places:
     elevation: null
     flag: 🇮🇩
     kind: capital
+    region: Asia
   - id: tehran
     name: Tehran
     country: Iran
@@ -1549,6 +1720,7 @@ places:
     elevation: null
     flag: 🇮🇷
     kind: capital
+    region: Asia
   - id: baghdad
     name: Baghdad
     country: Iraq
@@ -1558,6 +1730,7 @@ places:
     elevation: null
     flag: 🇮🇶
     kind: capital
+    region: Asia
   - id: dublin
     name: Dublin
     country: Ireland
@@ -1567,6 +1740,7 @@ places:
     elevation: null
     flag: 🇮🇪
     kind: capital
+    region: Europe
   - id: dublin-2
     name: Dublin
     country: Ireland
@@ -1576,6 +1750,7 @@ places:
     elevation: null
     flag: 🇮🇪
     kind: city
+    region: Europe
   - id: galway
     name: Galway
     country: Ireland
@@ -1585,6 +1760,7 @@ places:
     elevation: null
     flag: 🇮🇪
     kind: city
+    region: Europe
   - id: douglas
     name: Douglas
     country: Isle of Man
@@ -1594,6 +1770,7 @@ places:
     elevation: null
     flag: 🇮🇲
     kind: capital
+    region: Europe
   - id: eilat
     name: Eilat
     country: Israel
@@ -1603,6 +1780,7 @@ places:
     elevation: null
     flag: 🇮🇱
     kind: city
+    region: Asia
   - id: jerusalem
     name: Jerusalem
     country: Israel
@@ -1612,6 +1790,7 @@ places:
     elevation: null
     flag: 🇮🇱
     kind: capital
+    region: Asia
   - id: jerusalem-2
     name: Jerusalem
     country: Israel
@@ -1621,6 +1800,7 @@ places:
     elevation: null
     flag: 🇮🇱
     kind: city
+    region: Asia
   - id: tel-aviv
     name: Tel Aviv
     country: Israel
@@ -1630,6 +1810,7 @@ places:
     elevation: null
     flag: 🇮🇱
     kind: city
+    region: Asia
   - id: florence
     name: Florence
     country: Italy
@@ -1639,6 +1820,7 @@ places:
     elevation: null
     flag: 🇮🇹
     kind: city
+    region: Europe
   - id: milan
     name: Milan
     country: Italy
@@ -1648,6 +1830,7 @@ places:
     elevation: null
     flag: 🇮🇹
     kind: city
+    region: Europe
   - id: naples
     name: Naples
     country: Italy
@@ -1657,6 +1840,7 @@ places:
     elevation: null
     flag: 🇮🇹
     kind: city
+    region: Europe
   - id: rome
     name: Rome
     country: Italy
@@ -1666,6 +1850,7 @@ places:
     elevation: null
     flag: 🇮🇹
     kind: capital
+    region: Europe
   - id: turin
     name: Turin
     country: Italy
@@ -1675,6 +1860,7 @@ places:
     elevation: null
     flag: 🇮🇹
     kind: city
+    region: Europe
   - id: venice
     name: Venice
     country: Italy
@@ -1684,6 +1870,7 @@ places:
     elevation: null
     flag: 🇮🇹
     kind: city
+    region: Europe
   - id: yamoussoukro
     name: Yamoussoukro
     country: Ivory Coast
@@ -1693,6 +1880,7 @@ places:
     elevation: null
     flag: 🇨🇮
     kind: capital
+    region: Africa
   - id: kingston
     name: Kingston
     country: Jamaica
@@ -1702,6 +1890,7 @@ places:
     elevation: null
     flag: 🇯🇲
     kind: capital
+    region: Americas
   - id: fukuoka
     name: Fukuoka
     country: Japan
@@ -1711,6 +1900,7 @@ places:
     elevation: null
     flag: 🇯🇵
     kind: city
+    region: Asia
   - id: kyoto
     name: Kyoto
     country: Japan
@@ -1720,6 +1910,7 @@ places:
     elevation: null
     flag: 🇯🇵
     kind: city
+    region: Asia
   - id: mount-fuji
     name: Mount Fuji
     country: Japan
@@ -1729,6 +1920,7 @@ places:
     elevation: 3776
     flag: 🇯🇵
     kind: peak
+    region: Asia
   - id: osaka
     name: Osaka
     country: Japan
@@ -1738,6 +1930,7 @@ places:
     elevation: null
     flag: 🇯🇵
     kind: city
+    region: Asia
   - id: sapporo
     name: Sapporo
     country: Japan
@@ -1747,6 +1940,7 @@ places:
     elevation: null
     flag: 🇯🇵
     kind: city
+    region: Asia
   - id: tokyo
     name: Tokyo
     country: Japan
@@ -1756,6 +1950,7 @@ places:
     elevation: null
     flag: 🇯🇵
     kind: capital
+    region: Asia
   - id: saint-helier
     name: Saint Helier
     country: Jersey
@@ -1765,6 +1960,7 @@ places:
     elevation: null
     flag: 🇯🇪
     kind: capital
+    region: Europe
   - id: amman
     name: Amman
     country: Jordan
@@ -1774,6 +1970,7 @@ places:
     elevation: null
     flag: 🇯🇴
     kind: capital
+    region: Asia
   - id: nur-sultan
     name: Nur-Sultan
     country: Kazakhstan
@@ -1783,6 +1980,7 @@ places:
     elevation: null
     flag: 🇰🇿
     kind: capital
+    region: Asia
   - id: mombasa
     name: Mombasa
     country: Kenya
@@ -1792,6 +1990,7 @@ places:
     elevation: null
     flag: 🇰🇪
     kind: city
+    region: Africa
   - id: nairobi
     name: Nairobi
     country: Kenya
@@ -1801,6 +2000,7 @@ places:
     elevation: null
     flag: 🇰🇪
     kind: capital
+    region: Africa
   - id: south-tarawa
     name: South Tarawa
     country: Kiribati
@@ -1810,6 +2010,7 @@ places:
     elevation: null
     flag: 🇰🇮
     kind: capital
+    region: Oceania
   - id: pristina
     name: Pristina
     country: Kosovo
@@ -1819,6 +2020,7 @@ places:
     elevation: null
     flag: 🇽🇰
     kind: capital
+    region: Europe
   - id: kuwait-city
     name: Kuwait City
     country: Kuwait
@@ -1828,6 +2030,7 @@ places:
     elevation: null
     flag: 🇰🇼
     kind: capital
+    region: Asia
   - id: bishkek
     name: Bishkek
     country: Kyrgyzstan
@@ -1837,6 +2040,7 @@ places:
     elevation: null
     flag: 🇰🇬
     kind: capital
+    region: Asia
   - id: luang-prabang
     name: Luang Prabang
     country: Laos
@@ -1846,6 +2050,7 @@ places:
     elevation: null
     flag: 🇱🇦
     kind: city
+    region: Asia
   - id: vientiane
     name: Vientiane
     country: Laos
@@ -1855,6 +2060,7 @@ places:
     elevation: null
     flag: 🇱🇦
     kind: capital
+    region: Asia
   - id: riga
     name: Riga
     country: Latvia
@@ -1864,6 +2070,7 @@ places:
     elevation: null
     flag: 🇱🇻
     kind: capital
+    region: Europe
   - id: riga-2
     name: Riga
     country: Latvia
@@ -1873,6 +2080,7 @@ places:
     elevation: null
     flag: 🇱🇻
     kind: city
+    region: Europe
   - id: sigulda
     name: Sigulda
     country: Latvia
@@ -1882,6 +2090,7 @@ places:
     elevation: null
     flag: 🇱🇻
     kind: city
+    region: Europe
   - id: beirut
     name: Beirut
     country: Lebanon
@@ -1891,6 +2100,7 @@ places:
     elevation: null
     flag: 🇱🇧
     kind: capital
+    region: Asia
   - id: maseru
     name: Maseru
     country: Lesotho
@@ -1900,6 +2110,7 @@ places:
     elevation: null
     flag: 🇱🇸
     kind: capital
+    region: Africa
   - id: monrovia
     name: Monrovia
     country: Liberia
@@ -1909,6 +2120,7 @@ places:
     elevation: null
     flag: 🇱🇷
     kind: capital
+    region: Africa
   - id: tripoli
     name: Tripoli
     country: Libya
@@ -1918,6 +2130,7 @@ places:
     elevation: null
     flag: 🇱🇾
     kind: capital
+    region: Africa
   - id: vaduz
     name: Vaduz
     country: Liechtenstein
@@ -1927,6 +2140,7 @@ places:
     elevation: null
     flag: 🇱🇮
     kind: capital
+    region: Europe
   - id: vaduz-2
     name: Vaduz
     country: Liechtenstein
@@ -1936,6 +2150,7 @@ places:
     elevation: null
     flag: 🇱🇮
     kind: city
+    region: Europe
   - id: nida
     name: Nida
     country: Lithuania
@@ -1945,6 +2160,7 @@ places:
     elevation: null
     flag: 🇱🇹
     kind: city
+    region: Europe
   - id: vilnius
     name: Vilnius
     country: Lithuania
@@ -1954,6 +2170,7 @@ places:
     elevation: null
     flag: 🇱🇹
     kind: capital
+    region: Europe
   - id: vilnius-2
     name: Vilnius
     country: Lithuania
@@ -1963,6 +2180,7 @@ places:
     elevation: null
     flag: 🇱🇹
     kind: city
+    region: Europe
   - id: luxembourg
     name: Luxembourg
     country: Luxembourg
@@ -1972,6 +2190,7 @@ places:
     elevation: null
     flag: 🇱🇺
     kind: capital
+    region: Europe
   - id: antananarivo
     name: Antananarivo
     country: Madagascar
@@ -1981,6 +2200,7 @@ places:
     elevation: null
     flag: 🇲🇬
     kind: capital
+    region: Africa
   - id: lilongwe
     name: Lilongwe
     country: Malawi
@@ -1990,6 +2210,7 @@ places:
     elevation: null
     flag: 🇲🇼
     kind: capital
+    region: Africa
   - id: kuala-lumpur
     name: Kuala Lumpur
     country: Malaysia
@@ -1999,6 +2220,7 @@ places:
     elevation: null
     flag: 🇲🇾
     kind: capital
+    region: Asia
   - id: male
     name: Malé
     country: Maldives
@@ -2008,6 +2230,7 @@ places:
     elevation: null
     flag: 🇲🇻
     kind: capital
+    region: Asia
   - id: bamako
     name: Bamako
     country: Mali
@@ -2017,6 +2240,7 @@ places:
     elevation: null
     flag: 🇲🇱
     kind: capital
+    region: Africa
   - id: valletta
     name: Valletta
     country: Malta
@@ -2026,6 +2250,7 @@ places:
     elevation: null
     flag: 🇲🇹
     kind: capital
+    region: Europe
   - id: valletta-2
     name: Valletta
     country: Malta
@@ -2035,6 +2260,7 @@ places:
     elevation: null
     flag: 🇲🇹
     kind: city
+    region: Europe
   - id: majuro
     name: Majuro
     country: Marshall Islands
@@ -2044,6 +2270,7 @@ places:
     elevation: null
     flag: 🇲🇭
     kind: capital
+    region: Oceania
   - id: fort-de-france
     name: Fort-de-France
     country: Martinique
@@ -2053,6 +2280,7 @@ places:
     elevation: null
     flag: 🇲🇶
     kind: capital
+    region: Americas
   - id: nouakchott
     name: Nouakchott
     country: Mauritania
@@ -2062,6 +2290,7 @@ places:
     elevation: null
     flag: 🇲🇷
     kind: capital
+    region: Africa
   - id: port-louis
     name: Port Louis
     country: Mauritius
@@ -2071,6 +2300,7 @@ places:
     elevation: null
     flag: 🇲🇺
     kind: capital
+    region: Africa
   - id: mamoudzou
     name: Mamoudzou
     country: Mayotte
@@ -2080,6 +2310,7 @@ places:
     elevation: null
     flag: 🇾🇹
     kind: capital
+    region: Africa
   - id: cancun
     name: Cancun
     country: Mexico
@@ -2089,6 +2320,7 @@ places:
     elevation: null
     flag: 🇲🇽
     kind: city
+    region: Americas
   - id: guadalajara
     name: Guadalajara
     country: Mexico
@@ -2098,6 +2330,7 @@ places:
     elevation: null
     flag: 🇲🇽
     kind: city
+    region: Americas
   - id: mexico-city
     name: Mexico City
     country: Mexico
@@ -2107,6 +2340,7 @@ places:
     elevation: null
     flag: 🇲🇽
     kind: capital
+    region: Americas
   - id: monterrey
     name: Monterrey
     country: Mexico
@@ -2116,6 +2350,7 @@ places:
     elevation: null
     flag: 🇲🇽
     kind: city
+    region: Americas
   - id: palikir
     name: Palikir
     country: Micronesia
@@ -2125,6 +2360,7 @@ places:
     elevation: null
     flag: 🇫🇲
     kind: capital
+    region: Oceania
   - id: chisinau
     name: Chișinău
     country: Moldova
@@ -2134,6 +2370,7 @@ places:
     elevation: null
     flag: 🇲🇩
     kind: capital
+    region: Europe
   - id: monaco
     name: Monaco
     country: Monaco
@@ -2143,6 +2380,7 @@ places:
     elevation: null
     flag: 🇲🇨
     kind: capital
+    region: Europe
   - id: monaco-2
     name: Monaco
     country: Monaco
@@ -2152,6 +2390,7 @@ places:
     elevation: null
     flag: 🇲🇨
     kind: city
+    region: Europe
   - id: ulan-bator
     name: Ulan Bator
     country: Mongolia
@@ -2161,6 +2400,7 @@ places:
     elevation: null
     flag: 🇲🇳
     kind: capital
+    region: Asia
   - id: podgorica
     name: Podgorica
     country: Montenegro
@@ -2170,6 +2410,7 @@ places:
     elevation: null
     flag: 🇲🇪
     kind: capital
+    region: Europe
   - id: plymouth
     name: Plymouth
     country: Montserrat
@@ -2179,6 +2420,7 @@ places:
     elevation: null
     flag: 🇲🇸
     kind: capital
+    region: Americas
   - id: chefchaouen
     name: Chefchaouen
     country: Morocco
@@ -2188,6 +2430,7 @@ places:
     elevation: null
     flag: 🇲🇦
     kind: city
+    region: Africa
   - id: fes
     name: Fes
     country: Morocco
@@ -2197,6 +2440,7 @@ places:
     elevation: null
     flag: 🇲🇦
     kind: city
+    region: Africa
   - id: marrakesh
     name: Marrakesh
     country: Morocco
@@ -2206,6 +2450,7 @@ places:
     elevation: null
     flag: 🇲🇦
     kind: city
+    region: Africa
   - id: rabat
     name: Rabat
     country: Morocco
@@ -2215,6 +2460,7 @@ places:
     elevation: null
     flag: 🇲🇦
     kind: capital
+    region: Africa
   - id: maputo
     name: Maputo
     country: Mozambique
@@ -2224,6 +2470,7 @@ places:
     elevation: null
     flag: 🇲🇿
     kind: capital
+    region: Africa
   - id: naypyidaw
     name: Naypyidaw
     country: Myanmar
@@ -2233,6 +2480,7 @@ places:
     elevation: null
     flag: 🇲🇲
     kind: capital
+    region: Asia
   - id: windhoek
     name: Windhoek
     country: Namibia
@@ -2242,6 +2490,7 @@ places:
     elevation: null
     flag: 🇳🇦
     kind: capital
+    region: Africa
   - id: yaren
     name: Yaren
     country: Nauru
@@ -2251,6 +2500,7 @@ places:
     elevation: null
     flag: 🇳🇷
     kind: capital
+    region: Oceania
   - id: kathmandu
     name: Kathmandu
     country: Nepal
@@ -2260,6 +2510,7 @@ places:
     elevation: null
     flag: 🇳🇵
     kind: capital
+    region: Asia
   - id: mount-everest
     name: Mount Everest
     country: Nepal
@@ -2269,6 +2520,7 @@ places:
     elevation: 8849
     flag: 🇳🇵
     kind: peak
+    region: Asia
   - id: pokhara
     name: Pokhara
     country: Nepal
@@ -2278,6 +2530,7 @@ places:
     elevation: null
     flag: 🇳🇵
     kind: city
+    region: Asia
   - id: amsterdam
     name: Amsterdam
     country: Netherlands
@@ -2287,6 +2540,7 @@ places:
     elevation: null
     flag: 🇳🇱
     kind: capital
+    region: Europe
   - id: noumea
     name: Nouméa
     country: New Caledonia
@@ -2296,6 +2550,7 @@ places:
     elevation: null
     flag: 🇳🇨
     kind: capital
+    region: Oceania
   - id: auckland
     name: Auckland
     country: New Zealand
@@ -2305,6 +2560,7 @@ places:
     elevation: null
     flag: 🇳🇿
     kind: city
+    region: Oceania
   - id: queenstown
     name: Queenstown
     country: New Zealand
@@ -2314,6 +2570,7 @@ places:
     elevation: null
     flag: 🇳🇿
     kind: city
+    region: Oceania
   - id: wellington
     name: Wellington
     country: New Zealand
@@ -2323,6 +2580,7 @@ places:
     elevation: null
     flag: 🇳🇿
     kind: capital
+    region: Oceania
   - id: wellington-2
     name: Wellington
     country: New Zealand
@@ -2332,6 +2590,7 @@ places:
     elevation: null
     flag: 🇳🇿
     kind: city
+    region: Oceania
   - id: managua
     name: Managua
     country: Nicaragua
@@ -2341,6 +2600,7 @@ places:
     elevation: null
     flag: 🇳🇮
     kind: capital
+    region: Americas
   - id: niamey
     name: Niamey
     country: Niger
@@ -2350,6 +2610,7 @@ places:
     elevation: null
     flag: 🇳🇪
     kind: capital
+    region: Africa
   - id: abuja
     name: Abuja
     country: Nigeria
@@ -2359,6 +2620,7 @@ places:
     elevation: null
     flag: 🇳🇬
     kind: capital
+    region: Africa
   - id: alofi
     name: Alofi
     country: Niue
@@ -2368,6 +2630,7 @@ places:
     elevation: null
     flag: 🇳🇺
     kind: capital
+    region: Oceania
   - id: kingston-2
     name: Kingston
     country: Norfolk Island
@@ -2377,6 +2640,7 @@ places:
     elevation: null
     flag: 🇳🇫
     kind: capital
+    region: Oceania
   - id: pyongyang
     name: Pyongyang
     country: North Korea
@@ -2386,6 +2650,7 @@ places:
     elevation: null
     flag: 🇰🇵
     kind: capital
+    region: Asia
   - id: skopje
     name: Skopje
     country: North Macedonia
@@ -2395,6 +2660,7 @@ places:
     elevation: null
     flag: 🇲🇰
     kind: capital
+    region: Europe
   - id: saipan
     name: Saipan
     country: Northern Mariana Islands
@@ -2404,6 +2670,7 @@ places:
     elevation: null
     flag: 🇲🇵
     kind: capital
+    region: Oceania
   - id: bergen
     name: Bergen
     country: Norway
@@ -2413,6 +2680,7 @@ places:
     elevation: null
     flag: 🇳🇴
     kind: city
+    region: Europe
   - id: oslo
     name: Oslo
     country: Norway
@@ -2422,6 +2690,7 @@ places:
     elevation: null
     flag: 🇳🇴
     kind: capital
+    region: Europe
   - id: oslo-2
     name: Oslo
     country: Norway
@@ -2431,6 +2700,7 @@ places:
     elevation: null
     flag: 🇳🇴
     kind: city
+    region: Europe
   - id: tromso
     name: Tromso
     country: Norway
@@ -2440,6 +2710,7 @@ places:
     elevation: null
     flag: 🇳🇴
     kind: city
+    region: Europe
   - id: muscat
     name: Muscat
     country: Oman
@@ -2449,6 +2720,7 @@ places:
     elevation: null
     flag: 🇴🇲
     kind: capital
+    region: Asia
   - id: islamabad
     name: Islamabad
     country: Pakistan
@@ -2458,6 +2730,7 @@ places:
     elevation: null
     flag: 🇵🇰
     kind: capital
+    region: Asia
   - id: k2
     name: K2
     country: Pakistan
@@ -2467,6 +2740,7 @@ places:
     elevation: 8611
     flag: 🇵🇰
     kind: peak
+    region: Asia
   - id: ngerulmud
     name: Ngerulmud
     country: Palau
@@ -2476,6 +2750,7 @@ places:
     elevation: null
     flag: 🇵🇼
     kind: capital
+    region: Oceania
   - id: ramallah
     name: Ramallah
     country: Palestine
@@ -2485,6 +2760,7 @@ places:
     elevation: null
     flag: 🇵🇸
     kind: capital
+    region: Asia
   - id: panama-city
     name: Panama City
     country: Panama
@@ -2494,6 +2770,7 @@ places:
     elevation: null
     flag: 🇵🇦
     kind: capital
+    region: Americas
   - id: port-moresby
     name: Port Moresby
     country: Papua New Guinea
@@ -2503,6 +2780,7 @@ places:
     elevation: null
     flag: 🇵🇬
     kind: capital
+    region: Oceania
   - id: asuncion
     name: Asunción
     country: Paraguay
@@ -2512,6 +2790,7 @@ places:
     elevation: null
     flag: 🇵🇾
     kind: capital
+    region: Americas
   - id: cusco
     name: Cusco
     country: Peru
@@ -2521,6 +2800,7 @@ places:
     elevation: null
     flag: 🇵🇪
     kind: city
+    region: Americas
   - id: lima
     name: Lima
     country: Peru
@@ -2530,6 +2810,7 @@ places:
     elevation: null
     flag: 🇵🇪
     kind: capital
+    region: Americas
   - id: lima-2
     name: Lima
     country: Peru
@@ -2539,6 +2820,7 @@ places:
     elevation: null
     flag: 🇵🇪
     kind: city
+    region: Americas
   - id: manila
     name: Manila
     country: Philippines
@@ -2548,6 +2830,7 @@ places:
     elevation: null
     flag: 🇵🇭
     kind: capital
+    region: Asia
   - id: adamstown
     name: Adamstown
     country: Pitcairn Islands
@@ -2557,6 +2840,7 @@ places:
     elevation: null
     flag: 🇵🇳
     kind: capital
+    region: Oceania
   - id: gdansk
     name: Gdańsk
     country: Poland
@@ -2566,6 +2850,7 @@ places:
     elevation: null
     flag: 🇵🇱
     kind: city
+    region: Europe
   - id: giewont
     name: Giewont
     country: Poland
@@ -2575,6 +2860,7 @@ places:
     elevation: 1894
     flag: 🇵🇱
     kind: peak
+    region: Europe
   - id: gliwice
     name: Gliwice
     country: Poland
@@ -2584,6 +2870,7 @@ places:
     elevation: null
     flag: 🇵🇱
     kind: city
+    region: Europe
   - id: gorki-wielkie
     name: Górki Wielkie
     country: Poland
@@ -2593,6 +2880,7 @@ places:
     elevation: null
     flag: 🇵🇱
     kind: city
+    region: Europe
   - id: krakow
     name: Kraków
     country: Poland
@@ -2602,6 +2890,7 @@ places:
     elevation: null
     flag: 🇵🇱
     kind: city
+    region: Europe
   - id: poznan
     name: Poznań
     country: Poland
@@ -2611,6 +2900,7 @@ places:
     elevation: null
     flag: 🇵🇱
     kind: city
+    region: Europe
   - id: rysy
     name: Rysy
     country: Poland
@@ -2620,6 +2910,7 @@ places:
     elevation: 2499
     flag: 🇵🇱
     kind: peak
+    region: Europe
   - id: warsaw
     name: Warsaw
     country: Poland
@@ -2629,6 +2920,7 @@ places:
     elevation: null
     flag: 🇵🇱
     kind: capital
+    region: Europe
   - id: wrocaw
     name: Wrocław
     country: Poland
@@ -2638,6 +2930,7 @@ places:
     elevation: null
     flag: 🇵🇱
     kind: city
+    region: Europe
   - id: zakopane
     name: Zakopane
     country: Poland
@@ -2647,6 +2940,7 @@ places:
     elevation: null
     flag: 🇵🇱
     kind: city
+    region: Europe
   - id: sniezka
     name: Śnieżka
     country: Poland
@@ -2656,6 +2950,7 @@ places:
     elevation: 1603
     flag: 🇵🇱
     kind: peak
+    region: Europe
   - id: faro
     name: Faro
     country: Portugal
@@ -2665,6 +2960,7 @@ places:
     elevation: null
     flag: 🇵🇹
     kind: city
+    region: Europe
   - id: lisbon
     name: Lisbon
     country: Portugal
@@ -2674,6 +2970,7 @@ places:
     elevation: null
     flag: 🇵🇹
     kind: capital
+    region: Europe
   - id: lisbon-2
     name: Lisbon
     country: Portugal
@@ -2683,6 +2980,7 @@ places:
     elevation: null
     flag: 🇵🇹
     kind: city
+    region: Europe
   - id: porto
     name: Porto
     country: Portugal
@@ -2692,6 +2990,7 @@ places:
     elevation: null
     flag: 🇵🇹
     kind: city
+    region: Europe
   - id: san-juan
     name: San Juan
     country: Puerto Rico
@@ -2701,6 +3000,7 @@ places:
     elevation: null
     flag: 🇵🇷
     kind: capital
+    region: Americas
   - id: doha
     name: Doha
     country: Qatar
@@ -2710,6 +3010,7 @@ places:
     elevation: null
     flag: 🇶🇦
     kind: capital
+    region: Asia
   - id: brazzaville
     name: Brazzaville
     country: Republic of the Congo
@@ -2719,6 +3020,7 @@ places:
     elevation: null
     flag: 🇨🇬
     kind: capital
+    region: Africa
   - id: brasov
     name: Brasov
     country: Romania
@@ -2728,6 +3030,7 @@ places:
     elevation: null
     flag: 🇷🇴
     kind: city
+    region: Europe
   - id: bucharest
     name: Bucharest
     country: Romania
@@ -2737,6 +3040,7 @@ places:
     elevation: null
     flag: 🇷🇴
     kind: capital
+    region: Europe
   - id: bucharest-2
     name: Bucharest
     country: Romania
@@ -2746,6 +3050,7 @@ places:
     elevation: null
     flag: 🇷🇴
     kind: city
+    region: Europe
   - id: cluj-napoca
     name: Cluj-Napoca
     country: Romania
@@ -2755,6 +3060,7 @@ places:
     elevation: null
     flag: 🇷🇴
     kind: city
+    region: Europe
   - id: moscow
     name: Moscow
     country: Russia
@@ -2764,6 +3070,7 @@ places:
     elevation: null
     flag: 🇷🇺
     kind: capital
+    region: Europe
   - id: saint-petersburg
     name: Saint Petersburg
     country: Russia
@@ -2773,6 +3080,7 @@ places:
     elevation: null
     flag: 🇷🇺
     kind: city
+    region: Europe
   - id: sochi
     name: Sochi
     country: Russia
@@ -2782,6 +3090,7 @@ places:
     elevation: null
     flag: 🇷🇺
     kind: city
+    region: Europe
   - id: vladivostok
     name: Vladivostok
     country: Russia
@@ -2791,6 +3100,7 @@ places:
     elevation: null
     flag: 🇷🇺
     kind: city
+    region: Europe
   - id: kigali
     name: Kigali
     country: Rwanda
@@ -2800,6 +3110,7 @@ places:
     elevation: null
     flag: 🇷🇼
     kind: capital
+    region: Africa
   - id: saint-denis
     name: Saint-Denis
     country: Réunion
@@ -2809,6 +3120,7 @@ places:
     elevation: null
     flag: 🇷🇪
     kind: capital
+    region: Africa
   - id: gustavia
     name: Gustavia
     country: Saint Barthélemy
@@ -2818,6 +3130,7 @@ places:
     elevation: null
     flag: 🇧🇱
     kind: capital
+    region: Americas
   - id: jamestown
     name: Jamestown
     country: Saint Helena, Ascension and Tristan da Cunha
@@ -2827,6 +3140,7 @@ places:
     elevation: null
     flag: 🇸🇭
     kind: capital
+    region: Africa
   - id: basseterre
     name: Basseterre
     country: Saint Kitts and Nevis
@@ -2836,6 +3150,7 @@ places:
     elevation: null
     flag: 🇰🇳
     kind: capital
+    region: Americas
   - id: castries
     name: Castries
     country: Saint Lucia
@@ -2845,6 +3160,7 @@ places:
     elevation: null
     flag: 🇱🇨
     kind: capital
+    region: Americas
   - id: marigot
     name: Marigot
     country: Saint Martin
@@ -2854,6 +3170,7 @@ places:
     elevation: null
     flag: 🇲🇫
     kind: capital
+    region: Americas
   - id: saint-pierre
     name: Saint-Pierre
     country: Saint Pierre and Miquelon
@@ -2863,6 +3180,7 @@ places:
     elevation: null
     flag: 🇵🇲
     kind: capital
+    region: Americas
   - id: kingstown
     name: Kingstown
     country: Saint Vincent and the Grenadines
@@ -2872,6 +3190,7 @@ places:
     elevation: null
     flag: 🇻🇨
     kind: capital
+    region: Americas
   - id: apia
     name: Apia
     country: Samoa
@@ -2881,6 +3200,7 @@ places:
     elevation: null
     flag: 🇼🇸
     kind: capital
+    region: Oceania
   - id: city-of-san-marino
     name: City of San Marino
     country: San Marino
@@ -2890,6 +3210,7 @@ places:
     elevation: null
     flag: 🇸🇲
     kind: capital
+    region: Europe
   - id: san-marino
     name: San Marino
     country: San Marino
@@ -2899,6 +3220,7 @@ places:
     elevation: null
     flag: 🇸🇲
     kind: city
+    region: Europe
   - id: riyadh
     name: Riyadh
     country: Saudi Arabia
@@ -2908,6 +3230,7 @@ places:
     elevation: null
     flag: 🇸🇦
     kind: capital
+    region: Asia
   - id: dakar
     name: Dakar
     country: Senegal
@@ -2917,6 +3240,7 @@ places:
     elevation: null
     flag: 🇸🇳
     kind: capital
+    region: Africa
   - id: belgrade
     name: Belgrade
     country: Serbia
@@ -2926,6 +3250,7 @@ places:
     elevation: null
     flag: 🇷🇸
     kind: capital
+    region: Europe
   - id: victoria
     name: Victoria
     country: Seychelles
@@ -2935,6 +3260,7 @@ places:
     elevation: null
     flag: 🇸🇨
     kind: capital
+    region: Africa
   - id: freetown
     name: Freetown
     country: Sierra Leone
@@ -2944,6 +3270,7 @@ places:
     elevation: null
     flag: 🇸🇱
     kind: capital
+    region: Africa
   - id: singapore
     name: Singapore
     country: Singapore
@@ -2953,6 +3280,7 @@ places:
     elevation: null
     flag: 🇸🇬
     kind: capital
+    region: Asia
   - id: philipsburg
     name: Philipsburg
     country: Sint Maarten
@@ -2962,6 +3290,7 @@ places:
     elevation: null
     flag: 🇸🇽
     kind: capital
+    region: Americas
   - id: bratislava
     name: Bratislava
     country: Slovakia
@@ -2971,6 +3300,7 @@ places:
     elevation: null
     flag: 🇸🇰
     kind: capital
+    region: Europe
   - id: bratislava-2
     name: Bratislava
     country: Slovakia
@@ -2980,6 +3310,7 @@ places:
     elevation: null
     flag: 🇸🇰
     kind: city
+    region: Europe
   - id: poprad
     name: Poprad
     country: Slovakia
@@ -2989,6 +3320,7 @@ places:
     elevation: null
     flag: 🇸🇰
     kind: city
+    region: Europe
   - id: bled
     name: Bled
     country: Slovenia
@@ -2998,6 +3330,7 @@ places:
     elevation: null
     flag: 🇸🇮
     kind: city
+    region: Europe
   - id: ljubljana
     name: Ljubljana
     country: Slovenia
@@ -3007,6 +3340,7 @@ places:
     elevation: null
     flag: 🇸🇮
     kind: capital
+    region: Europe
   - id: ljubljana-2
     name: Ljubljana
     country: Slovenia
@@ -3016,6 +3350,7 @@ places:
     elevation: null
     flag: 🇸🇮
     kind: city
+    region: Europe
   - id: honiara
     name: Honiara
     country: Solomon Islands
@@ -3025,6 +3360,7 @@ places:
     elevation: null
     flag: 🇸🇧
     kind: capital
+    region: Oceania
   - id: mogadishu
     name: Mogadishu
     country: Somalia
@@ -3034,6 +3370,7 @@ places:
     elevation: null
     flag: 🇸🇴
     kind: capital
+    region: Africa
   - id: cape-town
     name: Cape Town
     country: South Africa
@@ -3043,6 +3380,7 @@ places:
     elevation: null
     flag: 🇿🇦
     kind: city
+    region: Africa
   - id: durban
     name: Durban
     country: South Africa
@@ -3052,6 +3390,7 @@ places:
     elevation: null
     flag: 🇿🇦
     kind: city
+    region: Africa
   - id: johannesburg
     name: Johannesburg
     country: South Africa
@@ -3061,6 +3400,7 @@ places:
     elevation: null
     flag: 🇿🇦
     kind: city
+    region: Africa
   - id: pretoria
     name: Pretoria
     country: South Africa
@@ -3070,6 +3410,7 @@ places:
     elevation: null
     flag: 🇿🇦
     kind: capital
+    region: Africa
   - id: king-edward-point
     name: King Edward Point
     country: South Georgia
@@ -3079,6 +3420,7 @@ places:
     elevation: null
     flag: 🇬🇸
     kind: capital
+    region: 
   - id: seoul
     name: Seoul
     country: South Korea
@@ -3088,6 +3430,7 @@ places:
     elevation: null
     flag: 🇰🇷
     kind: capital
+    region: Asia
   - id: juba
     name: Juba
     country: South Sudan
@@ -3097,6 +3440,7 @@ places:
     elevation: null
     flag: 🇸🇸
     kind: capital
+    region: Africa
   - id: barcelona
     name: Barcelona
     country: Spain
@@ -3106,6 +3450,7 @@ places:
     elevation: null
     flag: 🇪🇸
     kind: city
+    region: Europe
   - id: bilbao
     name: Bilbao
     country: Spain
@@ -3115,6 +3460,7 @@ places:
     elevation: null
     flag: 🇪🇸
     kind: city
+    region: Europe
   - id: madrid
     name: Madrid
     country: Spain
@@ -3124,6 +3470,7 @@ places:
     elevation: null
     flag: 🇪🇸
     kind: capital
+    region: Europe
   - id: seville
     name: Seville
     country: Spain
@@ -3133,6 +3480,7 @@ places:
     elevation: null
     flag: 🇪🇸
     kind: city
+    region: Europe
   - id: valencia
     name: Valencia
     country: Spain
@@ -3142,6 +3490,7 @@ places:
     elevation: null
     flag: 🇪🇸
     kind: city
+    region: Europe
   - id: colombo
     name: Colombo
     country: Sri Lanka
@@ -3151,6 +3500,7 @@ places:
     elevation: null
     flag: 🇱🇰
     kind: capital
+    region: Asia
   - id: khartoum
     name: Khartoum
     country: Sudan
@@ -3160,6 +3510,7 @@ places:
     elevation: null
     flag: 🇸🇩
     kind: capital
+    region: Africa
   - id: paramaribo
     name: Paramaribo
     country: Suriname
@@ -3169,6 +3520,7 @@ places:
     elevation: null
     flag: 🇸🇷
     kind: capital
+    region: Americas
   - id: longyearbyen
     name: Longyearbyen
     country: Svalbard and Jan Mayen
@@ -3178,6 +3530,7 @@ places:
     elevation: null
     flag: 🇸🇯
     kind: capital
+    region: Europe
   - id: gothenburg
     name: Gothenburg
     country: Sweden
@@ -3187,6 +3540,7 @@ places:
     elevation: null
     flag: 🇸🇪
     kind: city
+    region: Europe
   - id: stockholm
     name: Stockholm
     country: Sweden
@@ -3196,6 +3550,7 @@ places:
     elevation: null
     flag: 🇸🇪
     kind: capital
+    region: Europe
   - id: stockholm-2
     name: Stockholm
     country: Sweden
@@ -3205,6 +3560,7 @@ places:
     elevation: null
     flag: 🇸🇪
     kind: city
+    region: Europe
   - id: bern
     name: Bern
     country: Switzerland
@@ -3214,6 +3570,7 @@ places:
     elevation: null
     flag: 🇨🇭
     kind: capital
+    region: Europe
   - id: bern-2
     name: Bern
     country: Switzerland
@@ -3223,6 +3580,7 @@ places:
     elevation: null
     flag: 🇨🇭
     kind: city
+    region: Europe
   - id: geneva
     name: Geneva
     country: Switzerland
@@ -3232,6 +3590,7 @@ places:
     elevation: null
     flag: 🇨🇭
     kind: city
+    region: Europe
   - id: interlaken
     name: Interlaken
     country: Switzerland
@@ -3241,6 +3600,7 @@ places:
     elevation: null
     flag: 🇨🇭
     kind: city
+    region: Europe
   - id: matterhorn
     name: Matterhorn
     country: Switzerland
@@ -3250,6 +3610,7 @@ places:
     elevation: 4478
     flag: 🇨🇭
     kind: peak
+    region: Europe
   - id: monte-rosa
     name: Monte Rosa
     country: Switzerland
@@ -3259,6 +3620,7 @@ places:
     elevation: 4634
     flag: 🇨🇭
     kind: peak
+    region: Europe
   - id: zermatt
     name: Zermatt
     country: Switzerland
@@ -3268,6 +3630,7 @@ places:
     elevation: null
     flag: 🇨🇭
     kind: city
+    region: Europe
   - id: zurich
     name: Zurich
     country: Switzerland
@@ -3277,6 +3640,7 @@ places:
     elevation: null
     flag: 🇨🇭
     kind: city
+    region: Europe
   - id: damascus
     name: Damascus
     country: Syria
@@ -3286,6 +3650,7 @@ places:
     elevation: null
     flag: 🇸🇾
     kind: capital
+    region: Asia
   - id: sao-tome
     name: São Tomé
     country: São Tomé and Príncipe
@@ -3295,6 +3660,7 @@ places:
     elevation: null
     flag: 🇸🇹
     kind: capital
+    region: Africa
   - id: taipei
     name: Taipei
     country: Taiwan
@@ -3304,6 +3670,7 @@ places:
     elevation: null
     flag: 🇹🇼
     kind: capital
+    region: Asia
   - id: dushanbe
     name: Dushanbe
     country: Tajikistan
@@ -3313,6 +3680,7 @@ places:
     elevation: null
     flag: 🇹🇯
     kind: capital
+    region: Asia
   - id: arusha
     name: Arusha
     country: Tanzania
@@ -3322,6 +3690,7 @@ places:
     elevation: null
     flag: 🇹🇿
     kind: city
+    region: Africa
   - id: dodoma
     name: Dodoma
     country: Tanzania
@@ -3331,6 +3700,7 @@ places:
     elevation: null
     flag: 🇹🇿
     kind: capital
+    region: Africa
   - id: mount-kilimanjaro
     name: Mount Kilimanjaro
     country: Tanzania
@@ -3340,6 +3710,7 @@ places:
     elevation: 5895
     flag: 🇹🇿
     kind: peak
+    region: Africa
   - id: zanzibar-city
     name: Zanzibar City
     country: Tanzania
@@ -3349,6 +3720,7 @@ places:
     elevation: null
     flag: 🇹🇿
     kind: city
+    region: Africa
   - id: bangkok
     name: Bangkok
     country: Thailand
@@ -3358,6 +3730,7 @@ places:
     elevation: null
     flag: 🇹🇭
     kind: capital
+    region: Asia
   - id: dili
     name: Dili
     country: Timor-Leste
@@ -3367,6 +3740,7 @@ places:
     elevation: null
     flag: 🇹🇱
     kind: capital
+    region: Asia
   - id: lome
     name: Lomé
     country: Togo
@@ -3376,6 +3750,7 @@ places:
     elevation: null
     flag: 🇹🇬
     kind: capital
+    region: Africa
   - id: fakaofo
     name: Fakaofo
     country: Tokelau
@@ -3385,6 +3760,7 @@ places:
     elevation: null
     flag: 🇹🇰
     kind: capital
+    region: 
   - id: nuku-alofa
     name: Nuku'alofa
     country: Tonga
@@ -3394,6 +3770,7 @@ places:
     elevation: null
     flag: 🇹🇴
     kind: capital
+    region: Oceania
   - id: port-of-spain
     name: Port of Spain
     country: Trinidad and Tobago
@@ -3403,6 +3780,7 @@ places:
     elevation: null
     flag: 🇹🇹
     kind: capital
+    region: Americas
   - id: tunis
     name: Tunis
     country: Tunisia
@@ -3412,6 +3790,7 @@ places:
     elevation: null
     flag: 🇹🇳
     kind: capital
+    region: Africa
   - id: ankara
     name: Ankara
     country: Turkey
@@ -3421,6 +3800,7 @@ places:
     elevation: null
     flag: 🇹🇷
     kind: capital
+    region: Asia
   - id: ankara-2
     name: Ankara
     country: Turkey
@@ -3430,6 +3810,7 @@ places:
     elevation: null
     flag: 🇹🇷
     kind: city
+    region: Asia
   - id: antalya
     name: Antalya
     country: Turkey
@@ -3439,6 +3820,7 @@ places:
     elevation: null
     flag: 🇹🇷
     kind: city
+    region: Asia
   - id: istanbul
     name: Istanbul
     country: Turkey
@@ -3448,6 +3830,7 @@ places:
     elevation: null
     flag: 🇹🇷
     kind: city
+    region: Asia
   - id: ashgabat
     name: Ashgabat
     country: Turkmenistan
@@ -3457,6 +3840,7 @@ places:
     elevation: null
     flag: 🇹🇲
     kind: capital
+    region: Asia
   - id: cockburn-town
     name: Cockburn Town
     country: Turks and Caicos Islands
@@ -3466,6 +3850,7 @@ places:
     elevation: null
     flag: 🇹🇨
     kind: capital
+    region: Americas
   - id: funafuti
     name: Funafuti
     country: Tuvalu
@@ -3475,6 +3860,7 @@ places:
     elevation: null
     flag: 🇹🇻
     kind: capital
+    region: Oceania
   - id: kampala
     name: Kampala
     country: Uganda
@@ -3484,6 +3870,7 @@ places:
     elevation: null
     flag: 🇺🇬
     kind: capital
+    region: Africa
   - id: kyiv
     name: Kyiv
     country: Ukraine
@@ -3493,6 +3880,7 @@ places:
     elevation: null
     flag: 🇺🇦
     kind: capital
+    region: Europe
   - id: abu-dhabi
     name: Abu Dhabi
     country: United Arab Emirates
@@ -3502,6 +3890,7 @@ places:
     elevation: null
     flag: 🇦🇪
     kind: capital
+    region: Asia
   - id: abu-dhabi-2
     name: Abu Dhabi
     country: United Arab Emirates
@@ -3511,6 +3900,7 @@ places:
     elevation: null
     flag: 🇦🇪
     kind: city
+    region: Asia
   - id: dubai
     name: Dubai
     country: United Arab Emirates
@@ -3520,6 +3910,7 @@ places:
     elevation: null
     flag: 🇦🇪
     kind: city
+    region: Asia
   - id: ben-nevis
     name: Ben Nevis
     country: United Kingdom
@@ -3529,6 +3920,7 @@ places:
     elevation: 1345
     flag: 🇬🇧
     kind: peak
+    region: Europe
   - id: birmingham
     name: Birmingham
     country: United Kingdom
@@ -3538,6 +3930,7 @@ places:
     elevation: null
     flag: 🇬🇧
     kind: city
+    region: Europe
   - id: edinburgh
     name: Edinburgh
     country: United Kingdom
@@ -3547,6 +3940,7 @@ places:
     elevation: null
     flag: 🇬🇧
     kind: city
+    region: Europe
   - id: glasgow
     name: Glasgow
     country: United Kingdom
@@ -3556,6 +3950,7 @@ places:
     elevation: null
     flag: 🇬🇧
     kind: city
+    region: Europe
   - id: london
     name: London
     country: United Kingdom
@@ -3565,6 +3960,7 @@ places:
     elevation: null
     flag: 🇬🇧
     kind: capital
+    region: Europe
   - id: manchester
     name: Manchester
     country: United Kingdom
@@ -3574,6 +3970,7 @@ places:
     elevation: null
     flag: 🇬🇧
     kind: city
+    region: Europe
   - id: chicago
     name: Chicago
     country: United States
@@ -3583,6 +3980,7 @@ places:
     elevation: null
     flag: 🇺🇸
     kind: city
+    region: Americas
   - id: denali
     name: Denali
     country: United States
@@ -3592,6 +3990,7 @@ places:
     elevation: 6190
     flag: 🇺🇸
     kind: peak
+    region: Americas
   - id: denver
     name: Denver
     country: United States
@@ -3601,6 +4000,7 @@ places:
     elevation: null
     flag: 🇺🇸
     kind: city
+    region: Americas
   - id: houston
     name: Houston
     country: United States
@@ -3610,6 +4010,7 @@ places:
     elevation: null
     flag: 🇺🇸
     kind: city
+    region: Americas
   - id: los-angeles
     name: Los Angeles
     country: United States
@@ -3619,6 +4020,7 @@ places:
     elevation: null
     flag: 🇺🇸
     kind: city
+    region: Americas
   - id: miami
     name: Miami
     country: United States
@@ -3628,6 +4030,7 @@ places:
     elevation: null
     flag: 🇺🇸
     kind: city
+    region: Americas
   - id: new-york
     name: New York
     country: United States
@@ -3637,6 +4040,7 @@ places:
     elevation: null
     flag: 🇺🇸
     kind: city
+    region: Americas
   - id: seattle
     name: Seattle
     country: United States
@@ -3646,6 +4050,7 @@ places:
     elevation: null
     flag: 🇺🇸
     kind: city
+    region: Americas
   - id: washington-d-c
     name: Washington D.C.
     country: United States
@@ -3655,6 +4060,7 @@ places:
     elevation: null
     flag: 🇺🇸
     kind: capital
+    region: Americas
   - id: charlotte-amalie
     name: Charlotte Amalie
     country: United States Virgin Islands
@@ -3664,6 +4070,7 @@ places:
     elevation: null
     flag: 🇻🇮
     kind: capital
+    region: Americas
   - id: montevideo
     name: Montevideo
     country: Uruguay
@@ -3673,6 +4080,7 @@ places:
     elevation: null
     flag: 🇺🇾
     kind: capital
+    region: Americas
   - id: tashkent
     name: Tashkent
     country: Uzbekistan
@@ -3682,6 +4090,7 @@ places:
     elevation: null
     flag: 🇺🇿
     kind: capital
+    region: Asia
   - id: port-vila
     name: Port Vila
     country: Vanuatu
@@ -3691,6 +4100,7 @@ places:
     elevation: null
     flag: 🇻🇺
     kind: capital
+    region: Oceania
   - id: vatican-city
     name: Vatican City
     country: Vatican City
@@ -3700,6 +4110,7 @@ places:
     elevation: null
     flag: 🇻🇦
     kind: capital
+    region: Europe
   - id: vatican-city-2
     name: Vatican City
     country: Vatican City
@@ -3709,6 +4120,7 @@ places:
     elevation: null
     flag: 🇻🇦
     kind: city
+    region: Europe
   - id: caracas
     name: Caracas
     country: Venezuela
@@ -3718,6 +4130,7 @@ places:
     elevation: null
     flag: 🇻🇪
     kind: capital
+    region: Americas
   - id: hanoi
     name: Hanoi
     country: Vietnam
@@ -3727,6 +4140,7 @@ places:
     elevation: null
     flag: 🇻🇳
     kind: capital
+    region: Asia
   - id: mata-utu
     name: Mata-Utu
     country: Wallis and Futuna
@@ -3736,6 +4150,7 @@ places:
     elevation: null
     flag: 🇼🇫
     kind: capital
+    region: Oceania
   - id: el-aaiun
     name: El Aaiún
     country: Western Sahara
@@ -3745,6 +4160,7 @@ places:
     elevation: null
     flag: 🇪🇭
     kind: capital
+    region: 
   - id: sana-a
     name: Sana'a
     country: Yemen
@@ -3754,6 +4170,7 @@ places:
     elevation: null
     flag: 🇾🇪
     kind: capital
+    region: Asia
   - id: lusaka
     name: Lusaka
     country: Zambia
@@ -3763,6 +4180,7 @@ places:
     elevation: null
     flag: 🇿🇲
     kind: capital
+    region: Africa
   - id: harare
     name: Harare
     country: Zimbabwe
@@ -3772,6 +4190,7 @@ places:
     elevation: null
     flag: 🇿🇼
     kind: capital
+    region: Africa
   - id: mariehamn
     name: Mariehamn
     country: Åland Islands
@@ -3781,3 +4200,4 @@ places:
     elevation: null
     flag: 🇦🇽
     kind: capital
+    region: Europe

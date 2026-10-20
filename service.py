@@ -76,6 +76,7 @@ class Service:
         levtype: str,
         params: list[str],
         levels: list[int] | None,
+        members: list[str] | None = None,
     ) -> str | None:
         """Download one step, trying the mirrors in order."""
         suffix = "sfc" if levtype in ("sfc", "sol") else "pl"
@@ -88,6 +89,7 @@ class Service:
                     source=candidate,
                     param=params,
                     levelist=levels,
+                    number=members,
                     levtype=levtype,
                     out=os.path.join(
                         self.config.cache_dir,
@@ -160,9 +162,21 @@ class Service:
             if not wanted:
                 continue
 
+            # An ensemble file holds every member, so only the ones that are
+            # wanted are pulled out of it.
+            members = model.member_numbers()
+            if members is not None:
+                wanted_entries = [
+                    entry
+                    for entry in entries
+                    if entry.param in wanted and entry.number in members
+                ]
+                if not wanted_entries:
+                    continue
+
             try:
                 path = self._download(
-                    self.config.source, model, run, step, levtype, wanted, levels
+                    self.config.source, model, run, step, levtype, wanted, levels, members
                 )
             except eod.OpenDataError as exc:
                 report.errors.append(f"step {step} {levtype}: {exc}")
@@ -380,9 +394,23 @@ class Service:
         """Ingest every run that is available and not stored yet."""
         reports: list[IngestReport] = []
         for model in self.config.models:
-            for run in self.candidate_runs():
-                if self.store.run_status(run, model=model.key) == "complete":
+            candidates = self.candidate_runs()
+            incomplete = [
+                run
+                for run in candidates
+                if self.store.run_status(run, model=model.key) not in (None, "complete")
+            ]
+            # Take the newest runs that are actually published.
+            fresh = []
+            for run in candidates:
+                if self.store.run_status(run, model=model.key) is not None:
                     continue
+                if self._published(model, run):
+                    fresh.append(run)
+                    if len(fresh) >= self.config.backfill_runs:
+                        break
+
+            for run in incomplete + fresh:
                 if not self._published(model, run):
                     continue
 

@@ -44,6 +44,7 @@ class Config:
     method: str = "bilinear"
     lapse_rate: float = parameters.LAPSE_RATE
     keep_runs: int = 3
+    backfill_runs: int = 1
     path: str = DEFAULT_CONFIG
 
     @property
@@ -137,13 +138,18 @@ def _load_places(path: str) -> list[Place]:
                 flag=str(entry.get("flag", "")),
                 note=str(entry.get("note", "")),
                 kind=str(entry.get("kind", "")),
+                region=str(entry.get("region", "")),
             )
         )
     return places
 
 
 def _select_catalogue(all_places: list[Place], selection: Any) -> list[Place]:
-    """Pick the catalogue places to follow."""
+    """Pick the catalogue places to follow.
+
+    Besides ``all``, ``none`` and a list of place ids, the entries
+    ``region:<name>`` and ``kind:<name>`` pick by region or by kind.
+    """
     if selection is None:
         return []
     if isinstance(selection, str):
@@ -155,8 +161,25 @@ def _select_catalogue(all_places: list[Place], selection: Any) -> list[Place]:
     if "none" in selection:
         return []
 
-    wanted = set(selection)
-    return [place for place in all_places if place.id in wanted]
+    wanted_ids: set[str] = set()
+    regions: set[str] = set()
+    kinds: set[str] = set()
+    for item in selection:
+        if item.startswith("region:"):
+            regions.add(item.split(":", 1)[1].lower())
+        elif item.startswith("kind:"):
+            kinds.add(item.split(":", 1)[1].lower())
+        else:
+            wanted_ids.add(item)
+
+    chosen = []
+    for place in all_places:
+        by_id = place.id in wanted_ids
+        by_region = bool(place.region) and place.region.lower() in regions
+        by_kind = bool(place.kind) and place.kind.lower() in kinds
+        if by_id or by_region or by_kind:
+            chosen.append(place)
+    return chosen
 
 
 def load_config(path: str | os.PathLike[str] = DEFAULT_CONFIG) -> Config:
@@ -190,5 +213,6 @@ def load_config(path: str | os.PathLike[str] = DEFAULT_CONFIG) -> Config:
         method=str(raw.get("method", "bilinear")),
         lapse_rate=float(raw.get("lapse_rate", parameters.LAPSE_RATE)),
         keep_runs=int(raw.get("keep_runs", 3)),
+        backfill_runs=int(raw.get("backfill_runs", 1)),
         path=path,
     )

@@ -30,11 +30,12 @@ def build(out_dir: str, config_path: str = "places.yml", max_places: int | None 
     reader = ForecastReader(store, lapse_rate=config.lapse_rate, catalogue=config.all_places)
 
     embedded: dict[str, dict] = {}
+    newest: dict[str, str] = {}
     for info in store.runs():
-        model = info.model
-        if model in embedded:
-            continue
-        payload = reader.widget_payload(run=info.run, model=model)
+        if info.run > newest.get(info.model, ""):
+            newest[info.model] = info.run
+    for model, run in newest.items():
+        payload = reader.widget_payload(run=run, model=model)
         if not payload["places"]:
             continue
         embedded[model] = payload
@@ -48,6 +49,14 @@ def build(out_dir: str, config_path: str = "places.yml", max_places: int | None 
     if max_places:
         for payload in embedded.values():
             payload["places"] = payload["places"][:max_places]
+
+    # The spread is only there for the ensemble, so it is dropped elsewhere.
+    for payload in embedded.values():
+        for place in payload["places"]:
+            for entry in place["series"].values():
+                spreads = entry.get("spreads")
+                if spreads and not any(spread is not None for spread in spreads):
+                    entry.pop("spreads", None)
 
     os.makedirs(out_dir, exist_ok=True)
     icons_out = os.path.join(out_dir, "icons")

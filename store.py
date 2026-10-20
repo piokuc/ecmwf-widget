@@ -348,9 +348,20 @@ class ForecastStore:
 
     @_synchronized
     def prune_runs(self, keep: int = 3) -> int:
-        """Delete the values of runs that are no longer wanted."""
-        rows = self.connection.execute("SELECT model, run FROM runs ORDER BY run DESC").fetchall()
-        stale = [(row["model"], row["run"]) for row in rows[keep:]]
+        """Delete the values of runs that are no longer wanted.
+
+        The newest runs of every model are kept.
+        """
+        rows = self.connection.execute(
+            "SELECT model, run FROM runs ORDER BY model, run DESC"
+        ).fetchall()
+        seen: dict[str, int] = {}
+        stale = []
+        for row in rows:
+            model = row["model"]
+            seen[model] = seen.get(model, 0) + 1
+            if seen[model] > keep:
+                stale.append((model, row["run"]))
         if not stale:
             return 0
         for model, run in stale:

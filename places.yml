@@ -46,17 +46,19 @@ places:
 # Which world places to follow on top of your own. The catalogue lives in
 # world_places.yml and holds every capital, a lot of major cities and some
 # notable peaks.
-#   all   - the whole catalogue
-#   none  - only your own places
+#   all          - the whole catalogue
+#   none         - only your own places
+#   region:europe- every capital in Europe
+#   kind:peak    - the mountains
 #   a list of place ids, for example [warsaw, zurich, sniezka]
-catalogue: none
+catalogue: [region:europe, kind:peak]
 
 # Which models to download.
 #   ifs      - the high resolution forecast, about 9 km (0.1°)
 #   ifs025   - the same forecast on the 0.25° grid, available sooner
 #   aifs     - the artificial intelligence forecast
 #   aifs_ens - the artificial intelligence ensemble, with the spread
-models: [ifs]
+models: [ifs, ifs025, aifs, aifs_ens]
 
 # Which parameters to fetch. Use:
 #   basic  - the small set a widget normally shows
@@ -80,6 +82,13 @@ fallback_sources: [aws, google]
 
 # How often the service checks for a new run, in seconds.
 poll_interval: 900
+
+# How many older runs to pick up when the service starts for the first time.
+# ECMWF only keeps the last twelve runs, so there is not much to catch up on.
+backfill_runs: 1
+
+# How many runs of each model to keep in the database.
+keep_runs: 3
 
 # How the value at a point is taken from the model grid.
 #   bilinear - interpolate between the four surrounding grid points (default)

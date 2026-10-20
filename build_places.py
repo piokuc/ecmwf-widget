@@ -203,7 +203,7 @@ def main() -> int:
     seen: set[str] = set()
     unmatched: list[str] = []
 
-    def add(name, country_name, code, flag, latitude, longitude, elevation, kind):
+    def add(name, country_name, code, flag, latitude, longitude, elevation, kind, region=""):
         identifier = slug(name)
         while identifier in seen:
             identifier += "-2"
@@ -219,6 +219,7 @@ def main() -> int:
                 "longitude": round(float(longitude), 5),
                 "elevation": int(elevation) if elevation is not None else None,
                 "kind": kind,
+                "region": region,
             }
         )
 
@@ -244,6 +245,7 @@ def main() -> int:
             match["lng"],
             None,
             "capital",
+            country.get("region", ""),
         )
 
     # Major cities.
@@ -267,6 +269,7 @@ def main() -> int:
                 match["lng"],
                 None,
                 "city",
+                country.get("region", ""),
             )
 
     # Peaks.
@@ -281,6 +284,7 @@ def main() -> int:
             lon,
             elevation,
             "peak",
+            country.get("region", "") if country else "",
         )
 
     print(f"{len(entries)} places, {len(unmatched)} unmatched")
@@ -304,6 +308,7 @@ def main() -> int:
             handle.write(f"    elevation: {entry['elevation'] if entry['elevation'] is not None else 'null'}\n")
             handle.write(f"    flag: {entry['flag'] or ''}\n")
             handle.write(f"    kind: {entry['kind']}\n")
+            handle.write(f"    region: {entry['region']}\n")
     print(f"wrote {args.out}")
     return 0
 

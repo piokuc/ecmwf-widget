@@ -62,6 +62,7 @@ class Place:
     country_code: str = ""
     flag: str = ""
     kind: str = ""
+    region: str = ""
 
     @property
     def coordinates(self) -> str:

@@ -518,6 +518,7 @@ def download_step(
     source: str = "ecmwf",
     param: Sequence[str] | None = None,
     levelist: Sequence[int | str] | None = None,
+    number: Sequence[int | str] | None = None,
     levtype: str = "sfc",
     out: str | os.PathLike[str] | None = None,
     whole_file: bool = False,
