@@ -212,8 +212,23 @@ PAGE = r"""<!DOCTYPE html>
     border-radius: 5px; padding: 2px 5px; display: inline-block; min-width: 50px;
     color: #10202f; font-weight: 550;
   }
-  .pp { display: inline-flex; align-items: center; gap: 7px; }
-  .bar { display: inline-block; height: 4px; border-radius: 2px; background: var(--accent); flex: none; }
+  /* Precipitation is drawn as a small column chart, so the column keeps the
+     same width as every other one. */
+  td.precip { padding: 4px 7px; }
+  .pp { display: inline-flex; align-items: flex-end; gap: 6px; }
+  .pp .num { font-variant-numeric: tabular-nums; line-height: 20px; }
+  .pp .gauge {
+    width: 7px; height: 20px; border-radius: 2px;
+    background: var(--line); opacity: .45;
+    display: flex; align-items: flex-end; overflow: hidden;
+    flex: none;
+  }
+  /* The bar must keep the height it is given, so it is not allowed to
+     shrink inside the gauge. */
+  .pp .gauge i {
+    display: block; width: 100%; background: var(--accent);
+    border-radius: 2px; flex: none;
+  }
   .foot { color: var(--muted); font-size: 12px; text-align: center; margin-top: 26px; }
   .empty { color: var(--muted); padding: 40px; text-align: center; }
   .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 7px; vertical-align: 1px; }
@@ -715,7 +730,14 @@ function renderPlace(place, nowStep) {
   tbody.appendChild(condRow);
 
   const keys = visible.length ? visible : Object.keys(series);
-  const maxRain = Math.max(0.001, ...(series["precip_increment"] ? series["precip_increment"].values.map(v => v || 0) : [0]));
+
+  // Each precipitation row is scaled to its own largest value, so the bars
+  // show the shape of that row rather than being comparable across rows.
+  const rainScale = {};
+  for (const key of ["tp", "precip_increment"]) {
+    const values = series[key] ? series[key].values.map(v => v || 0) : [];
+    rainScale[key] = Math.max(0.001, ...values);
+  }
 
   keys.forEach((key, index) => {
     const s = series[key];
@@ -740,13 +762,14 @@ function renderPlace(place, nowStep) {
         cell.appendChild(arrow(value));
         cell.appendChild(document.createTextNode(" " + Math.round(value) + "°"));
       } else if (s.param === "precip_increment" || s.param === "tp") {
+        cell.classList.add("precip");
         const inner = el("span", "pp");
-        inner.appendChild(document.createTextNode(value.toFixed(1)));
-        if (value > 0) {
-          const bar = el("span", "bar");
-          bar.style.width = Math.max(4, (value / maxRain) * 46) + "px";
-          inner.appendChild(bar);
-        }
+        inner.appendChild(el("span", "num", value.toFixed(1)));
+        const gauge = el("span", "gauge");
+        const fill = el("i");
+        fill.style.height = (value > 0 ? Math.max(2, value / rainScale[s.param] * 20) : 0) + "px";
+        gauge.appendChild(fill);
+        inner.appendChild(gauge);
         cell.appendChild(inner);
       } else {
         cell.textContent = format(s, value);
