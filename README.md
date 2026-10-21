@@ -38,6 +38,10 @@ phone.
 - **Local time and UTC**, a switch between the two, and the time the values
   belong to always in the corner.
 
+The published page is built by a GitHub Action, every four hours after the
+ECMWF cycles: it fetches the forecast, builds the page and deploys it. The
+repository keeps nothing of it, so it does not fill up.
+
 ## Getting started
 
 ```bash
@@ -114,7 +118,8 @@ There is more in the [documentation](documentation/index.md):
 | `python widget.py --open` | The widget, in a browser |
 | `python widget.py --text` | The forecast as text |
 | `python publish.py` | Fetch, rebuild the page, commit and push |
-| `python auto_publish.py` | The same, on a schedule |
+| `python auto_publish.py` | The same, on a schedule, on the laptop |
+| `gh workflow run pages.yml` | Build and publish the page in GitHub |
 | `python make_icons.py` | Generate the weather icons |
 | `python build_places.py` | Rebuild the catalogue of world places |
 

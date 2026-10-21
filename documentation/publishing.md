@@ -1,80 +1,101 @@
 # Publishing
 
-The page is static. The forecast is written into it, and GitHub Pages
-serves it. There is no backend on the other side of the URL.
+The page is static. The forecast is written into it, and GitHub Pages serves
+it. There is no backend on the other side of the URL.
 
-## How it is published
+## The Action does it
 
-The repository has a `docs` folder, and GitHub Pages is set to publish it
-from the `main` branch. Every push to `main` rebuilds the site.
+The published page is built in GitHub Actions, not on the laptop:
 
 ```
-python publish.py
+.github/workflows/pages.yml
 ```
 
-which does four things:
+Every four hours it checks out the repository, installs the dependencies,
+fetches the newest forecast from ECMWF, builds the page and deploys it to
+Pages. The schedule is a quarter past the ECMWF cycles, with an hour and ten
+minutes of slack for the 0.1 degree tier to arrive:
 
-1. Runs the service, so anything new on the portal is fetched.
-2. Rebuilds `docs/index.html` with the forecast written into it.
-3. Writes `docs/latest.json` with the run and the time of the data.
-4. Commits and pushes.
+| Cycle | The Action runs at |
+| --- | --- |
+| 00 UTC | 01:50 UTC |
+| 06 UTC | 07:50 UTC |
+| 12 UTC | 13:50 UTC |
+| 18 UTC | 19:50 UTC |
 
-The push is the trigger. Pages picks it up, usually within a minute or two.
-
-## The daemon
-
-`auto_publish.py` does the same thing on a schedule:
+It can also be started by hand from the Actions tab, or with:
 
 ```bash
-python auto_publish.py
+gh workflow run pages.yml
 ```
 
-It waits until a minute after the expected publication time, polls the
-portal until the data is there, and then publishes. See
-[the workflows](workflows.md) for the options.
+**The repository keeps nothing of the page.** The Action builds it into a
+temporary folder and deploys that. So the repository no longer grows on
+every publish, which it did when the built page was committed: 5.5 MB per
+publish is 8 GB a year at four publishes a day.
 
-## The size of the page
+## The configuration the page is built from
 
-With every parameter of every place the page would be eighteen megabytes,
-which is too much to serve comfortably. The build keeps it in check:
+The page is built with `places.pages.yml`, not `places.yml`, so it holds
+less than the local service does:
 
-- Every parameter for the first 25 places.
-- The basic set for the rest.
-- All three models.
+| | The published page | The local service |
+| --- | --- | --- |
+| Places | 41 | 153 |
+| Models | IFS 0.1°, AIFS | IFS 0.1°, IFS 0.25°, AIFS |
+| Parameters | 13, on 3 pressure levels | 48, on 4 pressure levels |
+| Downloaded per run | 1.6 GB | 6.1 GB |
+| Size of the page | 0.9 MB, 0.3 MB compressed | 5.2 MB, 1.8 MB compressed |
 
-That comes to about 5 MB, or 1.8 MB compressed, which is what the page
-weighs now. `--full-places` and `--max-places` on `build_site.py` change it.
+The places are the two in `places.yml` plus a capital or a major city from
+each of a list of countries, and the peaks.
 
-## How much can be kept on GitHub
+The 0.25 degree IFS is left out of the published page: it is the same
+forecast as the 0.1 degree one and costs another gigabyte to fetch.
+
+## The local service
+
+The laptop still runs the service, for the local widget:
+
+```bash
+python service.py run
+```
+
+It keeps the whole catalogue, every parameter and all three models, and
+prunes the GRIB files down to the newest run. That cache is about 5.7 GB
+with every parameter, and 600 MB with the basic set.
+
+## Publishing by hand
+
+If you would rather not use Actions, `publish.py` does the whole thing
+locally: it fetches, builds the page into `docs/`, commits it and pushes.
+That is the flow that was used before the Action, and it is what puts a
+5.5 MB copy of the page into the history on every publish.
+
+```bash
+python publish.py
+python publish.py --no-fetch
+python publish.py --dry-run
+```
+
+## The size limits
 
 | | Limit | Where we are |
 | --- | --- | --- |
-| A published site | 1 GB | 5 MB |
-| A single file | 100 MB | 5 MB |
-| A repository | 5 GB recommended, 100 GB hard | 22 MB |
-| A file in the repository | 100 MB | 5 MB |
+| A published site | 1 GB | 0.9 MB |
+| A single file | 100 MB | 0.9 MB |
+| A repository | 5 GB recommended, 100 GB hard | 24 MB |
+| A file in the repository | 100 MB | 0.9 MB |
 
-The repository is the part that grows. Every commit stores a new copy of the
-page, and the page is 5 MB, so each publish adds about 5 MB to `.git`. At
-four publishes a day that is 7 GB a year, which would reach the recommended
-limit in a couple of years.
+The repository is at 24 MB, and it holds the history of the old approach
+with the built page in it. It does not grow any more.
 
-There are three ways to keep that in check, in the order I would use them:
-
-1. **Publish less often.** Once a day instead of four times. That is a
-   quarter of the growth and the forecast is barely different.
-2. **Make the page smaller.** The basic set for every place instead of every
-   parameter for the first 25, which takes it from 5 MB to about 1 MB.
-3. **Let git compress it.** `git gc --aggressive` packs the loose objects
-   into a pack file, and since the pages are nearly identical from one
-   commit to the next the delta is small.
-
-## The cache
+## The cache in front of the site
 
 GitHub Pages serves the page with `cache-control: max-age=600`, so a reader
 can see the old page for up to ten minutes after a publish. A hard refresh
-clears it. The `?t=` trick that a query string would normally give does not
-help here, because the cache in front of the site ignores it.
+clears it. A query string does not help, because the cache in front of the
+site ignores it.
 
 ## The local widget
 
@@ -84,8 +105,6 @@ where the data comes from:
 | | The local widget | The published page |
 | --- | --- | --- |
 | The data | Fetched from `/api/forecast` | Written into the page |
-| New data | Within a minute of the service fetching it | At the next publish |
-| The places | All of them | All of them, but only the basic set for most |
-
-The published page is the local widget frozen at a moment in time, with the
-forecast inside it.
+| New data | Within a minute of the service fetching it | Within four hours, when the Action runs |
+| The places | All of them | 41 of them |
+| The parameters | All of them | 13 of them |

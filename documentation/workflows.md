@@ -41,15 +41,26 @@ different machine from the service, pointing at a shared database.
 
 ## Publishing
 
+The published page is built by a GitHub Action, every four hours, after the
+ECMWF cycles. It fetches the forecast, builds the page and deploys it, and
+the repository keeps nothing of it.
+
+```bash
+gh workflow run pages.yml    # start it by hand
+gh run list --workflow=pages.yml
+```
+
+To publish from the laptop instead, which puts a copy of the built page into
+the history on every publish:
+
 ```bash
 python publish.py           # fetch, rebuild the page, commit and push
 python publish.py --no-fetch
 python publish.py --dry-run # show what would change, do not push
 ```
 
-Pushing is what makes GitHub Pages publish the new page. It takes a minute
-or two, and the page can look stale for up to ten minutes afterwards
-because of the cache in front of it.
+Either way the page can look stale for up to ten minutes afterwards,
+because of the cache in front of GitHub Pages.
 
 ## The daemon that keeps it up to date
 
