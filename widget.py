@@ -144,6 +144,9 @@ PAGE = r"""<!DOCTYPE html>
     font-size: 13.5px;
   }
   .panel label:hover { color: var(--accent); }
+  .panel label.off { opacity: .38; }
+  .panel label.off:hover { color: var(--muted); }
+  .panel p.note { margin: 12px 0 0; font-size: 11.5px; line-height: 1.45; }
   .panel input[type=checkbox] { accent-color: var(--accent); width: 15px; height: 15px; margin: 0; }
   .panel .swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
   .panel .unit { color: var(--muted); font-size: 11.5px; margin-left: auto; }
@@ -200,6 +203,8 @@ PAGE = r"""<!DOCTYPE html>
   .stat .v { font-size: 19px; font-weight: 600; margin-top: 3px; letter-spacing: -.02em; }
   .stat .v small { font-size: 12.5px; font-weight: 500; color: var(--muted); margin-left: 2px; }
   .stat.big .v { font-size: 30px; }
+  .stat.more { display: flex; align-items: center; justify-content: center;
+                color: var(--muted); font-size: 12.5px; }
 
   /* Chart -------------------------------------------------------------- */
   .chart { margin: 2px 0 22px; overflow-x: auto; scrollbar-width: thin; position: relative; }
@@ -474,9 +479,38 @@ function format(series, value) {
   }
 }
 
-function arrow(degrees) {
-  const node = svg(`<path d="M12 3 L12 21 M12 3 L7 9 M12 3 L17 9" stroke-width="2" fill="none"/>`, 13, "arrow");
+// The colours of the wind arrow, by the Beaufort force.
+const BEAUFORT_LIMITS = [0.5, 1.5, 3.3, 5.5, 7.9, 10.7, 13.8, 17.1, 20.7, 24.4];
+const BEAUFORT_COLOURS = [
+  [3, "#4caf50"], [5, "#c8c000"], [7, "#e8850c"],
+  [9, "#d0342c"], [11, "#8e44ad"], [99, "#7d4b28"],
+];
+
+function beaufortForce(metresPerSecond) {
+  let force = 0;
+  for (const limit of BEAUFORT_LIMITS) {
+    if (metresPerSecond < limit) break;
+    force += 1;
+  }
+  return force;
+}
+
+function beaufortColour(kmh) {
+  const force = beaufortForce(kmh / 3.6);
+  for (const [limit, colour] of BEAUFORT_COLOURS) {
+    if (force <= limit) return colour;
+  }
+  return "#7d4b28";
+}
+
+function arrow(degrees, speed) {
+  const node = svg(
+    `<path d="M12 2.5 L12 21.5 M12 2.5 L7.5 8 M12 2.5 L16.5 8" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+    16,
+    "arrow"
+  );
   node.style.transform = `rotate(${degrees + 180}deg)`;
+  if (speed !== undefined) node.style.color = beaufortColour(speed);
   return node;
 }
 
@@ -771,7 +805,12 @@ function renderPlace(place, nowStep, order) {
   const current = state.selected !== null && state.selected < steps.length ? state.selected : nowIndex;
 
   const chosen = state.visible.size ? state.visible : defaultSelection(state.data);
-  const visible = [...chosen].filter(key => series[key]);
+  // The catalogue gives the order things are shown in.
+  const rank = (key) => {
+    const index = order.findIndex((item) => item.key === key);
+    return index === -1 ? 999 : (order[index].rank === undefined ? 999 : order[index].rank);
+  };
+  const visible = [...chosen].filter((key) => series[key]).sort((a, b) => rank(a) - rank(b));
   // The times that are shown, in the zone the reader picked.
   const times = displayTimes(place);
 
@@ -838,28 +877,26 @@ function renderPlace(place, nowStep, order) {
     card.appendChild(banner);
   }
 
-  // Summary strip.
+  // The cards show the parameters that are switched on, the same ones the
+  // chart and the table show.
   const get = (key) => {
     const s = series[key];
     return s && s.values[current] !== null && s.values[current] !== undefined ? s.values[current] : null;
   };
   const now = el("div", "now");
-  const temp = get("2t");
-  if (temp !== null) now.appendChild(stat("Temp", temp.toFixed(1), "°C", "thermo", true, "2t"));
-  const apparent = get("apparent_temperature");
-  if (apparent !== null) now.appendChild(stat("Feels like", apparent.toFixed(1), "°C", "thermo", false, "apparent_temperature"));
-  const rain = get("precip_increment");
-  if (rain !== null) now.appendChild(stat("Precip", rain.toFixed(1), series["precip_increment"].unit, "drop", false, "precip_increment"));
-  const wind = get("wind_speed");
-  if (wind !== null) now.appendChild(stat("Wind", Math.round(wind), series["wind_speed"].unit, "wind", false, "wind_speed"));
-  const gust = get("gust");
-  if (gust !== null) now.appendChild(stat("Gusts", Math.round(gust), series["gust"].unit, "wind", false, "gust"));
-  const cloud = get("tcc");
-  if (cloud !== null) now.appendChild(stat("Cloud", Math.round(cloud), "%", "cloud", false, "tcc"));
-  const dew = get("2d");
-  if (dew !== null) now.appendChild(stat("Dew point", dew.toFixed(1), "°C", "drop", false, "2d"));
-  const pressure = get("msl");
-  if (pressure !== null) now.appendChild(stat("Pressure", Math.round(pressure), series["msl"].unit, "gauge", false, "msl"));
+  const shown = visible.slice(0, 12);
+  shown.forEach((key) => {
+    const entry = series[key];
+    const value = get(key);
+    if (!entry || value === null) return;
+    const big = key === "2t" || key === "temperature_adjusted";
+    const unit = key === "wind_dir" ? "" : entry.unit;
+    const text = key === "wind_dir" ? Math.round(value) + "°" : formatValue(entry, value);
+    now.appendChild(stat(entry.label, text, unit, PARAM_ICON[key] || "cloud", big, key));
+  });
+  if (visible.length > shown.length) {
+    now.appendChild(el("div", "stat more", "and " + (visible.length - shown.length) + " more"));
+  }
   if (now.children.length) card.appendChild(now);
 
   // The table and its plots share one scroll container, so they always have
@@ -947,12 +984,7 @@ function renderPlace(place, nowStep, order) {
   });
   tbody.appendChild(condRow);
 
-  // The payload lists the parameters in the order they should be shown.
-  const rank = (key) => {
-    const index = order.indexOf(key);
-    return index === -1 ? 999 : index;
-  };
-  const keys = visible.slice().sort((a, b) => rank(a) - rank(b));
+  const keys = visible;
 
   // Each precipitation row is scaled to its own largest value, so the bars
   // show the shape of that row rather than being comparable across rows.
@@ -987,8 +1019,11 @@ function renderPlace(place, nowStep, order) {
       } else if (["2t", "temperature_adjusted", "apparent_temperature"].includes(s.param)) {
         cell.textContent = value.toFixed(1) + "°";
       } else if (s.param === "wind_dir") {
-        cell.appendChild(arrow(value));
-        cell.appendChild(document.createTextNode(" " + Math.round(value) + "°"));
+        const speed = get("wind_speed");
+        cell.appendChild(arrow(value, speed));
+        const text = el("span", "wind");
+        text.textContent = speed === null ? Math.round(value) + "°" : Math.round(speed) + " km/h";
+        cell.appendChild(text);
       } else if (s.param === "precip_increment" || s.param === "tp") {
         cell.classList.add("precip");
         const inner = el("span", "pp");
@@ -1185,29 +1220,35 @@ function updateSummary(place, series, index) {
 // --------------------------------------------------------------------------- //
 // The parameter panel
 // --------------------------------------------------------------------------- //
-function renderPanel(available) {
+function renderPanel(catalogue) {
   const body = document.getElementById("panelBody");
   body.innerHTML = "";
-  if (!available.length) {
+  if (!catalogue.length) {
     body.appendChild(el("p", null, "No parameters yet."));
     return;
   }
+
   const groups = {};
-  available.forEach((item) => {
+  catalogue.forEach((item) => {
     const group = item.group || "other";
     (groups[group] = groups[group] || []).push(item);
   });
+
   Object.keys(groups).sort().forEach((group) => {
     const box = el("div", "group");
     box.appendChild(el("h4", null, group));
     groups[group].forEach((item) => {
-      const label = el("label");
+      const label = el("label", item.downloaded ? "" : "off");
       const check = document.createElement("input");
       check.type = "checkbox";
-      check.checked = state.visible.has(item.key);
+      check.disabled = !item.downloaded;
+      const keys = item.series.length ? item.series : [item.key];
+      check.checked = keys.some((key) => state.visible.has(key));
       check.addEventListener("change", () => {
-        if (check.checked) state.visible.add(item.key);
-        else state.visible.delete(item.key);
+        keys.forEach((key) => {
+          if (check.checked) state.visible.add(key);
+          else state.visible.delete(key);
+        });
         saveState();
         syncUrl();
         render();
@@ -1217,11 +1258,22 @@ function renderPanel(available) {
       swatch.style.background = colourFor(item.key, 0);
       label.appendChild(swatch);
       label.appendChild(document.createTextNode(item.label));
-      label.appendChild(el("span", "unit", item.unit));
+      if (item.levtype === "pl") {
+        label.appendChild(el("span", "unit", "on " + (item.levels || []).join(", ") + " hPa"));
+      } else {
+        label.appendChild(el("span", "unit", item.unit));
+      }
       box.appendChild(label);
     });
     body.appendChild(box);
   });
+
+  const missing = catalogue.filter((item) => !item.downloaded).length;
+  if (missing) {
+    body.appendChild(el("p", "note",
+      missing + " of these are not downloaded. Add them to the parameters "
+      + "list in places.yml and the service will fetch them."));
+  }
 }
 
 // --------------------------------------------------------------------------- //
@@ -1315,7 +1367,7 @@ function render() {
     content.appendChild(el("div", "empty", "Nothing to show for this place yet."));
     return;
   }
-  const order = data.params.map(p => p.key);
+  const order = data.catalogue || data.params;
   data.places.forEach((item) => {
     const built = renderPlace(item, data.now_step, order);
     content.appendChild(built.card);
@@ -1455,14 +1507,19 @@ async function load(run, place) {
     syncUrl();
   }
 
-  // Default the visible parameters to the interesting ones.
+  // Default to the first few parameters of the display order that are there.
   if (!state.visible.size) {
-    ["2t", "wind_speed", "msl", "tp"].forEach(key => {
-      if (data.params.some(p => p.key === key)) state.visible.add(key);
+    const order = ["2t", "temperature_adjusted", "apparent_temperature",
+                   "precip_increment", "tp", "wind_speed", "wind_dir", "gust",
+                   "tcc", "2d", "msl"];
+    const available = new Set();
+    data.places.forEach((place) => {
+      Object.keys(place.series).forEach((key) => available.add(key));
     });
+    order.filter((key) => available.has(key)).slice(0, 6).forEach((key) => state.visible.add(key));
     saveState();
   }
-  renderPanel(data.params);
+  renderPanel(data.catalogue || data.params);
   render();
 }
 

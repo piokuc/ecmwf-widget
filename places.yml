@@ -59,21 +59,27 @@ catalogue: [region:europe, kind:peak]
 #   aifs     - the artificial intelligence forecast
 models: [ifs, ifs025, aifs]
 
-# Which parameters to fetch. Use:
-#   basic  - the small set a widget normally shows
-#   all    - every parameter the 0.1 deg tier publishes
-#   a list - explicit parameter names, e.g. [2t, msl, tp]
-# Derived quantities (wind_speed, wind_dir, apparent_temperature, ...) are
-# computed from the parameters above and can be listed here too.
-# Every parameter is a full global field at 0.1 degrees, so fetching all of
-# them is a lot of downloading: about 3 GB per run of the high resolution
-# model. Use "basic" for a lighter service.
-parameters: all
+# Which parameters to fetch.
+#
+#   basic  - the small set the widget normally shows
+#   all    - every parameter the 0.1 deg tier publishes, which is a lot of
+#            downloading: every parameter is a full global field
+#   a list - explicit parameter names, as below
+#
+# The list below is the interesting ones, all on the surface: the
+# temperature, the wind (the components, so the direction and the speed can
+# be worked out), the rain and the snow.
+#
+# The panel in the widget always shows every parameter ECMWF publishes, and
+# greys out the ones that are not in this list, so it is clear what
+# changing it would bring in.
+parameters: [2t, 2d, msl, 10u, 10v, 10fg, tcc, tp, sf, sd, asn, mucape]
 
 # Pressure levels to fetch when pressure level parameters are selected.
 # Each level of each parameter is a full global field too, so every level
-# costs another download.
-pressure_levels: [1000, 850, 700, 500]
+# costs another download. There are none here: the list above is surface
+# only.
+pressure_levels: []
 
 # Forecast steps in hours. 0 is the analysis (model run time).
 # The open data goes to 360 hours, but only for the 00 and 12 UTC runs; the

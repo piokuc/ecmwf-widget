@@ -88,30 +88,39 @@ def local_label(moment: dt.datetime, timezone: str) -> str:
 
 
 def _parameter_catalogue(available: set[str]) -> list[dict]:
-    """Describe the parameters that can be switched on and off.
+    """Every parameter ECMWF publishes, and whether it has been downloaded.
 
-    They come out in the order they should be displayed, with anything that
-    is not in the catalogue last.
+    The ones that are not there are listed as well, so the panel shows the
+    whole list and greys out what is missing.
     """
     order = {name: index for index, name in enumerate(parameters.DISPLAY_ORDER)}
+    groups = {name: index for index, name in enumerate(parameters.PARAMETERS)}
+
+    # Which series belong to which parameter.
+    series_of: dict[str, list[str]] = {}
+    for key in available:
+        name, _, _level = key.partition(":")
+        series_of.setdefault(name, []).append(key)
+
     catalogue = []
-    for key in sorted(available, key=lambda name: (order.get(name, 999), name)):
-        # A pressure level series is stored as "name:level".
-        name, _, level = key.partition(":")
-        try:
-            spec = parameters.get(name)
-        except KeyError:
-            continue
-        level_number = int(level) if level.isdigit() else None
+    for entry in parameters.catalogue():
+        name = entry["key"]
+        keys = sorted(series_of.get(name, []))
         catalogue.append(
             {
-                "key": key,
-                "param": spec.name,
-                "label": parameters.label_for(name, level_number),
-                "unit": getattr(spec, "units", ""),
-                "group": getattr(spec, "group", "") if level_number is None else "pressure level",
+                "key": name,
+                "label": entry["label"],
+                "unit": entry["unit"],
+                "group": entry["group"],
+                "levtype": entry["levtype"],
+                "levels": entry["levels"],
+                "series": keys,
+                "downloaded": bool(keys),
+                "rank": order.get(name, 999),
+                "group_order": groups.get(name, 999),
             }
         )
+    catalogue.sort(key=lambda item: (item["group"], item["rank"], item["group_order"]))
     return catalogue
 
 
@@ -528,6 +537,7 @@ class ForecastReader:
                 "runs": run_list,
                 "place_list": place_list,
                 "params": [],
+                "catalogue": [],
                 "places": [],
             }
 
@@ -617,6 +627,7 @@ class ForecastReader:
             "runs": run_list,
             "place_list": place_list,
             "params": _parameter_catalogue(available),
+            "catalogue": _parameter_catalogue(available),
             "places": places,
         }
 

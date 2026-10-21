@@ -63,8 +63,13 @@ radiation (`ssr`, `ssrd`, `str`, `strd`, `ttr`), the water and ice budgets
 
 **Pressure level** — `t`, `u`, `v`, `q`, `r`, `z`, `gh`, `w`, `vo`, `d` on
 fourteen levels from 1000 to 10 hPa. The open data publishes them on
-1000, 925, 850, 700, 600, 500, 400, 300, 250, 200, 150, 100, 50 and 10 hPa;
-this project fetches four of them, which is configurable.
+1000, 925, 850, 700, 600, 500, 400, 300, 250, 200, 150, 100, 50 and 10 hPa.
+
+The service currently downloads the surface only. The pressure levels are
+available and are one line of configuration away, but each level of each
+parameter is a full global field, and there are a hundred and forty of them.
+The panel in the widget lists them all, greyed out, so it is clear what
+turning them on would cost.
 
 **Soil** parameters (`vsw`, `sot`) are in the 0.25° tier but not in the
 0.1° one.
@@ -112,11 +117,17 @@ The naming is described in
 
 | | |
 | --- | --- |
+| One step, the twelve surface parameters that are fetched, 0.1° | 21 MB |
+| One run, 26 steps, the same, 0.1° | 544 MB |
+| One run, all three models | 708 MB |
 | One step, all 48 surface parameters, 0.1° | 84 MB |
-| One step, 10 pressure parameters on 4 levels, 0.1° | 118 MB |
-| One step, everything, 0.1° | 202 MB |
-| One run, 26 steps, everything, 0.1° | 4.6 GB |
-| One run, everything, all three models | 6.1 GB |
+| One run, 26 steps, all 48, 0.1° | 4.6 GB |
 
 Every parameter is a full global field, so the cost is in the parameters and
 the levels, not in the number of places. Adding places is nearly free.
+
+The list that is fetched is twelve surface parameters: the temperature, the
+dew point, the pressure, the wind components, the gusts, the cloud cover, the
+rain, the snow, the snow albedo and the CAPE. The derived quantities — the
+wind speed and direction, the apparent temperature — are worked out from
+those, so they cost nothing.

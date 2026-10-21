@@ -54,7 +54,11 @@ class Service:
         surface, pressure, derived = parameters.resolve(config.parameters)
         self.surface_params = surface
         self.pressure_params = pressure
-        self.derived_params = derived
+        # The derived quantities are worked out from the fields that are
+        # downloaded, so they cost nothing and are always worth having.
+        self.derived_params = list(
+            dict.fromkeys(list(derived) + list(parameters.SURFACE_DERIVED))
+        )
 
         # Which levels are needed for the pressure level parameters.
         self.levels = config.pressure_levels or parameters.PRESSURE_LEVELS

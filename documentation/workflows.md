@@ -120,17 +120,21 @@ python build_places.py --check  # how well the capitals matched
 ## The parameters
 
 ```yaml
-parameters: all      # or basic, or a list of names
-pressure_levels: [1000, 850, 700, 500]
+parameters: [2t, 2d, msl, 10u, 10v, 10fg, tcc, tp, sf, sd, asn, mucape]
+pressure_levels: []
 ```
 
-`basic` is the small set the widget normally shows. `all` is every
-parameter the 0.1° tier publishes, and it is a lot of downloading: about
-6 GB and fifteen minutes per run, because every parameter is a full global
-field.
+`basic` is the small set the widget normally shows, `all` is every
+parameter the 0.1° tier publishes, and a list is a list. The list above is
+the interesting ones, all on the surface.
+
+Changing this is easy to see the effect of: the panel in the widget always
+lists every parameter ECMWF publishes, and the ones that are not in the list
+are greyed out and cannot be ticked, with a note saying how many there are.
+So it is clear what a change would bring in, and what it would cost.
 
 The pressure levels are a separate setting, because each level of each
-parameter costs another global field.
+parameter costs another global field: 140 of them at 0.1°.
 
 ## The icons
 

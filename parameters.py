@@ -213,6 +213,45 @@ DERIVED: dict[str, Derived] = {
 #: Derived quantities that are part of the basic set.
 BASIC_DERIVED: tuple[str, ...] = tuple(name for name, d in DERIVED.items() if d.basic)
 
+#: The derived quantities that only need the surface fields, and so are
+#: always worked out.
+SURFACE_DERIVED: tuple[str, ...] = (
+    "wind_speed", "wind_dir", "gust", "apparent_temperature",
+)
+
+
+def catalogue() -> list[dict]:
+    """Every parameter ECMWF publishes, with what is known about it.
+
+    This is what the parameter panel shows. The ones that have not been
+    downloaded are shown greyed out, so it is clear what changing the
+    download list would bring in.
+    """
+    entries: list[dict] = []
+    for name, param in PARAMETERS.items():
+        entries.append(
+            {
+                "key": name,
+                "label": param.label,
+                "unit": param.units,
+                "group": param.group,
+                "levtype": "sfc",
+                "levels": [],
+            }
+        )
+    for name, param in PRESSURE_PARAMETERS.items():
+        entries.append(
+            {
+                "key": name,
+                "label": param.label,
+                "unit": param.units,
+                "group": param.group,
+                "levtype": "pl",
+                "levels": list(PRESSURE_LEVELS),
+            }
+        )
+    return entries
+
 
 def get(name: str, levtype: str | None = None) -> Parameter | Derived:
     """Look up a parameter or derived quantity by name.

@@ -110,6 +110,24 @@ channel, so they work on the light and the dark theme.
 Two of them, the map pin and the clock, are drawn as SVG instead, because a
 line drawing is better for those than a picture.
 
+## The parameter panel
+
+It lists every parameter ECMWF publishes, in groups. The ones that have been
+downloaded can be ticked; the ones that have not are greyed out and cannot,
+with a note at the bottom saying how many are missing and where to change the
+list. So the panel is both a picker and a picture of what the data holds.
+
+Ticking a parameter switches it on everywhere at once: in the cards at the
+top, in the chart, in the table and in the box that follows the mouse. The
+cards show the parameters that are on, up to twelve, in the same order as
+everything else.
+
+## The wind
+
+The wind is stored as the two components, and the direction and the speed
+are worked out from them. The row in the table shows an arrow for the
+direction, coloured by the Beaufort force, with the speed next to it.
+
 ## The place picker
 
 A combobox. Clicking it selects the current name so that the first
