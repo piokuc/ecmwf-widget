@@ -446,6 +446,13 @@ class ForecastReader:
                 continue
             seen_models.add(info.model)
             spec = models.MODELS.get(info.model)
+            best = self._best_run(info.model, step_counts)
+            # The cycle belongs to the run that is used, not to the first one.
+            cycle = info
+            for other in self.store.runs():
+                if other.model == info.model and other.run == best:
+                    cycle = other
+                    break
             model_list.append(
                 {
                     "key": info.model,
@@ -453,9 +460,9 @@ class ForecastReader:
                     "short": spec.short if spec else info.model,
                     "resolution": spec.resolution if spec else info.resol,
                     "description": spec.description if spec else "",
-                    "run": self._best_run(info.model, step_counts),
-                    "cycle": f"{info.cycle[:4]}-{info.cycle[4:6]}-{info.cycle[6:]} {info.time}:00 UTC",
-                    "status": info.status,
+                    "run": best,
+                    "cycle": f"{cycle.cycle[:4]}-{cycle.cycle[4:6]}-{cycle.cycle[6:]} {cycle.time}:00 UTC",
+                    "status": cycle.status,
                 }
             )
         model_list.sort(

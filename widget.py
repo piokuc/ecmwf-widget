@@ -1300,7 +1300,7 @@ async function load(run, place) {
     option.value = item.run;
     runSelect.appendChild(option);
   });
-  if (run) runSelect.value = run;
+  runSelect.value = run || data.run;
 
   if (state.catalogue.length !== data.place_list.length) {
     state.catalogue = data.place_list;
