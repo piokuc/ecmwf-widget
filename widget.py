@@ -214,6 +214,7 @@ PAGE = r"""<!DOCTYPE html>
 
   /* Table -------------------------------------------------------------- */
   .grid { overflow-x: auto; scrollbar-width: thin; }
+  .inner { min-width: 100%; }
   /* Fixed columns, so the chart can be drawn on exactly the same grid. */
   table { border-collapse: collapse; width: 100%; min-width: 640px; table-layout: fixed; }
   thead th:first-child, tbody th { width: 190px; min-width: 190px; }
@@ -811,8 +812,12 @@ function renderPlace(place, nowStep, order) {
   // The chart and the table share one scroll container, so they always have
   // the same width and the columns line up.
   const wrap = el("div", "grid");
+  // The chart and the table share an inner element, so they are always the
+  // same width. The outer one does the scrolling.
+  const inner = el("div", "inner");
   const chartBox = el("div", "chart");
-  wrap.appendChild(chartBox);
+  inner.appendChild(chartBox);
+  wrap.appendChild(inner);
 
   // Table.
   const table = el("table");
@@ -925,9 +930,9 @@ function renderPlace(place, nowStep, order) {
     tbody.appendChild(row);
   });
   table.appendChild(tbody);
-  wrap.appendChild(table);
+  inner.appendChild(table);
   card.appendChild(wrap);
-  return { card, chartBox, table, wrap, place, series, chartKeys, current };
+  return { card, chartBox, table, wrap, inner, place, series, chartKeys, current };
 }
 
 function stat(label, value, unit, iconName, big, paramKey) {
@@ -1138,8 +1143,8 @@ function render() {
       ? built.table.querySelector("tbody th").getBoundingClientRect().width
       : 190;
     // Every column needs room for a value like "1024 hPa".
-    const column = Math.max(70, (built.wrap.clientWidth - labelWidth) / built.place.steps.length);
-    built.wrap.style.minWidth = Math.ceil(labelWidth + column * built.place.steps.length) + "px";
+    const column = Math.max(70, (built.inner.clientWidth - labelWidth) / built.place.steps.length);
+    built.inner.style.minWidth = Math.ceil(labelWidth + column * built.place.steps.length) + "px";
     const chart = drawChart(
       built.place, built.series, built.chartKeys, built.current,
       (index) => {
