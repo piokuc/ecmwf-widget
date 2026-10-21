@@ -1509,9 +1509,11 @@ async function load(run, place) {
 
   // Default to the first few parameters of the display order that are there.
   if (!state.visible.size) {
+    // The accumulation of the rain since the run is left out: the per step
+    // amount and the total for the day in the summary row say more.
     const order = ["2t", "temperature_adjusted", "apparent_temperature",
-                   "precip_increment", "tp", "wind_speed", "wind_dir", "gust",
-                   "tcc", "2d", "msl"];
+                   "precip_increment", "wind_speed", "wind_dir", "gust",
+                   "tcc", "2d", "msl", "tp"];
     const available = new Set();
     data.places.forEach((place) => {
       Object.keys(place.series).forEach((key) => available.add(key));
