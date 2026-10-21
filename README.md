@@ -14,7 +14,7 @@ widget that shows it.**
 ---
 
 <p align="center">
-  <img src="docs/screenshot.png" width="820" alt="The widget showing the forecast for Gliwice">
+  <img src="docs/screenshot.png" width="820" alt="The widget showing the forecast for Górki Wielkie">
 </p>
 
 ## What it does
@@ -27,14 +27,18 @@ This project fetches that data, evaluates it at the places you care about
 — cities, villages, summits — and serves it as a page you can use on a
 phone.
 
-- **Every parameter** the 0.1° tier publishes: 48 surface parameters and 10
-  on four pressure levels.
+- **Every parameter** ECMWF publishes is listed, and the ones you have
+  downloaded can be switched on and off. The service fetches the thirteen
+  interesting ones, all on the surface, and one line of configuration
+  changes that.
 - **Three models**: IFS at 0.1° and 0.25°, and the AIFS machine learning
   forecast.
 - **Every capital**, a lot of major cities and some notable peaks, with
   flags, and any place you add yourself.
 - **Fifteen days** of forecast, grouped by day, with the numbers and the
   plot of each parameter together.
+- **The wind as arrows**, built from the two components, coloured by the
+  Beaufort scale.
 - **Local time and UTC**, a switch between the two, and the time the values
   belong to always in the corner.
 
@@ -57,8 +61,14 @@ To keep it up to date, run the service as a daemon, and optionally the
 publisher with it:
 
 ```bash
-python service.py run
-python auto_publish.py     # waits for each new run, then updates the page
+python service.py run      # keep the database up to date
+```
+
+The published page is updated by a GitHub Action, so it does not need the
+laptop. To publish from the laptop instead:
+
+```bash
+python auto_publish.py     # waits for each new run, then pushes the page
 ```
 
 ## The places
@@ -115,6 +125,7 @@ There is more in the [documentation](documentation/index.md):
 | `python service.py once` | Fetch the latest run and stop |
 | `python service.py run` | Keep the database up to date |
 | `python service.py status` | What has been fetched |
+| `python service.py export` | Everything, as a CSV |
 | `python widget.py --open` | The widget, in a browser |
 | `python widget.py --text` | The forecast as text |
 | `python publish.py` | Fetch, rebuild the page, commit and push |
@@ -122,6 +133,8 @@ There is more in the [documentation](documentation/index.md):
 | `gh workflow run pages.yml` | Build and publish the page in GitHub |
 | `python make_icons.py` | Generate the weather icons |
 | `python build_places.py` | Rebuild the catalogue of world places |
+| `python build_site.py` | Build the static page on its own |
+| `python download_9km.py` | Download a single file, without the database |
 
 ## A note on the data
 
@@ -130,9 +143,9 @@ the 00 and 12 UTC runs carry the long range: the 06 and 18 UTC runs stop
 at 144 hours. The widget shows the run that reaches furthest and says where
 each run ends, so there is no guessing.
 
-Every parameter is a full global field, so asking for all of them is a lot
-of downloading — about 6 GB and fifteen minutes per run. `parameters: basic`
-in `places.yml` is the lighter option.
+Every parameter is a full global field, so the twelve that are fetched cost
+about 750 MB a run and asking for all forty-eight would cost six times
+that. `parameters: all` in `places.yml` is the greedy option.
 
 ## Credits
 

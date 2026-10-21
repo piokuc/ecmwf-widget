@@ -37,6 +37,9 @@ between local time and UTC, the parameter panel and the theme.
 values belong to in the top right, the current conditions as a row of cards,
 and the table.
 
+The cards show the parameters that are switched on, in the same order as
+everything else, up to twelve of them.
+
 **The table** is the heart of it. Two header rows, the days and then the
 times, and then one row of numbers per parameter with the plot of that same
 parameter right underneath it. A day spans its columns, with a rule between
@@ -82,14 +85,15 @@ The page gets its data from `/api/forecast`, which returns JSON:
   "models": [{"key": "ifs", "label": "IFS 0.1°", "run": "...", "cycle": "..."}],
   "runs": [{"model": "ifs", "run": "...", "steps": 26, "until": "Thu 05 Nov 00:00"}],
   "place_list": [{"id": "gliwice", "name": "Gliwice", "flag": "🇵🇱"}],
-  "params": [{"key": "2t", "label": "Temperature", "unit": "K", "group": "temperature"}],
+  "catalogue": [{"key": "2t", "label": "Temperature", "unit": "K",
+                 "group": "temperature", "downloaded": true, "series": ["2t"]}],
   "places": [{
     "id": "gliwice", "name": "Gliwice", "times": ["Wed 02:00", "..."],
     "times_utc": ["Tue 00:00", "..."],
     "steps": [0, 6, 12],
     "series": {
-      "2t": {"param": "2t", "label": "Temperature", "unit": "degC",
-             "values": [9.7, 9.8, 20.0], "spreads": [null, null, null]}
+      "2t": {"param": "2t", "label": "Temperature", "short": "Temperature",
+             "unit": "degC", "values": [9.7, 9.8, 20.0]}
     }
   }]
 }
@@ -110,8 +114,8 @@ The weather icons are pictures generated with a local image model, Z-Image
 Turbo, on the machine that runs `make_icons.py`. They are PNGs with an alpha
 channel, so they work on the light and the dark theme.
 
-Two of them, the map pin and the clock, are drawn as SVG instead, because a
-line drawing is better for those than a picture.
+The map pin and the clock are drawn as SVG instead, because a line drawing is
+better for those than a picture.
 
 ## The parameter panel
 
@@ -147,9 +151,9 @@ the name and the country.
 
 ## Responsiveness
 
-One layout for everything. On a phone the header wraps, the cards go three
+One layout for everything. On a phone the header wraps, the cards go two
 across, and the table scrolls sideways with the first column stuck in place.
-The chart and the table share that scroll container, so they stay in step.
+The table and the plots share that scroll container, so they stay in step.
 
 The page is also an installable web app, with a manifest and an icon, so it
 can be added to the home screen of a phone.

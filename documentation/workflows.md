@@ -80,10 +80,21 @@ it, rebuilds the page and pushes.
 | `--poll 60` | Seconds between tries |
 | `--dry-run` | Everything except the push |
 | `--max-places 40` | How many places the page holds |
+| `--full-places 25` | How many of them get every parameter |
 
 **The laptop has to be awake.** If it is asleep when the run comes out, the
 daemon finds it on the next poll and publishes then. The page is never more
 than one run behind, but it will not be exactly on time.
+
+## A one off download
+
+For a single file, without the database or the service:
+
+```bash
+python download_9km.py --list                 # what is in the data
+python download_9km.py --param 2t,msl --step 24
+python download_9km.py --param t --levelist 500,850 --levtype pl
+```
 
 ## The places
 
@@ -171,6 +182,10 @@ global minimum of the 2 m temperature lands in Antarctica at the same
 place in both.
 
 ```bash
-python -m pytest              # if there are tests
 python widget.py --text       # a quick look at what is stored
+python service.py status      # what has been fetched, and how much of it
 ```
+
+There are no unit tests yet. The checks that matter were done by hand:
+the same point taken from the 0.1 degree and the 0.25 degree files of the
+same run, and the values against the ECMWF charts.

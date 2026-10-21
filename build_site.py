@@ -161,9 +161,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--config", default="places.yml")
     parser.add_argument("--out", default="docs", help="output directory")
     parser.add_argument("--max-places", type=int, default=None, help="limit the number of places")
+    parser.add_argument(
+        "--full-places",
+        type=int,
+        default=25,
+        help="how many places get every parameter, the rest get the basic set",
+    )
     args = parser.parse_args(argv)
 
-    summary = build(args.out, args.config, args.max_places)
+    summary = build(args.out, args.config, args.max_places, args.full_places)
     print(f"wrote {summary['file']} ({summary['size'] / 1e6:.2f} MB)")
     for model, places in summary["models"].items():
         print(f"  {model}: {places} places")

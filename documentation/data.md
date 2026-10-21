@@ -36,7 +36,11 @@ Three models are published, and they are not the same length.
 | `ifs` | IFS, the deterministic forecast | 0.1° (about 9 km) | 360 h for the 00 and 12 UTC runs, 144 h for the 06 and 18 UTC runs |
 | `ifs025` | The same forecast, coarser | 0.25° | as above |
 | `aifs` | AIFS, the artificial intelligence forecast | 0.25° | 360 h for every run |
-| `aifs_ens` | The AIFS ensemble | 0.25° | 360 h |
+
+ECMWF also publishes the AIFS ensemble, with fifty perturbed members, which
+is where the spread comes from. It is not set up here at the moment, but the
+service can ingest an ensemble again by adding the model back to
+`models.py`.
 
 This is not a detail of the implementation, it is how ECMWF publishes them:
 the 00 and 12 UTC runs carry the long range, the 06 and 18 UTC runs are short
@@ -117,17 +121,21 @@ The naming is described in
 
 | | |
 | --- | --- |
-| One step, the twelve surface parameters that are fetched, 0.1° | 21 MB |
-| One run, 26 steps, the same, 0.1° | 544 MB |
-| One run, all three models | 708 MB |
+| One step, the thirteen surface parameters that are fetched, 0.1° | 23 MB |
+| One run, 26 steps, the same, 0.1° | 548 MB |
+| One run, all three models | 750 MB |
 | One step, all 48 surface parameters, 0.1° | 84 MB |
 | One run, 26 steps, all 48, 0.1° | 4.6 GB |
 
 Every parameter is a full global field, so the cost is in the parameters and
 the levels, not in the number of places. Adding places is nearly free.
 
-The list that is fetched is twelve surface parameters: the temperature, the
-dew point, the pressure, the wind components, the gusts, the cloud cover, the
-rain, the snow, the snow albedo and the CAPE. The derived quantities — the
-wind speed and direction, the apparent temperature — are worked out from
-those, so they cost nothing.
+The list that is fetched is thirteen surface parameters: the temperature,
+the dew point, the pressure, the wind components, the gusts, the cloud
+cover, the rain, the snow, the snow albedo, the CAPE and the orography.
+
+The orography is there for the height correction, which is the point of it:
+without it a summit would get the forecast of the cell below it.
+
+The derived quantities — the wind speed and direction, the gusts, the
+apparent temperature — are worked out from those, so they cost nothing.

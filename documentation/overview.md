@@ -29,7 +29,11 @@ The published page is at <https://piokuc.github.io/ecmwf-widget/>.
           |
           |  a static page with the data in it
           v
-   docs/index.html  -->  GitHub Pages
+   build_site.py  -->  site/index.html  -->  GitHub Pages
+                            ^
+                            |
+                 .github/workflows/pages.yml
+                 does this part, in the cloud
 ```
 
 Two processes, and they are deliberately separate:
@@ -54,6 +58,7 @@ service can keep running on a machine of its own.
 | `forecast.py` | Turns the stored values into what the page needs |
 | `widget.py` | The page itself, and the small server that serves it |
 | `build_site.py` | Builds the static page for GitHub Pages |
+| `download_9km.py` | A small command line tool for a one off download |
 | `auto_publish.py` | Waits for a new run, then rebuilds and pushes the page |
 | `publish.py` | One shot: fetch, rebuild, commit, push |
 | `make_icons.py` | Generates the weather icons with a local image model |
@@ -73,5 +78,10 @@ page draws them as a table with a plot under every row.
 
 A run is downloaded once and evaluated at every place at the same time.
 Decoding a GRIB field is the expensive part, and doing it once per run
-rather than once per request is what makes the page fast with 150 places and
-90 parameters behind it.
+rather than once per request is what makes the page fast with 153 places
+behind it.
+
+The page itself is built from the same values, so the published page and the
+local widget render exactly the same thing. The only difference is where the
+data comes from: the local widget asks for it, the published page has it
+inside.

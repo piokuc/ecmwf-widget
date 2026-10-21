@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import os
 import subprocess
 import sys
 
@@ -45,6 +46,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-fetch", action="store_true", help="do not download anything")
     parser.add_argument("--dry-run", action="store_true", help="do not commit or push")
     parser.add_argument("--max-places", type=int, default=None)
+    parser.add_argument(
+        "--full-places",
+        type=int,
+        default=25,
+        help="how many places get every parameter, the rest get the basic set",
+    )
     parser.add_argument("--message", default=None, help="commit message")
     args = parser.parse_args(argv)
 
@@ -55,20 +62,30 @@ def main(argv: list[str] | None = None) -> int:
         run([sys.executable, "-u", "service.py", "once", "--config", args.config])
 
     print("Building the page")
-    summary = build_site.build(args.out, args.config, args.max_places)
+    summary = build_site.build(args.out, args.config, args.max_places, args.full_places)
     print(f"  {summary['file']} ({summary['size'] / 1e6:.2f} MB)")
     for model, places in summary["models"].items():
         print(f"  {model}: {places} places")
 
     print("Checking the repository")
     status = git("status", "--porcelain", check=False)
-    if not status.stdout.strip():
+    # The built page is in .gitignore, so it has to be added by force.
+    built = [
+        os.path.join(args.out, name)
+        for name in ("index.html", "latest.json")
+        if os.path.exists(os.path.join(args.out, name))
+    ]
+    if built:
+        git("add", "--force", *built)
+    staged = git("diff", "--cached", "--name-only", check=False)
+
+    if not status.stdout.strip() and not staged.stdout.strip():
         print("  nothing changed")
         return 0
 
     if args.dry_run:
         print("Dry run, not committing. Changed files:")
-        print(status.stdout)
+        print(status.stdout + staged.stdout)
         return 0
 
     stamp = dt.datetime.now().strftime("%Y-%m-%d %H:%M")

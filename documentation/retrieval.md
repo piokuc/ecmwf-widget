@@ -50,9 +50,10 @@ a multi range header. The S3, Google Cloud and Azure mirrors do not do
 that, they return the whole object instead, so the code sends one range per
 request to them.
 
-The result is that fetching 8 fields out of 48 costs about a fifth of the
-file, and the download for a run of 26 steps and 90 parameters is 4.6 GB
-rather than the 40 GB it would be if every file were taken whole.
+The result is that fetching a dozen fields out of the forty-eight in the
+file costs about a quarter of it. A run of 26 steps and the twelve surface
+parameters the service asks for is 544 MB, where taking every file whole
+would be closer to 20 GB.
 
 ## Decoding
 
@@ -111,9 +112,9 @@ The values are stored in the unit the GRIB message used, not in the display
 unit, so that nothing is lost and the conversion happens on the way out.
 
 The service keeps the last few runs and prunes the rest, so the database
-does not grow without bound. With 153 places, 90 parameters and 26 steps
-that is about 3400 values per place per model, or 171 MB for three models and
-three runs.
+does not grow without bound. With 153 places, the twelve surface
+parameters and 26 steps that is about 2000 values per place per model, or
+80 MB for three models and two runs.
 
 ## The mirrors
 

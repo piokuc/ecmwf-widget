@@ -73,7 +73,7 @@ models: [ifs, ifs025, aifs]
 # The panel in the widget always shows every parameter ECMWF publishes, and
 # greys out the ones that are not in this list, so it is clear what
 # changing it would bring in.
-parameters: [2t, 2d, msl, 10u, 10v, 10fg, tcc, tp, sf, sd, asn, mucape]
+parameters: [2t, 2d, msl, 10u, 10v, 10fg, tcc, tp, sf, sd, asn, mucape, z]
 
 # Pressure levels to fetch when pressure level parameters are selected.
 # Each level of each parameter is a full global field too, so every level
