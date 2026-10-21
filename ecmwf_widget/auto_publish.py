@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import os
 import subprocess
 import time
 
@@ -38,6 +39,15 @@ def publish(out_dir: str, config_path: str, dry_run: bool, max_places: int | Non
     summary = build_site.build(out_dir, config_path, max_places)
     print(f"  built {summary['file']} ({summary['size'] / 1e6:.2f} MB)")
 
+    # The built page is in .gitignore (the GitHub Action builds it too), so
+    # it has to be added by force to be a visible change at all.
+    built = [
+        os.path.join(out_dir, name)
+        for name in ("index.html", "latest.json")
+        if os.path.exists(os.path.join(out_dir, name))
+    ]
+    if built:
+        run_git("add", "--force", *built)
     status = run_git("status", "--porcelain")
     if not status.stdout.strip():
         print("  nothing changed, no push needed")
@@ -46,6 +56,8 @@ def publish(out_dir: str, config_path: str, dry_run: bool, max_places: int | Non
     if dry_run:
         print("  dry run, not committing:")
         print("   " + status.stdout.strip().replace("\n", "\n   "))
+        if built:
+            run_git("restore", "--staged", *built)
         return False
 
     stamp = dt.datetime.now().strftime("%Y-%m-%d %H:%M")

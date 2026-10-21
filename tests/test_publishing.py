@@ -99,6 +99,28 @@ def test_publish_in_dry_run_builds_but_does_not_push(repo, monkeypatch):
     assert "seed" in commit
 
 
+def test_publish_commits_a_gitignored_page(repo, monkeypatch):
+    """The built page is in .gitignore; the daemon must push it anyway."""
+    work, remote, git = repo
+    _commit_baseline(work, remote, git)
+    (work / ".gitignore").write_text("index.html\nlatest.json\n")
+    git("add", ".gitignore")
+    git("commit", "-q", "-m", "ignore the built page")
+
+    def fake_build(out_dir, config_path, max_places):
+        (work / "latest.json").write_text('{"updated": "now"}')
+        return {"file": str(work / "latest.json"), "size": 20}
+
+    monkeypatch.setattr(auto_publish.build_site, "build", fake_build)
+    assert auto_publish.publish(str(work), "places.yml", dry_run=False, max_places=None) is True
+
+    head = subprocess.run(
+        ["git", "--git-dir", str(remote), "show", "--name-only", "--format="],
+        capture_output=True, text=True, check=True,
+    ).stdout
+    assert "latest.json" in head
+
+
 def test_publish_commits_and_pushes_a_new_version(repo, monkeypatch):
     work, remote, git = repo
     _commit_baseline(work, remote, git)
