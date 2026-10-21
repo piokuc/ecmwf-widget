@@ -580,7 +580,12 @@ class ForecastReader:
                     "model_height": model_height,
                     "timezone": timezone,
                     "note": item.note,
-                    "times": [local_label(_valid_time(run, step), timezone) for step in place_steps],
+                    "times": [
+                        local_label(_valid_time(run, step), timezone) for step in place_steps
+                    ],
+                    "times_utc": [
+                        local_label(_valid_time(run, step), "UTC") for step in place_steps
+                    ],
                     # When the forecast runs out. The 0.1 degree tier only goes
                     # to 360 hours for the 00 and 12 UTC runs; the 06 and 18
                     # UTC runs stop at 90 hours.

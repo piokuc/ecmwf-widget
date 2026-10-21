@@ -313,6 +313,7 @@ PAGE = r"""<!DOCTYPE html>
       <ul id="placeList"></ul>
     </div>
     <select id="run" title="Forecast run"></select>
+    <button id="clock" title="Show the times in the local time or in UTC">Local</button>
     <button id="params" title="Choose the parameters to show">Parameters</button>
     <button id="theme" title="Switch between light and dark">Auto</button>
   </header>
@@ -494,6 +495,8 @@ const state = {
   catalogue: [],
   // The step the user picked, or null to follow the current hour.
   selected: null,
+  // "local" or "utc".
+  clock: "local",
 };
 
 function colourFor(key, index) {
@@ -626,7 +629,7 @@ function drawChart(place, series, keys, selected, select, box, labelWidth) {
   }
   let lastDay = "";
   shown.forEach((i) => {
-    const parts = place.times[i].split(" ");
+    const parts = displayTimes(place)[i].split(" ");
     const day = parts[0];
     const hour = parts.slice(1).join(" ");
     const showDay = day !== lastDay;
@@ -680,7 +683,7 @@ function drawChart(place, series, keys, selected, select, box, labelWidth) {
 const tip = document.getElementById("tip");
 function showTip(place, series, keys, index, event) {
   tip.innerHTML = "";
-  const head = el("div", "t", place.times[index] || "");
+  const head = el("div", "t", displayTimes(place)[index] || "");
   tip.appendChild(head);
   keys.forEach((key, i) => {
     const entry = series[key];
@@ -711,14 +714,19 @@ function hideTip() { tip.classList.remove("on"); }
 // --------------------------------------------------------------------------- //
 const HIDDEN = new Set(["z", "model_elevation"]);
 
-// The columns grouped into local days.
-function dayGroups(place) {
+// The times that are shown, in the zone the reader picked.
+function displayTimes(place) {
+  return state.clock === "utc" && place.times_utc ? place.times_utc : place.times;
+}
+
+// The columns grouped into days.
+function dayGroups(place, times) {
   const groups = [];
   let at = 0;
-  while (at < place.times.length) {
-    const day = place.times[at].split(" ")[0];
+  while (at < times.length) {
+    const day = times[at].split(" ")[0];
     let end = at;
-    while (end + 1 < place.times.length && place.times[end + 1].split(" ")[0] === day) end++;
+    while (end + 1 < times.length && times[end + 1].split(" ")[0] === day) end++;
     groups.push({ day, from: at, to: end });
     at = end + 1;
   }
@@ -756,6 +764,8 @@ function renderPlace(place, nowStep, order) {
 
   const chosen = state.visible.size ? state.visible : defaultSelection(state.data);
   const visible = [...chosen].filter(key => series[key]);
+  // The times that are shown, in the zone the reader picked.
+  const times = displayTimes(place);
 
   // Head.
   const head = el("div", "place-head");
@@ -778,7 +788,7 @@ function renderPlace(place, nowStep, order) {
   // The time the values below belong to, big and clear, on the right.
   const when = el("div", "when");
   const stamp = el("div", "stamp");
-  stamp.appendChild(el("span", null, localStamp(place.run, place.steps[current], place.timezone)));
+  stamp.appendChild(el("span", null, bigStamp(place, current)));
   when.appendChild(stamp);
   head.appendChild(when);
 
@@ -809,7 +819,7 @@ function renderPlace(place, nowStep, order) {
   if (state.selected !== null) {
     const banner = el("div", "banner");
     banner.appendChild(icon("clock", 16));
-    banner.appendChild(el("span", null, "Showing " + place.times[state.selected]));
+    banner.appendChild(el("span", null, "Showing " + times[state.selected]));
     const back = el("button", null, "Back to now");
     back.addEventListener("click", (event) => {
       event.stopPropagation();
@@ -856,24 +866,30 @@ function renderPlace(place, nowStep, order) {
   // The days are one row, the times of the day below them, the way yr.no
   // and the Met Office lay it out.
   const dayStart = {};
-  dayGroups(place).forEach((group) => { dayStart[group.from] = true; });
+  dayGroups(place, times).forEach((group) => { dayStart[group.from] = true; });
   const dayRow = el("tr", "days");
   const timeRow = el("tr", "times");
   const corner = el("th", null, "");
   corner.rowSpan = 2;
   dayRow.appendChild(corner);
   let at = 0;
-  while (at < place.times.length) {
-    const day = place.times[at].split(" ")[0];
+  while (at < times.length) {
+    const day = times[at].split(" ")[0];
     let end = at;
-    while (end + 1 < place.times.length && place.times[end + 1].split(" ")[0] === day) end++;
+    while (end + 1 < times.length && times[end + 1].split(" ")[0] === day) end++;
     const spans = end - at + 1;
     const head = el("th", null, day);
     if (spans > 1) head.colSpan = spans;
+    head.classList.add("clickable");
+    head.title = "Click to show this day";
+    head.addEventListener("click", () => {
+      state.selected = state.selected === at ? null : at;
+      render();
+    });
     dayRow.appendChild(head);
     for (let i = at; i <= end; i++) {
       const cell = el("th", (i === current ? "now-col" : null) + (dayStart[i] ? " day-start" : ""),
-                      place.times[i].split(" ")[1]);
+                      times[i].split(" ")[1]);
       cell.dataset.col = i;
       cell.classList.add("clickable");
       cell.title = "Click to show this hour";
@@ -895,7 +911,7 @@ function renderPlace(place, nowStep, order) {
   // One cell per day, with the range and the rain of that day.
   const summaryRow = el("tr", "summary");
   summaryRow.appendChild(el("th", null, "Day"));
-  const groups = dayGroups(place);
+  const groups = dayGroups(place, times);
   groups.forEach((group) => {
     const cell = el("td", group.from > 0 ? "day-start" : null,
                     daySummary(series, group.from, group.to));
@@ -912,6 +928,12 @@ function renderPlace(place, nowStep, order) {
   steps.forEach((_, i) => {
     const cell = el("td", (i === current ? "now-col" : null) + (dayStart[i] ? " day-start" : ""), null);
     cell.dataset.col = i;
+    cell.classList.add("clickable");
+    cell.title = "Click to show this hour";
+    cell.addEventListener("click", () => {
+      state.selected = state.selected === i ? null : i;
+      render();
+    });
     cell.appendChild(icon(conditionFor(series, i).key, 34));
     condRow.appendChild(cell);
   });
@@ -1079,6 +1101,19 @@ function moveSparkMarkers(index) {
   });
 }
 
+// The title of the card: the time in the chosen zone, with the other one
+// in brackets.
+function bigStamp(place, index) {
+  const local = localStamp(place.run, place.steps[index], place.timezone);
+  const utc = localStamp(place.run, place.steps[index], "UTC");
+  const shortUtc = utc.split(" at ")[1] || utc;
+  const shortLocal = local.split(" at ")[1] || local;
+  if (state.clock === "utc") {
+    return utc + " UTC (" + shortLocal + " local)";
+  }
+  return local + " (" + shortUtc + " UTC)";
+}
+
 // The local date and time of a forecast step.
 function localStamp(run, step, timezone) {
   if (!run) return "";
@@ -1117,7 +1152,7 @@ function updateSummary(place, series, index) {
     if (target) target.textContent = formatValue(entry, entry.values[index]);
   });
   const stamp = document.querySelector(".stamp span");
-  if (stamp) stamp.textContent = localStamp(place.run, place.steps[index], place.timezone);
+  if (stamp) stamp.textContent = bigStamp(place, index);
 
   // The big icon shows the weather of that hour.
   const box = document.querySelector('[data-role="condition"]');
@@ -1416,6 +1451,23 @@ document.getElementById("params").addEventListener("click", () => {
 document.addEventListener("click", (event) => {
   const panel = document.getElementById("panel");
   if (!panel.contains(event.target) && !event.target.closest("#params")) panel.classList.remove("open");
+});
+
+// The times: the local time of the place, or UTC.
+const clockButton = document.getElementById("clock");
+function applyClock(mode) {
+  state.clock = mode === "utc" ? "utc" : "local";
+  clockButton.textContent = state.clock === "utc" ? "UTC" : "Local";
+  clockButton.classList.toggle("on", state.clock === "utc");
+  try { localStorage.setItem("ecmwf-clock", state.clock); } catch (e) { /* private mode */ }
+}
+applyClock((() => {
+  try { return localStorage.getItem("ecmwf-clock") || "local"; } catch (e) { return "local"; }
+})());
+clockButton.addEventListener("click", () => {
+  applyClock(state.clock === "utc" ? "local" : "utc");
+  syncUrl();
+  render();
 });
 
 // Theme: auto, light or dark, remembered between visits.
