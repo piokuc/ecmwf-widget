@@ -75,6 +75,46 @@ python publish.py          # fetch, rebuild the page, commit and push
 
 That publishes to <https://piokuc.github.io/ecmwf-widget/>.
 
+## Keeping the page up to date
+
+`auto_publish.py` is a daemon that does the whole thing on its own. It works
+out when the next run is due, waits until a minute after that, polls the
+portal until the data shows up, then rebuilds the page and pushes it. The push
+is what makes GitHub Pages publish the new page.
+
+```bash
+python auto_publish.py
+```
+
+The 0.1 degree tier appears about two hours after the 0.25 degree tier, which
+is roughly eight hours and forty minutes after the cycle time. The daemon
+uses that as its schedule:
+
+| Cycle | Expected on the portal |
+| --- | --- |
+| 00z | 08:40 UTC |
+| 06z | 14:40 UTC |
+| 12z | 20:40 UTC |
+| 18z | 02:40 UTC |
+
+If the timing shifts, change it with `--delay 07:30`. Other options:
+
+```bash
+python auto_publish.py --now          # check straight away, do not wait
+python auto_publish.py --once         # one cycle, then exit
+python auto_publish.py --dry-run      # everything except the push
+python auto_publish.py --poll 60      # seconds between tries
+```
+
+Each publish writes `docs/latest.json` next to the page, with the run and
+the time of the data in it.
+
+## On a phone
+
+The page is responsive and works on a phone. It is also an installable web
+app: open it in Safari or Chrome and use "Add to Home Screen", and it opens
+without the browser chrome, with its own icon.
+
 ## Notes on the data
 
 - The 0.1° tier is published about two hours after the 0.25° tier.
