@@ -96,17 +96,20 @@ def _parameter_catalogue(available: set[str]) -> list[dict]:
     order = {name: index for index, name in enumerate(parameters.DISPLAY_ORDER)}
     catalogue = []
     for key in sorted(available, key=lambda name: (order.get(name, 999), name)):
+        # A pressure level series is stored as "name:level".
+        name, _, level = key.partition(":")
         try:
-            spec = parameters.get(key)
+            spec = parameters.get(name)
         except KeyError:
             continue
+        level_number = int(level) if level.isdigit() else None
         catalogue.append(
             {
                 "key": key,
                 "param": spec.name,
-                "label": getattr(spec, "label", key),
+                "label": parameters.label_for(name, level_number),
                 "unit": getattr(spec, "units", ""),
-                "group": getattr(spec, "group", ""),
+                "group": getattr(spec, "group", "") if level_number is None else "pressure level",
             }
         )
     return catalogue

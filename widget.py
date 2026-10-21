@@ -756,7 +756,6 @@ function renderPlace(place, nowStep, order) {
 
   const chosen = state.visible.size ? state.visible : defaultSelection(state.data);
   const visible = [...chosen].filter(key => series[key]);
-  const chartKeys = visible.filter(key => key !== "precip_increment");
 
   // Head.
   const head = el("div", "place-head");
@@ -803,7 +802,7 @@ function renderPlace(place, nowStep, order) {
     });
     empty.appendChild(button);
     card.appendChild(empty);
-    return { card, chartBox: null, table: null, place, series, chartKeys: [], current };
+    return { card, table: null, plots: [], place, series, current };
   }
 
   // A banner when the user has picked a step.
@@ -845,32 +844,10 @@ function renderPlace(place, nowStep, order) {
   if (pressure !== null) now.appendChild(stat("Pressure", Math.round(pressure), series["msl"].unit, "gauge", false, "msl"));
   if (now.children.length) card.appendChild(now);
 
-  // Legend and chart.
-  if (chartKeys.length) {
-    const legend = el("div", "legend");
-    chartKeys.forEach((key, i) => {
-      const entry = series[key];
-      const item = el("span");
-      const bar = el("i");
-      bar.style.background = colourFor(entry.param, i);
-      item.appendChild(bar);
-      item.appendChild(document.createTextNode(entry.label));
-      const value = el("b", null, format(entry, entry.values[current]));
-      item.appendChild(document.createTextNode(" "));
-      item.appendChild(value);
-      legend.appendChild(item);
-    });
-    card.appendChild(legend);
-  }
-
-  // The chart and the table share one scroll container, so they always have
+  // The table and its plots share one scroll container, so they always have
   // the same width and the columns line up.
   const wrap = el("div", "grid");
-  // The chart and the table share an inner element, so they are always the
-  // same width. The outer one does the scrolling.
   const inner = el("div", "inner");
-  const chartBox = el("div", "chart");
-  inner.appendChild(chartBox);
   wrap.appendChild(inner);
 
   // Table.
@@ -913,6 +890,7 @@ function renderPlace(place, nowStep, order) {
   table.appendChild(thead);
 
   const tbody = el("tbody");
+  const plots = [];
 
   // One cell per day, with the range and the rain of that day.
   const summaryRow = el("tr", "summary");
@@ -997,11 +975,19 @@ function renderPlace(place, nowStep, order) {
       row.appendChild(cell);
     });
     tbody.appendChild(row);
+
+    // And a plot of the same parameter, right under the numbers.
+    const plotRow = el("tr", "plot");
+    const plotCell = el("td");
+    plotCell.colSpan = steps.length;
+    plotRow.appendChild(plotCell);
+    tbody.appendChild(plotRow);
+    plots.push({ cell: plotCell, entry: s });
   });
   table.appendChild(tbody);
   inner.appendChild(table);
   card.appendChild(wrap);
-  return { card, chartBox, table, wrap, inner, place, series, chartKeys, current };
+  return { card, table, wrap, inner, place, series, plots, current };
 }
 
 function stat(label, value, unit, iconName, big, paramKey) {
@@ -1017,6 +1003,80 @@ function stat(label, value, unit, iconName, big, paramKey) {
   if (unit) v.appendChild(el("small", null, unit));
   box.appendChild(v);
   return box;
+}
+
+// A small plot of one parameter, sitting under its row of numbers.
+function sparkline(entry, column, n) {
+  const W = column * n, H = 32;
+  const values = entry.values;
+  const valid = values.filter((v) => v !== null && v !== undefined);
+  const root = svg("", 1);
+  root.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  root.setAttribute("width", "100%");
+  root.setAttribute("height", H);
+  root.setAttribute("preserveAspectRatio", "none");
+  root.removeAttribute("stroke-width");
+  root.setAttribute("stroke", "none");
+  if (valid.length < 2) return root;
+
+  let lo = Math.min(...valid), hi = Math.max(...valid);
+  if (hi - lo < 1e-9) { hi = lo + 1; lo -= 1; }
+  const pad = (hi - lo) * 0.12;
+  lo -= pad; hi += pad;
+
+  const x = (i) => (i + 0.5) * column;
+  const y = (v) => H - 4 - ((v - lo) / (hi - lo)) * (H - 9);
+  const colour = colourFor(entry.param, 0);
+
+  const points = values
+    .map((v, i) => ({ i, v }))
+    .filter((p) => p.v !== null && p.v !== undefined);
+  const line = points
+    .map((p, k) => `${k ? "L" : "M"}${x(p.i).toFixed(1)},${y(p.v).toFixed(1)}`)
+    .join(" ");
+
+  const area = `${line} L${x(points[points.length - 1].i).toFixed(1)},${H - 1} L${x(points[0].i).toFixed(1)},${H - 1} Z`;
+
+  const base = document.createElementNS(SVG_NS, "path");
+  base.setAttribute("d", area);
+  base.setAttribute("fill", colour);
+  base.setAttribute("opacity", "0.13");
+  root.appendChild(base);
+
+  const stroke = document.createElementNS(SVG_NS, "path");
+  stroke.setAttribute("d", line);
+  stroke.setAttribute("fill", "none");
+  stroke.setAttribute("stroke", colour);
+  stroke.setAttribute("stroke-width", "1.6");
+  stroke.setAttribute("vector-effect", "non-scaling-stroke");
+  root.appendChild(stroke);
+
+  // The marker that follows the mouse.
+  const marker = document.createElementNS(SVG_NS, "line");
+  marker.setAttribute("x1", 0);
+  marker.setAttribute("x2", 0);
+  marker.setAttribute("y1", 0);
+  marker.setAttribute("y2", H);
+  marker.setAttribute("stroke", "currentColor");
+  marker.setAttribute("stroke-width", "1");
+  marker.setAttribute("stroke-dasharray", "2 2");
+  marker.setAttribute("opacity", "0.5");
+  root.appendChild(marker);
+  marker.dataset.width = String(column);
+
+  return root;
+}
+
+// The markers in the plots, which follow the mouse.
+let sparkMarkers = [];
+
+function moveSparkMarkers(index) {
+  sparkMarkers.forEach((marker) => {
+    const column = Number(marker.dataset.width || 0);
+    const x = (index + 0.5) * column;
+    marker.setAttribute("x1", x);
+    marker.setAttribute("x2", x);
+  });
 }
 
 // The local date and time of a forecast step.
@@ -1072,6 +1132,7 @@ function updateSummary(place, series, index) {
   document.querySelectorAll("[data-col]").forEach((cell) => {
     cell.classList.toggle("now-col", Number(cell.dataset.col) === index);
   });
+  moveSparkMarkers(index);
 }
 
 // --------------------------------------------------------------------------- //
@@ -1205,8 +1266,8 @@ function render() {
   data.places.forEach((item) => {
     const built = renderPlace(item, data.now_step, order);
     content.appendChild(built.card);
-    if (!built.table || !built.chartBox) return;
-    // Now that the card has a width, the chart can be drawn on exactly the
+    if (!built.table) return;
+    // Now that the card has a width, the plots can be drawn on exactly the
     // same columns as the table.
     const labelWidth = built.table.querySelector("tbody th")
       ? built.table.querySelector("tbody th").getBoundingClientRect().width
@@ -1214,16 +1275,16 @@ function render() {
     // Every column needs room for a value like "1024 hPa".
     const column = Math.max(70, (built.inner.clientWidth - labelWidth) / built.place.steps.length);
     built.inner.style.minWidth = Math.ceil(labelWidth + column * built.place.steps.length) + "px";
-    const chart = drawChart(
-      built.place, built.series, built.chartKeys, built.current,
-      (index) => {
-        state.selected = state.selected === index ? null : index;
-        render();
-      },
-      built.chartBox,
-      labelWidth
-    );
-    if (chart) built.chartBox.appendChild(chart);
+
+    sparkMarkers = [];
+    const plotWidth = column * built.place.steps.length;
+    built.plots.forEach((plot) => {
+      const picture = sparkline(plot.entry, column, built.place.steps.length);
+      const marker = picture.querySelector("line");
+      if (marker) sparkMarkers.push(marker);
+      plot.cell.appendChild(picture);
+    });
+    moveSparkMarkers(built.current);
   });
 }
 

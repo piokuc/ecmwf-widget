@@ -24,9 +24,31 @@ from config import load_config
 from forecast import ForecastReader
 from store import ForecastStore
 
+#: The parameters the page shows when nothing else is picked.
+BASIC = {"2t", "2d", "msl", "10u", "10v", "10fg", "tcc", "tp",
+         "apparent_temperature", "wind_speed", "wind_dir", "gust",
+         "precip_increment", "temperature_adjusted"}
 
-def build(out_dir: str, config_path: str = "places.yml", max_places: int | None = None) -> dict:
-    """Write the static site and return a small summary."""
+
+def _trim(place: dict) -> dict:
+    """Keep only the basic series of a place."""
+    trimmed = dict(place)
+    trimmed["series"] = {k: v for k, v in place["series"].items() if k in BASIC}
+    return trimmed
+
+
+def build(
+    out_dir: str,
+    config_path: str = "places.yml",
+    max_places: int | None = None,
+    full_places: int = 25,
+) -> dict:
+    """Write the static site and return a small summary.
+
+    Every parameter of the first ``full_places`` places is embedded, the rest
+    only get the basic set. With every parameter of every place the page
+    would be tens of megabytes.
+    """
     config = load_config(config_path)
     store = ForecastStore(config.database)
     reader = ForecastReader(store, lapse_rate=config.lapse_rate, catalogue=config.all_places)
@@ -51,10 +73,14 @@ def build(out_dir: str, config_path: str = "places.yml", max_places: int | None 
             "no forecast data in the database; run 'python service.py once' first"
         )
 
-    # Keep the page a sensible size when there are many places.
+    # Keep the page a sensible size: every parameter for the first few
+    # places, the basic set for the rest.
     if max_places:
         for payload in embedded.values():
             payload["places"] = payload["places"][:max_places]
+    for payload in embedded.values():
+        places = payload["places"]
+        payload["places"] = places[:full_places] + [_trim(p) for p in places[full_places:]]
 
     os.makedirs(out_dir, exist_ok=True)
     icons_out = os.path.join(out_dir, "icons")
