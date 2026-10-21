@@ -44,7 +44,9 @@ def repo(tmp_path, monkeypatch):
     """A repository with an empty bare remote, and cwd switched into it."""
     work = tmp_path / "work"
     remote = tmp_path / "remote.git"
-    subprocess.run(["git", "init", "--bare", "-q", str(remote)], check=True)
+    subprocess.run(
+        ["git", "init", "--bare", "-q", "--initial-branch=main", str(remote)], check=True
+    )
     work.mkdir()
 
     def git(*args, cwd=work):
@@ -115,7 +117,7 @@ def test_publish_commits_a_gitignored_page(repo, monkeypatch):
     assert auto_publish.publish(str(work), "places.yml", dry_run=False, max_places=None) is True
 
     head = subprocess.run(
-        ["git", "--git-dir", str(remote), "show", "--name-only", "--format="],
+        ["git", "--git-dir", str(remote), "show", "--name-only", "--format=", "main"],
         capture_output=True, text=True, check=True,
     ).stdout
     assert "latest.json" in head
@@ -133,7 +135,7 @@ def test_publish_commits_and_pushes_a_new_version(repo, monkeypatch):
     assert auto_publish.publish(str(work), "places.yml", dry_run=False, max_places=None) is True
 
     head = subprocess.run(
-        ["git", "--git-dir", str(remote), "log", "--oneline", "-1"],
+        ["git", "--git-dir", str(remote), "log", "--oneline", "-1", "main"],
         capture_output=True, text=True, check=True,
     ).stdout
     assert "Update the forecast" in head
