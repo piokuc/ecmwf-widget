@@ -42,6 +42,13 @@ class Parameter:
     group: str
     basic: bool = False
     step_only: tuple[int, ...] = ()
+    #: A shorter name, for the table where there is little room.
+    short: str = ""
+
+    @property
+    def short_label(self) -> str:
+        """The name to show where there is little room."""
+        return self.short or self.label
 
     @property
     def levels(self) -> tuple[int, ...]:
@@ -53,8 +60,8 @@ class Parameter:
 PRESSURE_LEVELS: tuple[int, ...] = (1000, 925, 850, 700, 600, 500, 400, 300, 250, 200, 150, 100, 50, 10)
 
 
-def _p(name, label, units, levtype, group, basic=False, step_only=()):
-    return Parameter(name, label, units, levtype, group, basic, step_only)
+def _p(name, label, units, levtype, group, basic=False, step_only=(), short=""):
+    return Parameter(name, label, units, levtype, group, basic, step_only, short)
 
 
 #: Everything the 0.1 deg tier publishes. Surface parameters live in
@@ -68,15 +75,15 @@ PARAMETERS: dict[str, Parameter] = {
         _p("2t", "Temperature", "K", "sfc", "temperature", basic=True),
         _p("2d", "Dew point", "K", "sfc", "temperature", basic=True),
         _p("skt", "Skin temperature", "K", "sfc", "temperature"),
-        _p("mx2t3", "Max 2 m temperature (3 h)", "K", "sfc", "temperature"),
-        _p("mn2t3", "Min 2 m temperature (3 h)", "K", "sfc", "temperature"),
-        _p("mx2t6", "Max 2 m temperature (6 h)", "K", "sfc", "temperature"),
-        _p("mn2t6", "Min 2 m temperature (6 h)", "K", "sfc", "temperature"),
-        _p("tcw", "Total column water", "kg m-2", "sfc", "humidity"),
-        _p("tcwv", "Total column water vapour", "kg m-2", "sfc", "humidity"),
-        _p("tciw", "Total column cloud ice water", "kg m-2", "sfc", "humidity"),
-        _p("tclw", "Total column cloud liquid water", "kg m-2", "sfc", "humidity"),
-        _p("tcrw", "Total column rain water", "kg m-2", "sfc", "humidity"),
+        _p("mx2t3", "Max 2 m temperature (3 h)", "K", "sfc", "temperature", short="Max temp 3 h"),
+        _p("mn2t3", "Min 2 m temperature (3 h)", "K", "sfc", "temperature", short="Min temp 3 h"),
+        _p("mx2t6", "Max 2 m temperature (6 h)", "K", "sfc", "temperature", short="Max temp 6 h"),
+        _p("mn2t6", "Min 2 m temperature (6 h)", "K", "sfc", "temperature", short="Min temp 6 h"),
+        _p("tcw", "Total column water", "kg m-2", "sfc", "humidity", short="Column water"),
+        _p("tcwv", "Total column water vapour", "kg m-2", "sfc", "humidity", short="Column vapour"),
+        _p("tciw", "Total column cloud ice water", "kg m-2", "sfc", "humidity", short="Column ice"),
+        _p("tclw", "Total column cloud liquid water", "kg m-2", "sfc", "humidity", short="Column cloud water"),
+        _p("tcrw", "Total column rain water", "kg m-2", "sfc", "humidity", short="Column rain"),
         _p("msl", "Pressure", "Pa", "sfc", "pressure", basic=True),
         _p("sp", "Surface pressure", "Pa", "sfc", "pressure"),
         _p("10u", "Wind U", "m s-1", "sfc", "wind", basic=True),
@@ -89,30 +96,30 @@ PARAMETERS: dict[str, Parameter] = {
         _p("mcc", "Medium cloud cover", "%", "sfc", "cloud"),
         _p("lcc", "Low cloud cover", "%", "sfc", "cloud"),
         _p("tp", "Precipitation total", "m", "sfc", "precipitation", basic=True),
-        _p("cp", "Convective precipitation", "m", "sfc", "precipitation"),
-        _p("sf", "Snowfall (water equivalent)", "m", "sfc", "precipitation"),
-        _p("tprate", "Total precipitation rate", "kg m-2 s-1", "sfc", "precipitation"),
+        _p("cp", "Convective precipitation", "m", "sfc", "precipitation", short="Convective rain"),
+        _p("sf", "Snowfall (water equivalent)", "m", "sfc", "precipitation", short="Snowfall"),
+        _p("tprate", "Total precipitation rate", "kg m-2 s-1", "sfc", "precipitation", short="Precipitation rate"),
         _p("ptype", "Precipitation type", "code table", "sfc", "precipitation"),
-        _p("sd", "Snow depth (water equivalent)", "m", "sfc", "precipitation"),
+        _p("sd", "Snow depth (water equivalent)", "m", "sfc", "precipitation", short="Snow depth"),
         _p("rsn", "Snow density", "kg m-3", "sfc", "precipitation"),
         _p("asn", "Snow albedo", "%", "sfc", "precipitation"),
-        _p("mucape", "Most-unstable CAPE", "J kg-1", "sfc", "thermodynamics"),
+        _p("mucape", "Most-unstable CAPE", "J kg-1", "sfc", "thermodynamics", short="CAPE"),
         _p("lsm", "Land-sea mask", "(0 - 1)", "sfc", "surface"),
         _p("zos", "Sea surface height", "m", "sfc", "sea"),
         _p("sithick", "Sea ice thickness", "m", "sfc", "sea"),
-        _p("sve", "Eastward sea-water velocity", "m s-1", "sfc", "sea"),
-        _p("svn", "Northward sea-water velocity", "m s-1", "sfc", "sea"),
+        _p("sve", "Eastward sea-water velocity", "m s-1", "sfc", "sea", short="Eastward sea"),
+        _p("svn", "Northward sea-water velocity", "m s-1", "sfc", "sea", short="Northward sea"),
         _p("ro", "Runoff", "m", "sfc", "water"),
-        _p("ssr", "Surface net shortwave radiation", "W m-2", "sfc", "radiation"),
-        _p("ssrd", "Surface downward shortwave radiation", "W m-2", "sfc", "radiation"),
-        _p("str", "Surface net longwave radiation", "W m-2", "sfc", "radiation"),
-        _p("strd", "Surface downward longwave radiation", "W m-2", "sfc", "radiation"),
-        _p("ttr", "Top net longwave radiation", "W m-2", "sfc", "radiation"),
-        _p("ewss", "Eastward turbulent surface stress", "N m-2", "sfc", "stress"),
-        _p("nsss", "Northward turbulent surface stress", "N m-2", "sfc", "stress"),
-        _p("z", "Geopotential (orography)", "m2 s-2", "sfc", "surface", basic=True, step_only=(0,)),
-        _p("sdor", "St. dev. of sub-grid orography", "m", "sfc", "surface", step_only=(0,)),
-        _p("slor", "Slope of sub-grid orography", "(0 - 1)", "sfc", "surface", step_only=(0,)),
+        _p("ssr", "Surface net shortwave radiation", "W m-2", "sfc", "radiation", short="Net shortwave"),
+        _p("ssrd", "Surface downward shortwave radiation", "W m-2", "sfc", "radiation", short="Down shortwave"),
+        _p("str", "Surface net longwave radiation", "W m-2", "sfc", "radiation", short="Net longwave"),
+        _p("strd", "Surface downward longwave radiation", "W m-2", "sfc", "radiation", short="Down longwave"),
+        _p("ttr", "Top net longwave radiation", "W m-2", "sfc", "radiation", short="Top net longwave"),
+        _p("ewss", "Eastward turbulent surface stress", "N m-2", "sfc", "stress", short="Eastward stress"),
+        _p("nsss", "Northward turbulent surface stress", "N m-2", "sfc", "stress", short="Northward stress"),
+        _p("z", "Geopotential (orography)", "m2 s-2", "sfc", "surface", basic=True, step_only=(0,), short="Orography"),
+        _p("sdor", "St. dev. of sub-grid orography", "m", "sfc", "surface", step_only=(0,), short="Orography spread"),
+        _p("slor", "Slope of sub-grid orography", "(0 - 1)", "sfc", "surface", step_only=(0,), short="Orography slope"),
     ]
 }
 
@@ -178,6 +185,7 @@ class Derived:
     needs: tuple[str, ...]
     level: int | None = None
     basic: bool = True
+    short: str = ""
 
 
 DERIVED: dict[str, Derived] = {
@@ -196,7 +204,10 @@ DERIVED: dict[str, Derived] = {
         Derived("wind_speed_pl", "Wind speed", "m s-1", "wind", ("u", "v"), basic=False),
         Derived("wind_dir_pl", "Wind direction", "deg", "wind", ("u", "v"), basic=False),
         # Computed from the total precipitation, not requested from ECMWF.
-        Derived("precip_increment", "Precipitation", "mm", "precipitation", (), basic=False),
+        Derived(
+            "precip_increment", "Precipitation", "mm", "precipitation", (),
+            basic=False, short="Rain, each step",
+        ),
         # The temperature at the real height of the place, corrected for the
         # difference to the height of the model grid.
         Derived(

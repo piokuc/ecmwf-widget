@@ -42,6 +42,9 @@ times, and then one row of numbers per parameter with the plot of that same
 parameter right underneath it. A day spans its columns, with a rule between
 the days and a summary of the day in the row above.
 
+The long parameter names have a short form for the table, where there is only
+room for a few words, and the full name is in the tooltip.
+
 ## How the table and the plots line up
 
 The table uses fixed layout with a 190 pixel label column and equal data
@@ -124,9 +127,17 @@ everything else.
 
 ## The wind
 
-The wind is stored as the two components, and the direction and the speed
-are worked out from them. The row in the table shows an arrow for the
-direction, coloured by the Beaufort force, with the speed next to it.
+The wind is stored as the two components, `10u` and `10v`, and the speed and
+the direction are worked out from them.
+
+The table has a **Wind (u, v)** row where each column holds an arrow built
+from the two components: it points the way the wind blows, its length grows
+with the speed, and it is coloured by the Beaufort force. Below it, the wind
+speed and the direction are given as numbers.
+
+The arrow is the direction the wind blows **towards**, which is the opposite
+of the meteorological direction, where 90 degrees means a wind from the
+east.
 
 ## The place picker
 

@@ -194,7 +194,7 @@ PAGE = r"""<!DOCTYPE html>
     color: var(--fg); line-height: 1.2; white-space: nowrap;
   }
   .now {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 10px; margin: 0 0 20px;
   }
   .stat {
@@ -203,9 +203,10 @@ PAGE = r"""<!DOCTYPE html>
   }
   .stat .k {
     color: var(--muted); font-size: 10.5px; text-transform: uppercase;
-    letter-spacing: .03em; overflow-wrap: anywhere;
-    display: flex; align-items: center; gap: 4px;
+    letter-spacing: .03em; line-height: 1.25; overflow-wrap: normal;
+    display: flex; align-items: center; gap: 4px; min-width: 0;
   }
+  .stat .k span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .stat .k svg, .stat .k img.icon { flex: none; opacity: .8; }
   .stat .v { font-size: 19px; font-weight: 600; margin-top: 3px; letter-spacing: -.02em; }
   .stat .v small { font-size: 12.5px; font-weight: 500; color: var(--muted); margin-left: 2px; }
@@ -270,7 +271,9 @@ PAGE = r"""<!DOCTYPE html>
   tbody th {
     text-align: left; font-weight: 500; font-size: 14.5px; color: var(--muted);
     position: sticky; left: 0; background: var(--card); padding-right: 16px;
+    max-width: 190px; overflow: hidden;
   }
+  tbody th .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   tbody th svg, tbody th img.icon { vertical-align: -3px; margin-right: 6px; opacity: .85; }
   tbody th i { width: 9px; height: 9px; border-radius: 3px; display: inline-block; margin-right: 7px; }
   tbody td { border-top: 1px solid var(--line); font-size: 14.5px; }
@@ -510,6 +513,41 @@ function beaufortColour(kmh) {
     if (force <= limit) return colour;
   }
   return "#7d4b28";
+}
+
+// An arrow built from the two wind components: it points the way the wind
+// blows and its length grows with the speed.
+function windVector(u, v, maxSpeed) {
+  const size = 26;
+  const node = svg("", size);
+  node.setAttribute("viewBox", "-13 -13 26 26");
+  node.setAttribute("class", "vector");
+
+  const speed = Math.hypot(u, v);
+  const length = maxSpeed ? Math.max(5, (speed / maxSpeed) * 11) : 9;
+  const angle = Math.atan2(-v, -u);
+
+  const shaft = document.createElementNS(SVG_NS, "line");
+  shaft.setAttribute("x1", 0);
+  shaft.setAttribute("y1", 0);
+  shaft.setAttribute("x2", (length * Math.cos(angle)).toFixed(2));
+  shaft.setAttribute("y2", (-length * Math.sin(angle)).toFixed(2));
+  shaft.setAttribute("stroke", "currentColor");
+  shaft.setAttribute("stroke-width", "2");
+  shaft.setAttribute("stroke-linecap", "round");
+  node.appendChild(shaft);
+
+  const head = document.createElementNS(SVG_NS, "path");
+  const tipX = length * Math.cos(angle);
+  const tipY = -length * Math.sin(angle);
+  head.setAttribute("d",
+    `M${tipX.toFixed(2)},${tipY.toFixed(2)} `
+    + `L${(tipX - 4 * Math.cos(angle - 0.5)).toFixed(2)},${(-tipY + 4 * Math.sin(angle - 0.5)).toFixed(2)} `
+    + `L${(tipX - 4 * Math.cos(angle + 0.5)).toFixed(2)},${(-tipY + 4 * Math.sin(angle + 0.5)).toFixed(2)} Z`);
+  head.setAttribute("fill", "currentColor");
+  node.appendChild(head);
+
+  return node;
 }
 
 function arrow(degrees, speed) {
@@ -901,7 +939,7 @@ function renderPlace(place, nowStep, order) {
     const big = key === "2t" || key === "temperature_adjusted";
     const unit = key === "wind_dir" ? "" : entry.unit;
     const text = key === "wind_dir" ? Math.round(value) + "°" : formatValue(entry, value);
-    now.appendChild(stat(entry.label, text, unit, PARAM_ICON[key] || "cloud", big, key));
+    now.appendChild(stat(entry.short || entry.label, text, unit, PARAM_ICON[key] || "cloud", big, key));
   });
   if (visible.length > shown.length) {
     now.appendChild(el("div", "stat more", "and " + (visible.length - shown.length) + " more"));
@@ -994,6 +1032,28 @@ function renderPlace(place, nowStep, order) {
   tbody.appendChild(condRow);
 
   const keys = visible;
+  let windMax = 1;
+
+  // The two wind components are shown as one row of arrows, which is what
+  // they are for, rather than as two rows of numbers.
+  if (keys.includes("10u") && keys.includes("10v")) {
+    const at = keys.indexOf("10u");
+    keys.splice(at, 2, "wind_vector");
+    const u = series["10u"].values;
+    const v = series["10v"].values;
+    windMax = Math.max(0.1, ...u.map((value, i) => {
+      if (value === null || value === undefined || v[i] === null || v[i] === undefined) return 0;
+      return Math.hypot(value, v[i]);
+    }));
+    // A stand in for the row; the values come from the two components.
+    series.wind_vector = {
+      param: "wind_vector",
+      label: "Wind (u, v)",
+      short: "Wind (u, v)",
+      unit: "m s-1",
+      values: u.map((value) => (value === null || value === undefined ? null : 1)),
+    };
+  }
 
   // Each precipitation row is scaled to its own largest value, so the bars
   // show the shape of that row rather than being comparable across rows.
@@ -1008,11 +1068,12 @@ function renderPlace(place, nowStep, order) {
     if (!s) return;
     const row = el("tr");
     const label = el("th");
-    const swatch = el("i");
-    swatch.style.background = colourFor(s.param, index);
-    label.appendChild(swatch);
     label.appendChild(icon(PARAM_ICON[key] || "cloud", 21));
-    label.appendChild(document.createTextNode(s.label));
+    const text = el("span", "name", key === "wind_vector" ? "Wind (u, v)" : (s.short || s.label));
+    text.title = key === "wind_vector"
+      ? "The two wind components, as arrows. The arrow points the way the wind blows."
+      : s.label;
+    label.appendChild(text);
     row.appendChild(label);
     s.values.forEach((value, i) => {
       const cell = el("td", (i === current ? "now-col" : null) + (dayStart[i] ? " day-start" : ""), null);
@@ -1023,7 +1084,17 @@ function renderPlace(place, nowStep, order) {
         state.selected = state.selected === i ? null : i;
         render();
       });
-      if (value === null || value === undefined) {
+      if (key === "wind_vector") {
+        const u = series["10u"].values[i];
+        const v = series["10v"].values[i];
+        if (u === null || u === undefined || v === null || v === undefined) {
+          cell.textContent = "–";
+        } else {
+          const picture = windVector(u, v, windMax);
+          picture.style.color = beaufortColour(Math.hypot(u, v) * 3.6);
+          cell.appendChild(picture);
+        }
+      } else if (value === null || value === undefined) {
         cell.textContent = "–";
       } else if (["2t", "temperature_adjusted", "apparent_temperature"].includes(s.param)) {
         cell.textContent = value.toFixed(1) + "°";
@@ -1050,8 +1121,15 @@ function renderPlace(place, nowStep, order) {
     });
     tbody.appendChild(row);
 
-    // And a plot of the same parameter, right under the numbers.
+    // And a plot of the same parameter, right under the numbers. It needs
+    // a cell of its own for the label column, or it would be one column
+    // short and the plot would not reach the end.
+    if (key === "wind_vector") {
+      tbody.appendChild(row);
+      return;
+    }
     const plotRow = el("tr", "plot");
+    plotRow.appendChild(el("th"));
     const plotCell = el("td");
     plotCell.colSpan = steps.length;
     plotRow.appendChild(plotCell);

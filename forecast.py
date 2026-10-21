@@ -57,12 +57,10 @@ _UNITS = {
 #: Rows that are shown in the header rather than in the table.
 _HIDDEN = {"z", "model_elevation"}
 
-#: A raw component is hidden when its derived counterpart is present.
-_REDUNDANT = {
-    "10u": "wind_speed",
-    "10v": "wind_dir",
-    "10fg": "gust",
-}
+#: A raw component is hidden when its derived counterpart is present. The
+#: wind components are the exception: they are shown as arrows, which is the
+#: clearest way to read a wind forecast.
+_REDUNDANT: dict[str, str] = {}
 
 
 def _valid_time(run: str, step: int) -> dt.datetime:
@@ -270,10 +268,18 @@ class ForecastReader:
 
             if key in result:
                 continue
+            spec = None
+            try:
+                spec = parameters.get(param)
+            except KeyError:
+                spec = None
             result[key] = {
                 "param": param,
                 "level": level if level >= 0 else None,
                 "label": _LABELS.get(param) or parameters.label_for(param, level if level >= 0 else None),
+                "short": (getattr(spec, "short", "") or getattr(spec, "short_label", "")
+                          or _LABELS.get(param)
+                          or parameters.label_for(param, level if level >= 0 else None)),
                 "units": _UNITS.get(param, points[0]["units"]),
                 "points": points,
             }
@@ -568,6 +574,7 @@ class ForecastReader:
                     "param": entry["param"],
                     "level": entry["level"],
                     "label": entry["label"],
+                    "short": entry.get("short") or entry["label"],
                     "unit": entry["units"],
                     "values": [by_step.get(step) for step in place_steps],
                 }
