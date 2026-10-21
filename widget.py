@@ -931,7 +931,18 @@ function renderPlace(place, nowStep, order) {
     return s && s.values[current] !== null && s.values[current] !== undefined ? s.values[current] : null;
   };
   const now = el("div", "now");
-  const shown = visible.slice(0, 12);
+
+  // The two wind components are one thing in the table, so they are one
+  // card here as well.
+  const cardKeys = visible.slice();
+  let windVectorCard = false;
+  if (cardKeys.includes("10u") && cardKeys.includes("10v")) {
+    const at = cardKeys.indexOf("10u");
+    cardKeys.splice(at, 2);
+    windVectorCard = true;
+  }
+
+  const shown = cardKeys.slice(0, 12);
   shown.forEach((key) => {
     const entry = series[key];
     const value = get(key);
@@ -941,8 +952,21 @@ function renderPlace(place, nowStep, order) {
     const text = key === "wind_dir" ? Math.round(value) + "°" : formatValue(entry, value);
     now.appendChild(stat(entry.short || entry.label, text, unit, PARAM_ICON[key] || "cloud", big, key));
   });
-  if (visible.length > shown.length) {
-    now.appendChild(el("div", "stat more", "and " + (visible.length - shown.length) + " more"));
+
+  if (windVectorCard) {
+    const speed = get("wind_speed");
+    const u = get("10u");
+    const v = get("10v");
+    const magnitude = u !== null && v !== null ? Math.hypot(u, v) * 3.6 : null;
+    const value = speed !== null ? speed : magnitude;
+    if (value !== null) {
+      now.appendChild(stat("Wind (u, v)", Math.round(value), "km/h", "wind", false, "wind_vector"));
+    }
+  }
+
+  if (cardKeys.length > shown.length + (windVectorCard ? 1 : 0)) {
+    const extra = cardKeys.length - shown.length - (windVectorCard ? 1 : 0);
+    now.appendChild(el("div", "stat more", "and " + extra + " more"));
   }
   if (now.children.length) card.appendChild(now);
 
