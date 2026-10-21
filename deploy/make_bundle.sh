@@ -21,7 +21,7 @@ VERSION=$(python3 -c "import ecmwf_widget; print(ecmwf_widget.__version__)")
 STAGE="ecmwf-widget-$VERSION-$OS-$ARCH"
 DIST="${DIST:-dist}"
 
-rm -rf "$STAGE" "$DIST" 2>/dev/null || true
+rm -rf "$STAGE" 2>/dev/null || true
 mkdir -p "$STAGE/bin" "$DIST"
 
 # The package with its dependencies, ready to run.
