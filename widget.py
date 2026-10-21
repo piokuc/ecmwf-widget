@@ -1292,14 +1292,14 @@ async function load(run, place) {
   }
   if (state.model) modelSelect.value = state.model;
 
-  if (runSelect.dataset.filled !== "yes" && data.models.length) {
-    data.models.forEach(info => {
-      const option = el("option", null, info.cycle);
-      option.value = info.run;
-      runSelect.appendChild(option);
-    });
-    runSelect.dataset.filled = "yes";
-  }
+  // The runs of the chosen model, with how far each one reaches.
+  const wanted = state.model || (data.models[0] && data.models[0].key);
+  runSelect.innerHTML = "";
+  data.runs.filter(item => item.model === wanted).forEach((item) => {
+    const option = el("option", null, item.cycle + (item.until ? "  →  " + item.until : ""));
+    option.value = item.run;
+    runSelect.appendChild(option);
+  });
   if (run) runSelect.value = run;
 
   if (state.catalogue.length !== data.place_list.length) {
@@ -1338,9 +1338,11 @@ function showError(error) {
 
 modelSelect.addEventListener("change", (event) => {
   state.model = event.target.value;
-  state.run = null;
+  // Each model has a run that reaches furthest, use that one.
+  const model = state.data.models.find(item => item.key === state.model);
+  state.run = model ? model.run : null;
   syncUrl();
-  load(null, state.place).catch(showError);
+  load(state.run, state.place).catch(showError);
 });
 document.getElementById("run").addEventListener("change", (event) => {
   state.run = event.target.value || null;

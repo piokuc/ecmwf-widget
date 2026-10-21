@@ -179,6 +179,23 @@ class ForecastReader:
     def latest_run(self, model: str | None = None) -> str | None:
         return self.store.latest_run(model)
 
+    def _best_run(self, model: str, step_counts: dict[tuple[str, str], int]) -> str | None:
+        """The run of a model that reaches furthest.
+
+        The 00 and 12 UTC runs of the 0.1 degree tier go out to 360 hours,
+        while the 06 and 18 UTC runs stop at 144 hours. The run that reaches
+        furthest is therefore the more useful one, even if it is a few hours
+        older.
+        """
+        runs = [
+            (count, run)
+            for (name, run), count in step_counts.items()
+            if name == model
+        ]
+        if not runs:
+            return self.store.latest_run(model)
+        return max(runs)[1]
+
     def known_place(self, place_id: str) -> bool:
         """Whether a place can be chosen."""
         if any(item.id == place_id for item in self.places()):
@@ -417,9 +434,13 @@ class ForecastReader:
         """
         now = dt.datetime.now(dt.UTC)
 
-        # The models that have data, and their newest run.
-        seen_models: set[str] = set()
+        # The models that have data, and their runs.
+        step_counts = self.store.step_counts()
+        places_now = self.places(run) if run else []
+        timezone = places_now[0].timezone if places_now else "UTC"
+
         model_list = []
+        seen_models: set[str] = set()
         for info in self.store.runs():
             if info.model in seen_models:
                 continue
@@ -432,7 +453,7 @@ class ForecastReader:
                     "short": spec.short if spec else info.model,
                     "resolution": spec.resolution if spec else info.resol,
                     "description": spec.description if spec else "",
-                    "run": info.run,
+                    "run": self._best_run(info.model, step_counts),
                     "cycle": f"{info.cycle[:4]}-{info.cycle[4:6]}-{info.cycle[6:]} {info.time}:00 UTC",
                     "status": info.status,
                 }
@@ -441,10 +462,30 @@ class ForecastReader:
             key=lambda m: list(models.MODELS).index(m["key"]) if m["key"] in models.MODELS else 99
         )
 
+        # Every run that has been fetched, with how far it reaches.
+        run_list = []
+        for info in self.store.runs():
+            count, last = step_counts.get((info.model, info.run), (0, 0))
+            until = ""
+            if info.run and last:
+                until = local_time(
+                    _valid_time(info.run, last), timezone
+                ).strftime("%a %d %b %H:%M")
+            run_list.append(
+                {
+                    "model": info.model,
+                    "run": info.run,
+                    "cycle": f"{info.cycle[:4]}-{info.cycle[4:6]}-{info.cycle[6:]} {info.time}:00 UTC",
+                    "status": info.status,
+                    "steps": count,
+                    "until": until,
+                }
+            )
+
         if model is None and model_list:
             model = model_list[0]["key"]
         if run is None and model:
-            run = self.store.latest_run(model)
+            run = self._best_run(model, step_counts)
 
         # Every place that can be chosen.
         place_list = []
@@ -474,6 +515,7 @@ class ForecastReader:
                 "cycle_utc": None,
                 "now_step": None,
                 "models": model_list,
+                "runs": run_list,
                 "place_list": place_list,
                 "params": [],
                 "places": [],
@@ -557,6 +599,7 @@ class ForecastReader:
             "cycle_utc": cycle.strftime("%Y-%m-%d %H:%M UTC"),
             "now_step": now_step,
             "models": model_list,
+            "runs": run_list,
             "place_list": place_list,
             "params": _parameter_catalogue(available),
             "places": places,

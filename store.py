@@ -342,6 +342,18 @@ class ForecastStore:
         return int(row[0])
 
     @_synchronized
+    def step_counts(self) -> dict[tuple[str, str], tuple[int, int]]:
+        """How many forecast steps each run holds, and the last one."""
+        rows = self.connection.execute(
+            "SELECT model, run, COUNT(DISTINCT step) AS count, MAX(step) AS last "
+            "FROM point_values GROUP BY model, run"
+        ).fetchall()
+        return {
+            (row["model"], row["run"]): (row["count"], row["last"])
+            for row in rows
+        }
+
+    @_synchronized
     def prune_runs(self, keep: int = 3) -> int:
         """Delete the values of runs that are no longer wanted.
 
