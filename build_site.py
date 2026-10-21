@@ -13,6 +13,7 @@ file server and on GitHub Pages, with no backend at all.
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import os
 import shutil
@@ -61,6 +62,51 @@ def build(out_dir: str, config_path: str = "places.yml", max_places: int | None 
         shutil.rmtree(icons_out)
     if os.path.isdir(widget.ICON_DIR):
         shutil.copytree(widget.ICON_DIR, icons_out)
+
+    # A small file with the state of the data. It changes on every publish, so
+    # the commit is a visible data change and not just a rebuilt page.
+    latest = {
+        "updated": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
+        "models": {
+            model: {
+                "run": payload["run"],
+                "cycle": payload["cycle_utc"],
+                "places": len(payload["places"]),
+            }
+            for model, payload in embedded.items()
+        },
+    }
+    with open(os.path.join(out_dir, "latest.json"), "w") as handle:
+        json.dump(latest, handle, indent=2, sort_keys=True)
+
+    # The web app manifest, so the page can be installed on a phone.
+    manifest = {
+        "name": "ECMWF forecast",
+        "short_name": "ECMWF",
+        "description": "Point forecasts from ECMWF's free and open 0.1° data",
+        "start_url": "./",
+        "scope": "./",
+        "display": "standalone",
+        "orientation": "any",
+        "background_color": "#12161c",
+        "theme_color": "#1d6fb8",
+        "icons": [
+            {"src": "app-icon-192.png", "sizes": "192x192", "type": "image/png"},
+            {
+                "src": "app-icon-512.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "any maskable",
+            },
+        ],
+    }
+    with open(os.path.join(out_dir, "manifest.webmanifest"), "w") as handle:
+        json.dump(manifest, handle, indent=2, sort_keys=True)
+
+    for size in (192, 512):
+        source = os.path.join("assets", f"app-icon-{size}.png")
+        if os.path.exists(source):
+            shutil.copy(source, os.path.join(out_dir, f"app-icon-{size}.png"))
 
     data = json.dumps(embedded, separators=(",", ":"))
     page = widget.PAGE.replace(

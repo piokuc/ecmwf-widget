@@ -40,6 +40,13 @@ PAGE = r"""<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ECMWF forecast</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1d6fb8">
+<meta name="description" content="Point forecasts from ECMWF's free and open 0.1° data">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ECMWF">
+<link rel="apple-touch-icon" href="app-icon-192.png">
+<link rel="icon" href="app-icon-192.png">
 <style>
   :root {
     --bg: #f4f6f8;
@@ -1360,6 +1367,10 @@ class Handler(BaseHTTPRequestHandler):
             self._send_icon(path[len("/icons/") :])
             return
 
+        if path == "/manifest.webmanifest" or path.startswith("/app-icon-"):
+            self._send_file(path)
+            return
+
         try:
             self._send_json(self._payload(path, params))
         except KeyError as exc:
@@ -1395,6 +1406,26 @@ class Handler(BaseHTTPRequestHandler):
             ]
 
         raise KeyError("not found")
+
+    def _send_file(self, name: str) -> None:
+        """Serve a file from the output directory or the assets."""
+        if not re.fullmatch(r"[a-zA-Z0-9_.-]+", name):
+            self._send(b"not found", "text/plain; charset=utf-8", status=404)
+            return
+        for folder in ("docs", "assets"):
+            path = os.path.join(folder, name)
+            if os.path.isfile(path):
+                with open(path, "rb") as handle:
+                    body = handle.read()
+                kind = "application/manifest+json" if name.endswith(".webmanifest") else "image/png"
+                self.send_response(200)
+                self.send_header("Content-Type", kind)
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Cache-Control", "public, max-age=3600")
+                self.end_headers()
+                self.wfile.write(body)
+                return
+        self._send(b"not found", "text/plain; charset=utf-8", status=404)
 
     def _send_icon(self, name: str) -> None:
         """Serve a generated icon."""
