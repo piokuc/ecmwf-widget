@@ -41,11 +41,11 @@ jobs:
 
       - name: Fetch the latest forecast
         run: |
-          python service.py once --config places.pages.yml
+          python -m ecmwf_widget.service once --config places.pages.yml
 
       - name: Build the page
         run: |
-          python build_site.py --config places.pages.yml --out site
+          python -m ecmwf_widget.build_site --config places.pages.yml --out site
 
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -24,7 +24,7 @@ import sqlite3
 import threading
 from collections.abc import Iterable, Sequence
 
-from points import Place, PointValue
+from .points import Place, PointValue
 
 __all__ = ["ForecastStore", "RunInfo"]
 
@@ -430,8 +430,8 @@ class ForecastStore:
         """Write every value to a CSV file and return its path."""
         rows = self.connection.execute(
             """
-            SELECT run, place_id, param, level, step, value, units, method
-            FROM point_values ORDER BY run, place_id, param, level, step
+            SELECT model, run, place_id, param, level, step, value, units, method
+            FROM point_values ORDER BY model, run, place_id, param, level, step
             """
         ).fetchall()
         import csv

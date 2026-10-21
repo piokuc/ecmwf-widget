@@ -1,0 +1,6 @@
+# The tests. Install on top of requirements.txt:
+#
+#     pip install -r requirements-dev.txt
+#
+pytest
+pytest-bdd

@@ -16,9 +16,9 @@ from typing import Any
 
 import yaml
 
-import models
-import parameters
-from points import Place
+from . import models
+from . import parameters
+from .points import Place
 
 __all__ = ["DEFAULT_CONFIG", "WORLD_PLACES", "Config", "load_config"]
 

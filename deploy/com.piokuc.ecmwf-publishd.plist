@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  The publishing daemon as a macOS launchd user agent.
+
+  It follows the ECMWF schedule itself (0, 6, 12 and 18 UTC plus the delay
+  of publication), so launchd only has to keep it alive.
+
+  Install with:
+
+      PLIST=~/Library/LaunchAgents/com.piokuc.ecmwf-publishd.plist
+      sed -e "s|REPOSITORY|$HOME/work/ecmwf-widget|" \
+          -e "s|PYTHON|$HOME/.venv/ecmwf-widget/bin/python|" \
+          deploy/com.piokuc.ecmwf-publishd.plist > "$PLIST"
+      launchctl load "$PLIST"
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.piokuc.ecmwf-publishd</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>PYTHON</string>
+        <string>-u</string>
+        <string>auto_publish.py</string>
+        <string>--config</string>
+        <string>places.yml</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPOSITORY</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>REPOSITORY/data/publishd.log</string>
+    <key>StandardErrorPath</key>
+    <string>REPOSITORY/data/publishd.log</string>
+</dict>
+</plist>

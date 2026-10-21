@@ -15,10 +15,10 @@ try:
 except ImportError:  # pragma: no cover - Python < 3.9
     ZoneInfo = None  # type: ignore[assignment]
 
-import models
-import parameters
-from points import Place
-from store import ForecastStore
+from . import models
+from . import parameters
+from .points import Place
+from .store import ForecastStore
 
 __all__ = ["ForecastReader", "local_time", "render_text"]
 

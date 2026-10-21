@@ -1,0 +1,27 @@
+# The publishing daemon as a Linux systemd user service.
+#
+# It follows the ECMWF schedule itself (0, 6, 12 and 18 UTC plus the delay
+# of publication), so systemd only has to keep it alive.
+#
+# Install with:
+#
+#     mkdir -p ~/.config/systemd/user
+#     sed -e "s|REPOSITORY|$HOME/work/ecmwf-widget|" \
+#         -e "s|PYTHON|$HOME/.venv/ecmwf-widget/bin/python|" \
+#         deploy/ecmwf-publishd.service > ~/.config/systemd/user/ecmwf-publishd.service
+#     systemctl --user daemon-reload
+#     systemctl --user enable --now ecmwf-publishd
+
+[Unit]
+Description=ECMWF forecast: pull on the ECMWF schedule and publish to GitHub Pages
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=REPOSITORY
+ExecStart=PYTHON -u auto_publish.py --config places.yml
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=default.target

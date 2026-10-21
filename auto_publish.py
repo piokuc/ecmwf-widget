@@ -1,159 +1,16 @@
 #!/usr/bin/env python3
-"""Keep the published page up to date.
+"""Publish on the ECMWF schedule.
 
-The daemon works out when the next forecast run is expected, waits until a
-minute after that time, then polls the portal until the data shows up. When
-it does, the page is rebuilt with the new forecast and pushed, which is what
-triggers the GitHub Pages build.
+This is a thin wrapper; the implementation lives in
+``ecmwf_widget/auto_publish``. The ECMWF schedule itself lives in
+``ecmwf_widget/scheduler``.
 
-    python auto_publish.py            # run it
-    python auto_publish.py --dry-run  # do everything except the push
+    python auto_publish.py            # wait for each new run, then push
     python auto_publish.py --once     # one cycle, then exit
-
-The 0.1 degree tier is published roughly two hours after the 0.25 degree
-tier, which lands about eight hours and forty minutes after the cycle time.
-That is the default here; ``--delay`` changes it if the timing shifts.
+    python auto_publish.py --dry-run  # do everything except the push
 """
 
-from __future__ import annotations
-
-import argparse
-import datetime as dt
-import subprocess
-import time
-
-import build_site
-from config import load_config
-from service import Service
-from store import ForecastStore
-
-#: How long after the cycle time the 0.1 degree data is expected.
-DEFAULT_DELAY = dt.timedelta(hours=8, minutes=40)
-
-#: The ECMWF cycles.
-CYCLES = (0, 6, 12, 18)
-
-
-def cycle_times(now: dt.datetime, back: int = 8) -> list[dt.datetime]:
-    """The recent and upcoming cycle times."""
-    start = now.replace(minute=0, second=0, microsecond=0)
-    start -= dt.timedelta(hours=start.hour % 6)
-    return [start + dt.timedelta(hours=6 * index) for index in range(-back, 5)]
-
-
-def next_expected(now: dt.datetime, delay: dt.timedelta) -> dt.datetime:
-    """When the next run is expected to be on the portal."""
-    for cycle in cycle_times(now):
-        expected = cycle + delay
-        if expected > now:
-            return expected
-    raise RuntimeError("no upcoming cycle found")  # pragma: no cover
-
-
-def run_git(*arguments: str) -> subprocess.CompletedProcess:
-    """Run a git command."""
-    return subprocess.run(["git", *arguments], capture_output=True, text=True, check=False)
-
-
-def publish(out_dir: str, config_path: str, dry_run: bool, max_places: int | None) -> bool:
-    """Rebuild the page and push it. Returns True when something was pushed."""
-    summary = build_site.build(out_dir, config_path, max_places)
-    print(f"  built {summary['file']} ({summary['size'] / 1e6:.2f} MB)")
-
-    status = run_git("status", "--porcelain")
-    if not status.stdout.strip():
-        print("  nothing changed, no push needed")
-        return False
-
-    if dry_run:
-        print("  dry run, not committing:")
-        print("   " + status.stdout.strip().replace("\n", "\n   "))
-        return False
-
-    stamp = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
-    run_git("add", "--all")
-    commit = run_git("commit", "-m", f"Update the forecast ({stamp})")
-    if commit.returncode != 0:
-        print(f"  commit failed: {commit.stderr.strip()}")
-        return False
-    push = run_git("push")
-    if push.returncode != 0:
-        print(f"  push failed: {push.stderr.strip()}")
-        return False
-    print(f"  pushed ({commit.stdout.strip().splitlines()[0] if commit.stdout.strip() else ''})")
-    return True
-
-
-def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--config", default="places.yml")
-    parser.add_argument("--out", default="docs", help="where the page is written")
-    parser.add_argument("--database", help="override the database path")
-    parser.add_argument(
-        "--delay",
-        default="08:40",
-        help="how long after the cycle the data is expected, as HH:MM",
-    )
-    parser.add_argument("--poll", type=int, default=120, help="seconds between tries")
-    parser.add_argument("--max-places", type=int, default=None)
-    parser.add_argument("--dry-run", action="store_true", help="do everything but push")
-    parser.add_argument("--once", action="store_true", help="one cycle, then exit")
-    parser.add_argument(
-        "--now",
-        action="store_true",
-        help="do not wait for the expected time, check straight away",
-    )
-    args = parser.parse_args(argv)
-
-    hours, minutes = (int(part) for part in args.delay.split(":"))
-    delay = dt.timedelta(hours=hours, minutes=minutes)
-
-    config = load_config(args.config)
-    if args.database:
-        config.database = args.database
-    store = ForecastStore(config.database)
-    service = Service(config, store)
-
-    now = dt.datetime.now(dt.UTC)
-    expected = next_expected(now, delay)
-    print("ECMWF open data publisher")
-    print(f"  database  {config.database}")
-    print(f"  page      {args.out}")
-    print(f"  next run  {expected.strftime('%Y-%m-%d %H:%M')} UTC "
-          f"(cycle + {args.delay})")
-    print(f"  polling every {args.poll} s")
-
-    while True:
-        # Wait until a minute after the expected time.
-        wait = (expected + dt.timedelta(minutes=1) - dt.datetime.now(dt.UTC)).total_seconds()
-        if args.now:
-            wait = 0
-        if wait > 0:
-            print(f"  waiting {wait / 60:.0f} min for the run")
-            if args.once:
-                return 0
-            time.sleep(wait)
-
-        print(f"  {dt.datetime.now(dt.UTC).strftime('%H:%M:%S')} looking for the data")
-        while True:
-            reports = service.poll()
-            fresh = [r for r in reports if r.values_stored]
-            if fresh:
-                for report in fresh:
-                    print(f"  got {report.model} run {report.run}: "
-                          f"{report.values_stored} values")
-                break
-            print(f"  not there yet, trying again in {args.poll} s")
-            if args.once:
-                return 0
-            time.sleep(args.poll)
-
-        publish(args.out, args.config, args.dry_run, args.max_places)
-
-        if args.once:
-            return 0
-        expected = next_expected(dt.datetime.now(dt.UTC), delay)
-
+from ecmwf_widget.auto_publish import main
 
 if __name__ == "__main__":
     raise SystemExit(main())

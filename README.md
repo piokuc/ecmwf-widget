@@ -50,6 +50,7 @@ repository keeps nothing of it, so it does not fill up.
 
 ```bash
 pip install -r requirements.txt
+pip install -r requirements-dev.txt   # only for the tests
 
 python service.py once     # fetch the latest run
 python widget.py --open    # and look at it
@@ -65,11 +66,63 @@ python service.py run      # keep the database up to date
 ```
 
 The published page is updated by a GitHub Action, so it does not need the
-laptop. To publish from the laptop instead:
+laptop. To publish from the laptop instead, the publisher daemon follows
+the ECMWF schedule itself — it waits for each cycle, pulls the data as
+soon as it appears, rebuilds the page and pushes to GitHub, which is what
+publishes the new version:
 
 ```bash
-python auto_publish.py     # waits for each new run, then pushes the page
+python auto_publish.py             # waits for each new run, then pushes
+python auto_publish.py --dry-run   # do everything except the push
 ```
+
+Ready-made service definitions for macOS (`launchd`) and Linux
+(`systemd`) are in [`deploy/`](deploy).
+
+## The structure
+
+The application lives in the `ecmwf_widget` package; the files on the top
+level are thin launchers for the commands above:
+
+```
+ecmwf_widget/          the package
+├── scheduler          the ECMWF publication schedule (0, 6, 12, 18 UTC)
+├── service            the ingester: find runs, download, extract, store
+├── auto_publish       the publishing daemon, on the schedule above
+├── publish            one-shot fetch, build and push
+├── build_site         the static page for GitHub Pages
+├── widget             the local widget server, and the page itself
+├── forecast           turning stored values into display structures
+├── store              the SQLite store
+├── points             places, GRIB grids and point extraction
+├── ecmwf_open_data    the anonymous HTTPS client for the open data portal
+├── models, parameters the catalogue of models and parameters
+├── config             places.yml loading and validation
+├── build_places       rebuilding world_places.yml
+├── make_icons         generating the weather icons
+└── download_9km       downloading a single file, without the database
+tests/                 unit tests (pytest) and the website scenarios
+├── test_*.py          the unit tests
+└── features           Cucumber descriptions of the published page,
+                       executed with pytest-bdd against a served bundle
+deploy/                service files for launchd and systemd
+```
+
+## The tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest                    # unit tests and website scenarios
+pytest tests/features     # just the website scenarios
+```
+
+The unit tests cover the schedule, the configuration, the parameters, the
+store, the service (with the network faked away) and the publishing step
+(against a throwaway git repository). The scenarios in
+`tests/features/published_page.feature` describe what the published page
+promises; they serve the built bundle over HTTP and check it the way a
+visitor would receive it. Build the page first with `python build_site.py`
+if `docs/index.html` is not there yet.
 
 ## The places
 
