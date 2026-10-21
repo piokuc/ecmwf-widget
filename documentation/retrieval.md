@@ -18,7 +18,8 @@ forty minutes after the cycle time:
 `auto_publish.py` works out the next expected time, waits until a minute
 after it, and then polls every two minutes until the data is there. The
 delay is a setting (`--delay`), because the exact timing is a property of
-ECMWF's dissemination and not of this code.
+ECMWF's dissemination and not of this code. The GitHub Action does the same
+thing, on a schedule.
 
 The check itself is one request: does the index file for step 0 of that run
 exist? A 200 means it is published.
@@ -90,13 +91,18 @@ to the real elevation of the place is then used to correct the temperature
 with a standard lapse rate, 6.5 K per kilometre by default. The widget
 shows both heights, so the correction is never a surprise.
 
-## The ensemble
+## Ensembles
 
-The AIFS ensemble publishes all fifty perturbed members in one file per
-step. The retriever takes the range for the members it wants, extracts each
-one at the place, and the service averages them. The spread it stores is
-the range between the 10th and the 90th percentile of the members, which is
-the usual "likely range" of an ensemble.
+ECMWF publishes the AIFS ensemble, with all fifty perturbed members in one
+file per step, and the IFS ensemble at 0.1° as well.
+
+The retriever can read them: the index gives the byte range of every member,
+and the service can average them and store the range between the 10th and
+the 90th percentile, which is the usual "likely range" of an ensemble.
+
+Neither is set up at the moment. The models are in `models.py`, and the
+aggregation is in `service.py`, so it is a matter of adding the model back
+and naming the members to take.
 
 ## Storing it
 

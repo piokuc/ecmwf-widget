@@ -7,7 +7,7 @@ API key and no registration of any kind.
 
 | | |
 | --- | --- |
-| The portal | <https://data.ecmwf.int/forecasts> |
+| The portal | <https://data.ecmwf.int/forecasts/> |
 | The dataset page | <https://www.ecmwf.int/en/forecasts/datasets/open-data> |
 | The official documentation | [ECMWF open data: real-time forecasts from IFS and AIFS](https://confluence.ecmwf.int/spaces/DAC/pages/272310539/ECMWF+open+data+real-time+forecasts+from+IFS+and+AIFS) |
 | The licence | [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) |

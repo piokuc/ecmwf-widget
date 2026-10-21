@@ -131,9 +131,12 @@ python build_places.py --check  # how well the capitals matched
 ## The parameters
 
 ```yaml
-parameters: [2t, 2d, msl, 10u, 10v, 10fg, tcc, tp, sf, sd, asn, mucape]
+parameters: [2t, 2d, msl, 10u, 10v, 10fg, tcc, tp, sf, sd, asn, mucape, z]
 pressure_levels: []
 ```
+
+The `z` is the orography, which the height correction needs. Without it a
+summit would get the forecast of the cell below it.
 
 `basic` is the small set the widget normally shows, `all` is every
 parameter the 0.1° tier publishes, and a list is a list. The list above is
@@ -167,6 +170,9 @@ steps: [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72,
         84, 96, 108, 120, 132, 144,
         168, 192, 216, 240, 288, 336, 360]
 ```
+
+That is 26 steps: every six hours for the first three days, every twelve
+hours to a week, then once a day.
 
 Every six hours for the first three days, then every twelve hours to a week,
 then once a day. The open data only has those steps, and a step that the

@@ -44,6 +44,7 @@ less than the local service does:
 | Places | 41 | 153 |
 | Models | IFS 0.1°, AIFS | IFS 0.1°, IFS 0.25°, AIFS |
 | Parameters | 13, surface only | 13, surface only |
+| Pressure levels | none | none |
 | Downloaded per run | 630 MB | 750 MB |
 | Size of the page | 718 KB | 718 KB |
 
