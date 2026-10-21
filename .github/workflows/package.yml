@@ -52,9 +52,10 @@ jobs:
       - name: Smoke test the bundle
         run: |
           set -euo pipefail
-          tar -tzf dist/*.tar.gz > /tmp/bundle.contents
-          STAGE=$(head -n 1 /tmp/bundle.contents | cut -d/ -f1)
-          tar -xzf dist/*.tar.gz
+          # The sdist is a tar.gz too, so the bundle has to be named exactly.
+          ARCHIVE=$(printf '%s\n' dist/ecmwf-widget-*.tar.gz)
+          STAGE=$(basename "$ARCHIVE" .tar.gz)
+          tar -xzf "$ARCHIVE"
           chmod +x "$STAGE/bin/"*
           # the ingestor answers, without touching the network
           "$STAGE/bin/ecmwf-service" status
