@@ -52,7 +52,8 @@ jobs:
       - name: Smoke test the bundle
         run: |
           set -euo pipefail
-          STAGE=$(tar -tzf dist/*.tar.gz | head -1 | cut -d/ -f1)
+          tar -tzf dist/*.tar.gz > /tmp/bundle.contents
+          STAGE=$(head -n 1 /tmp/bundle.contents | cut -d/ -f1)
           tar -xzf dist/*.tar.gz
           chmod +x "$STAGE/bin/"*
           # the ingestor answers, without touching the network
