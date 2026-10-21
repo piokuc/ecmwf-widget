@@ -529,6 +529,14 @@ class ForecastReader:
                     "timezone": timezone,
                     "note": item.note,
                     "times": [local_label(_valid_time(run, step), timezone) for step in place_steps],
+                    # When the forecast runs out. The 0.1 degree tier only goes
+                    # to 360 hours for the 00 and 12 UTC runs; the 06 and 18
+                    # UTC runs stop at 90 hours.
+                    "until": (
+                        local_time(_valid_time(run, place_steps[-1]), timezone).strftime("%a %d %b %H:%M")
+                        if place_steps
+                        else ""
+                    ),
                     "steps": place_steps,
                     "series": payload_series,
                 }

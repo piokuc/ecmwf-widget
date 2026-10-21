@@ -231,8 +231,20 @@ PAGE = r"""<!DOCTYPE html>
   }
   thead tr.days th {
     font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: .05em;
-    color: var(--muted); padding-bottom: 1px; text-align: center;
+    color: var(--muted); padding-bottom: 3px; text-align: center;
   }
+  /* A rule between the days, so it is clear where one day ends. */
+  .day-start { border-left: 1px solid var(--line); }
+  thead tr.days th.day-start { border-left: 1px solid var(--line); }
+  tbody tr.summary td {
+    font-size: 12.5px; color: var(--muted); text-align: center;
+    padding-top: 5px; padding-bottom: 5px; white-space: nowrap;
+  }
+  tbody tr.summary th {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--muted);
+  }
+  tbody tr.summary td:first-of-type { border-left: none; }
   thead tr.days th.now-col { color: var(--accent); }
   thead tr.times th {
     font-size: 13.5px; font-weight: 500; padding-top: 1px; padding-bottom: 7px;
@@ -699,6 +711,41 @@ function hideTip() { tip.classList.remove("on"); }
 // --------------------------------------------------------------------------- //
 const HIDDEN = new Set(["z", "model_elevation"]);
 
+// The columns grouped into local days.
+function dayGroups(place) {
+  const groups = [];
+  let at = 0;
+  while (at < place.times.length) {
+    const day = place.times[at].split(" ")[0];
+    let end = at;
+    while (end + 1 < place.times.length && place.times[end + 1].split(" ")[0] === day) end++;
+    groups.push({ day, from: at, to: end });
+    at = end + 1;
+  }
+  return groups;
+}
+
+// The temperature range and the rain of one day.
+function daySummary(series, from, to) {
+  const range = (key) => {
+    const entry = series[key];
+    if (!entry) return null;
+    const values = entry.values.slice(from, to + 1).filter((v) => v !== null && v !== undefined);
+    return values.length ? values : null;
+  };
+  const temps = range("2t");
+  const rain = range("precip_increment");
+  const parts = [];
+  if (temps) {
+    parts.push(Math.round(Math.min(...temps)) + "–" + Math.round(Math.max(...temps)) + "°");
+  }
+  if (rain) {
+    const total = rain.reduce((sum, v) => sum + v, 0);
+    if (total > 0.05) parts.push(total.toFixed(1) + " mm");
+  }
+  return parts.join("  ·  ");
+}
+
 function renderPlace(place, nowStep, order) {
   const card = el("section", "place");
   const series = place.series;
@@ -831,6 +878,8 @@ function renderPlace(place, nowStep, order) {
   const thead = el("thead");
   // The days are one row, the times of the day below them, the way yr.no
   // and the Met Office lay it out.
+  const dayStart = {};
+  dayGroups(place).forEach((group) => { dayStart[group.from] = true; });
   const dayRow = el("tr", "days");
   const timeRow = el("tr", "times");
   const corner = el("th", null, "");
@@ -846,7 +895,8 @@ function renderPlace(place, nowStep, order) {
     if (spans > 1) head.colSpan = spans;
     dayRow.appendChild(head);
     for (let i = at; i <= end; i++) {
-      const cell = el("th", i === current ? "now-col" : null, place.times[i].split(" ")[1]);
+      const cell = el("th", (i === current ? "now-col" : null) + (dayStart[i] ? " day-start" : ""),
+                      place.times[i].split(" ")[1]);
       cell.dataset.col = i;
       cell.classList.add("clickable");
       cell.title = "Click to show this hour";
@@ -864,13 +914,25 @@ function renderPlace(place, nowStep, order) {
 
   const tbody = el("tbody");
 
+  // One cell per day, with the range and the rain of that day.
+  const summaryRow = el("tr", "summary");
+  summaryRow.appendChild(el("th", null, "Day"));
+  const groups = dayGroups(place);
+  groups.forEach((group) => {
+    const cell = el("td", group.from > 0 ? "day-start" : null,
+                    daySummary(series, group.from, group.to));
+    cell.colSpan = group.to - group.from + 1;
+    summaryRow.appendChild(cell);
+  });
+  tbody.appendChild(summaryRow);
+
   const condRow = el("tr", "conds");
   const condHead = el("th");
   condHead.appendChild(icon("clock", 18));
   condHead.appendChild(document.createTextNode("Condition"));
   condRow.appendChild(condHead);
   steps.forEach((_, i) => {
-    const cell = el("td", i === current ? "now-col" : null);
+    const cell = el("td", (i === current ? "now-col" : null) + (dayStart[i] ? " day-start" : ""), null);
     cell.dataset.col = i;
     cell.appendChild(icon(conditionFor(series, i).key, 34));
     condRow.appendChild(cell);
@@ -904,7 +966,7 @@ function renderPlace(place, nowStep, order) {
     label.appendChild(document.createTextNode(s.label));
     row.appendChild(label);
     s.values.forEach((value, i) => {
-      const cell = el("td", i === current ? "now-col" : null);
+      const cell = el("td", (i === current ? "now-col" : null) + (dayStart[i] ? " day-start" : ""), null);
       cell.dataset.col = i;
       cell.classList.add("clickable");
       cell.title = "Click to show this hour";
@@ -1216,6 +1278,9 @@ async function load(run, place) {
   }
   meta.appendChild(el("span", null, "Run "));
   meta.appendChild(el("b", null, data.cycle_utc));
+  if (data.places.length && data.places[0].until) {
+    meta.appendChild(el("span", null, "· until " + data.places[0].until));
+  }
 
   if (modelSelect.dataset.filled !== "yes" && data.models.length) {
     data.models.forEach(info => {
