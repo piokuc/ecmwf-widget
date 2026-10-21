@@ -126,8 +126,10 @@ PAGE = r"""<!DOCTYPE html>
   .picker li .k { color: var(--muted); font-size: 11px; margin-left: 6px; }
 
   /* Parameter panel ---------------------------------------------------- */
+  .tools { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; }
   .panel {
-    position: absolute; z-index: 40; right: 20px; top: 62px; width: 320px; max-height: 72vh;
+    position: absolute; z-index: 40; right: 0; top: calc(100% + 8px);
+    width: 520px; max-height: calc(100vh - 110px);
     overflow-y: auto; background: var(--card); border: 1px solid var(--line);
     border-radius: 12px; box-shadow: var(--shadow); padding: 14px; display: none;
   }
@@ -135,21 +137,26 @@ PAGE = r"""<!DOCTYPE html>
   .panel h3 { margin: 0 0 4px; font-size: 14px; font-weight: 600; }
   .panel p { margin: 0 0 12px; color: var(--muted); font-size: 12px; }
   .panel .group { margin-bottom: 12px; }
+  .panel .items { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; align-items: start; }
+  .panel .group-items { display: block; }
+  .panel .search { width: 100%; margin: 0 0 10px; padding: 5px 9px; font-size: 13px; }
   .panel .group > h4 {
     margin: 0 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
     color: var(--muted); font-weight: 600;
   }
   .panel label {
     display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer;
-    font-size: 13.5px;
+    font-size: 13.5px; min-width: 0;
   }
+  .panel label > span:not(.swatch) { overflow: hidden; text-overflow: ellipsis; }
   .panel label:hover { color: var(--accent); }
   .panel label.off { opacity: .38; }
   .panel label.off:hover { color: var(--muted); }
   .panel p.note { margin: 12px 0 0; font-size: 11.5px; line-height: 1.45; }
   .panel input[type=checkbox] { accent-color: var(--accent); width: 15px; height: 15px; margin: 0; }
   .panel .swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
-  .panel .unit { color: var(--muted); font-size: 11.5px; margin-left: auto; }
+  .panel .unit { color: var(--muted); font-size: 11.5px; margin-left: auto;
+                 white-space: nowrap; flex: none; padding-left: 4px; }
 
   /* Cards -------------------------------------------------------------- */
   .place {
@@ -311,23 +318,25 @@ PAGE = r"""<!DOCTYPE html>
     <h1>ECMWF forecast</h1>
     <div class="meta" id="meta"></div>
     <div class="grow"></div>
-    <select id="model" title="Forecast model"></select>
-    <div class="picker" id="picker">
-      <span class="flag" id="pickerFlag"></span>
-      <input id="placeInput" placeholder="Choose a place" autocomplete="off" spellcheck="false">
-      <ul id="placeList"></ul>
-    </div>
-    <select id="run" title="Forecast run"></select>
-    <button id="clock" title="Show the times in the local time or in UTC">Local</button>
-    <button id="params" title="Choose the parameters to show">Parameters</button>
-    <button id="theme" title="Switch between light and dark">Auto</button>
-  </header>
+    <div class="tools">
+      <select id="model" title="Forecast model"></select>
+      <div class="picker" id="picker">
+        <span class="flag" id="pickerFlag"></span>
+        <input id="placeInput" placeholder="Choose a place" autocomplete="off" spellcheck="false">
+        <ul id="placeList"></ul>
+      </div>
+      <select id="run" title="Forecast run"></select>
+      <button id="clock" title="Show the times in the local time or in UTC">Local</button>
+      <button id="params" title="Choose the parameters to show">Parameters</button>
+      <button id="theme" title="Switch between light and dark">Auto</button>
 
-  <div class="panel" id="panel">
-    <h3>Parameters</h3>
-    <p>Pick what to show in the chart and the table. The choice is kept in the address.</p>
-    <div id="panelBody"></div>
-  </div>
+      <div class="panel" id="panel">
+        <h3>Parameters</h3>
+        <p>Pick what to show in the chart and the table. The choice is kept in the address.</p>
+        <div id="panelBody"></div>
+      </div>
+    </div>
+  </header>
 
   <div id="content"><div class="empty">Loading&hellip;</div></div>
   <p class="foot">
@@ -1228,17 +1237,30 @@ function renderPanel(catalogue) {
     return;
   }
 
-  const groups = {};
-  catalogue.forEach((item) => {
-    const group = item.group || "other";
-    (groups[group] = groups[group] || []).push(item);
-  });
+  const search = el("input", "search");
+  search.placeholder = "Search the parameters";
+  body.appendChild(search);
 
-  Object.keys(groups).sort().forEach((group) => {
+  const list = el("div", "items");
+  body.appendChild(list);
+
+  const draw = (needle) => {
+    list.innerHTML = "";
+    const groups = {};
+    catalogue
+      .filter((item) => !needle || (item.label + " " + item.key).toLowerCase().includes(needle))
+      .forEach((item) => {
+        const group = item.group || "other";
+        (groups[group] = groups[group] || []).push(item);
+      });
+
+    Object.keys(groups).sort().forEach((group) => {
     const box = el("div", "group");
     box.appendChild(el("h4", null, group));
+    const items = el("div", "group-items");
     groups[group].forEach((item) => {
       const label = el("label", item.downloaded ? "" : "off");
+      if (!item.downloaded) label.title = "Not downloaded. Add it to the parameters list in places.yml.";
       const check = document.createElement("input");
       check.type = "checkbox";
       check.disabled = !item.downloaded;
@@ -1259,14 +1281,21 @@ function renderPanel(catalogue) {
       label.appendChild(swatch);
       label.appendChild(document.createTextNode(item.label));
       if (item.levtype === "pl") {
-        label.appendChild(el("span", "unit", "on " + (item.levels || []).join(", ") + " hPa"));
+        const levels = item.levels || [];
+        label.appendChild(el("span", "unit", levels.length + " levels"));
+        label.title = "On " + levels.join(", ") + " hPa";
       } else {
         label.appendChild(el("span", "unit", item.unit));
       }
-      box.appendChild(label);
+      items.appendChild(label);
     });
-    body.appendChild(box);
-  });
+    box.appendChild(items);
+    list.appendChild(box);
+    });
+  };
+
+  draw("");
+  search.addEventListener("input", () => draw(search.value.trim().toLowerCase()));
 
   const missing = catalogue.filter((item) => !item.downloaded).length;
   if (missing) {
