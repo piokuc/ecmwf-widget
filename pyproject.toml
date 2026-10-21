@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ecmwf-widget"
+description = "A point forecast service for ECMWF's free and open 0.1 degree data, and the web page that shows it"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Piotr Kuczynski" }]
+keywords = ["ecmwf", "forecast", "open-data", "grib", "weather"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
+]
+# The version is the single one in ecmwf_widget/__init__.py.
+dynamic = ["version"]
+
+dependencies = [
+    "requests>=2.28",
+    "PyYAML>=6.0",
+    "eccodes>=1.6",
+]
+
+[project.optional-dependencies]
+# Only needed to regenerate the weather icons with make_icons.py.
+icons = [
+    "torch>=2.4",
+    "diffusers>=0.41",
+    "transformers>=4.50",
+    "accelerate>=1.0",
+    "safetensors>=0.5",
+    "Pillow>=10.0",
+    "numpy>=1.26",
+]
+# The tests.
+dev = ["pytest", "pytest-bdd"]
+
+[project.urls]
+Homepage = "https://github.com/piokuc/ecmwf-widget"
+Documentation = "https://github.com/piokuc/ecmwf-widget/tree/main/documentation"
+"ECMWF open data" = "https://www.ecmwf.int/en/forecasts/datasets/open-data"
+
+[project.scripts]
+ecmwf-service = "ecmwf_widget.service:main"
+ecmwf-widget = "ecmwf_widget.widget:main"
+ecmwf-publisher = "ecmwf_widget.auto_publish:main"
+ecmwf-publish = "ecmwf_widget.publish:main"
+ecmwf-build-site = "ecmwf_widget.build_site:main"
+ecmwf-build-places = "ecmwf_widget.build_places:main"
+ecmwf-make-icons = "ecmwf_widget.make_icons:main"
+ecmwf-download = "ecmwf_widget.download_9km:main"
+
+[tool.setuptools]
+# The launchers at the top of the repository are not part of the package.
+packages = ["ecmwf_widget"]
+
+[tool.setuptools.dynamic]
+version = { attr = "ecmwf_widget.__version__" }

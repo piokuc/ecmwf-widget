@@ -1,0 +1,126 @@
+# Configuration for the ECMWF 0.1 deg point forecast service.
+#
+# Add a place by copying an entry and changing the id, name and coordinates.
+# The id must be unique and is used as the key in the database.
+#
+# Coordinates are decimal degrees (WGS84). Elevation is the ground elevation
+# in metres; it is only used for display, the forecast values are taken from
+# the model grid.
+
+# Your own places. These are always followed.
+places:
+  - id: gliwice
+    name: Gliwice
+    latitude: 50.29417
+    longitude: 18.66583
+    elevation: 230
+    timezone: Europe/Warsaw
+    country: Poland
+    note: City centre, on the Kłodnica river
+    country: Poland
+    country_code: PL
+    flag: 🇵🇱
+
+  - id: gorki-wielkie
+    name: Górki Wielkie
+    latitude: 49.77281
+    longitude: 18.85401
+    elevation: 328
+    timezone: Europe/Warsaw
+    country: Poland
+    note: Village in gmina Brenna, Cieszyn County, Beskids
+    country: Poland
+    country_code: PL
+    flag: 🇵🇱
+
+  # A second village of a similar name sits in gmina Opatów, Świętokrzyskie
+  # Voivodeship. Uncomment to follow it as well.
+  # - id: gorki-wielkie-opatow
+  #   name: Gorki Wielkie (Opatów)
+  #   latitude: 50.08890
+  #   longitude: 18.52580
+  #   elevation: 261
+  #   timezone: Europe/Warsaw
+  #   country: Poland
+
+# Which world places to follow on top of your own. The catalogue lives in
+# world_places.yml and holds every capital, a lot of major cities and some
+# notable peaks.
+#   all          - the whole catalogue
+#   none         - only your own places
+#   region:europe- every capital in Europe
+#   kind:peak    - the mountains
+#   a list of place ids, for example [warsaw, zurich, sniezka]
+catalogue: [region:europe, kind:peak]
+
+# Which models to download.
+#   ifs      - the high resolution forecast, about 9 km (0.1°)
+#   ifs025   - the same forecast on the 0.25° grid, available sooner
+#   aifs     - the artificial intelligence forecast
+models: [ifs, ifs025, aifs]
+
+# Which parameters to fetch.
+#
+#   basic  - the small set the widget normally shows
+#   all    - every parameter the 0.1 deg tier publishes, which is a lot of
+#            downloading: every parameter is a full global field
+#   a list - explicit parameter names, as below
+#
+# The list below is the interesting ones, all on the surface: the
+# temperature, the wind (the components, so the direction and the speed can
+# be worked out), the rain and the snow.
+#
+# The panel in the widget always shows every parameter ECMWF publishes, and
+# greys out the ones that are not in this list, so it is clear what
+# changing it would bring in.
+parameters: [2t, 2d, msl, 10u, 10v, 10fg, tcc, tp, sf, sd, asn, mucape, z]
+
+# Pressure levels to fetch when pressure level parameters are selected.
+# Each level of each parameter is a full global field too, so every level
+# costs another download. There are none here: the list above is surface
+# only.
+pressure_levels: []
+
+# Forecast steps in hours. 0 is the analysis (model run time).
+# The open data goes to 360 hours, but only for the 00 and 12 UTC runs; the
+# 06 and 18 UTC runs stop at 144 hours.
+# Every six hours for the first three days, then every twelve hours to a
+# week, then once a day. More steps means a lot more to download, because
+# every parameter is a full global field.
+steps: [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72,
+        84, 96, 108, 120, 132, 144,
+        168, 192, 216, 240, 288, 336, 360]
+
+# Where to get the data. The ECMWF portal is the primary source; the cloud
+# mirrors are identical copies and are used as a fallback when the portal is
+# busy or unreachable.
+source: ecmwf
+fallback_sources: [aws, google]
+
+# How often the service checks for a new run, in seconds.
+poll_interval: 900
+
+# How many runs to pick up when the service starts. Two are fetched: the
+# newest one, and the one before it, which is the 00 or 12 UTC run that
+# reaches all the way to 360 hours. The widget shows the run that reaches
+# furthest, so the short 06 and 18 UTC runs are not what ends up on screen.
+backfill_runs: 2
+
+# How many runs of each model to keep in the database. Two is enough to see
+# how the forecast changed, and the database is then about 120 MB.
+keep_runs: 2
+
+# How the value at a point is taken from the model grid.
+#   bilinear - interpolate between the four surrounding grid points (default)
+#   nearest  - take the closest grid point, about 5 km away
+method: bilinear
+
+# Temperature correction for points that sit above the model's own terrain,
+# in K per km. The model grid is about 9 km across, so for a summit the
+# forecast refers to the height of the surrounding cell. 6.5 is the usual
+# environmental lapse rate; 0 disables the correction.
+lapse_rate: 6.5
+
+# Where the database and the downloaded GRIB files live.
+database: data/forecast.sqlite
+cache_dir: data/grib

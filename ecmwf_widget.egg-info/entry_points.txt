@@ -1,0 +1,9 @@
+[console_scripts]
+ecmwf-build-places = ecmwf_widget.build_places:main
+ecmwf-build-site = ecmwf_widget.build_site:main
+ecmwf-download = ecmwf_widget.download_9km:main
+ecmwf-make-icons = ecmwf_widget.make_icons:main
+ecmwf-publish = ecmwf_widget.publish:main
+ecmwf-publisher = ecmwf_widget.auto_publish:main
+ecmwf-service = ecmwf_widget.service:main
+ecmwf-widget = ecmwf_widget.widget:main

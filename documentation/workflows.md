@@ -107,6 +107,37 @@ The daemon logs to `data/publishd.log`, and `launchctl list` (or
 daemon finds it on the next poll and publishes then. The page is never more
 than one run behind, but it will not be exactly on time.
 
+## The packages
+
+The whole thing — the ingestor, the local widget, the site builder and the
+publisher, with their dependencies already installed — is built by GitHub
+Actions for Linux and macOS:
+
+```bash
+gh workflow run package.yml        # or push a tag v*
+gh run download                    # • pick "dist-macos-15" or "dist-ubuntu-24.04"
+```
+
+Two kinds of artifact come out of every run:
+
+| Artifact | What it is |
+| --- | --- |
+| `ecmwf_widget-*.whl` | The wheel: installable on any system with `pip install ecmwf_widget-*.whl`; the dependencies are fetched at install time. It brings the `ecmwf-service`, `ecmwf-widget`, `ecmwf-publisher`, `ecmwf-publish`, `ecmwf-build-site`, `ecmwf-build-places` and `ecmwf-download` commands. |
+| `ecmwf-widget-<version>-<os>-<arch>.tar.gz` | The portable bundle, per platform. Unpack it anywhere and run from it — a `bin/` of launchers, the dependencies in `vendor/`, the documentation and a starting `places.yml`. Nothing is written outside the directory you run it from. |
+
+```bash
+tar -xzf ecmwf-widget-1.0.0-macos-arm64.tar.gz
+cd ecmwf-widget-1.0.0-macos-arm64
+./bin/ecmwf-service once      # fetch the latest run into ./data
+./bin/ecmwf-widget --open     # and look at it
+```
+
+The bundle needs a `python3` of 3.10 or newer on the PATH and nothing else.
+`deploy/make_bundle.sh` is what assembles it, so the same archive can be
+made by hand on your own machine. The packages are checked in the workflow
+before they are uploaded: the test suite runs on both platforms, and the
+bundle itself answers a command before it is packed.
+
 ## A one off download
 
 For a single file, without the database or the service:

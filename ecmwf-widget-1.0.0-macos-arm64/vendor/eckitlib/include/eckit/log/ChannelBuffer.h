@@ -1,0 +1,93 @@
+// SPDX-FileCopyrightText: 1996- European Centre for Medium-Range Weather Forecasts (ECMWF)
+// SPDX-License-Identifier: Apache-2.0
+
+/// @file ChannelBuffer.h
+/// @author Baudouin Raoult
+/// @author Tiago Quintino
+/// @date   August 2016
+
+#ifndef eckit_log_ChannelBuffer_h
+#define eckit_log_ChannelBuffer_h
+
+#include <streambuf>
+#include <vector>
+
+#include "eckit/log/Channel.h"
+
+namespace eckit {
+
+//----------------------------------------------------------------------------------------------------------------------
+
+class LogTarget;
+
+/// Stream buffer to be usedby Channel
+class ChannelBuffer : public std::streambuf {
+
+private:  // methods
+
+    /// constructor, taking ownership of stream
+    ChannelBuffer(std::size_t size = 1024);
+
+    ChannelBuffer(const ChannelBuffer&)            = delete;
+    ChannelBuffer& operator=(const ChannelBuffer&) = delete;
+    ChannelBuffer(ChannelBuffer&&)                 = delete;
+    ChannelBuffer& operator=(ChannelBuffer&&)      = delete;
+
+    ~ChannelBuffer() override;
+
+    bool active() const;
+
+    void reset();
+
+    void setTarget(LogTarget* target);
+    void addTarget(LogTarget* target);
+
+    void indent(const char* space = "   ");
+    void unindent();
+
+    void setStream(std::ostream& out);
+    void addStream(std::ostream& out);
+
+    void setFile(const std::string& path, size_t bufferSize = 4 * 1024);
+    void addFile(const std::string& path, size_t bufferSize = 4 * 1024);
+
+    void setCallback(channel_callback_t cb, void* data = nullptr);
+    void addCallback(channel_callback_t cb, void* data = nullptr);
+
+protected:  // methods
+
+    /// override this to change buffer behavior
+    /// @returns true if no error occured
+    virtual bool dumpBuffer();
+
+    /// typically you don't need to override this
+    /// @see dumpBuffer
+    int_type overflow(int_type ch) override;
+
+    /// typically you don't need to override this
+    /// @see dumpBuffer
+    int_type sync() override;
+
+protected:  // members
+
+    LogTarget* target_;
+
+    std::vector<char> buffer_;
+
+private:
+
+    friend std::ostream& operator<<(std::ostream& os, const ChannelBuffer& c) {
+        c.print(os);
+        return os;
+    }
+
+    void print(std::ostream& s) const;
+
+    friend class Channel;
+};
+
+//----------------------------------------------------------------------------------------------------------------------
+
+}  // namespace eckit
+
+#endif

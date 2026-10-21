@@ -1,0 +1,86 @@
+name: Build the packages
+
+# A wheel and an sdist (pure Python, every OS), and a portable bundle per
+# platform: the ingestor, the local widget, the site builder and the
+# publishing daemon with their dependencies already installed inside.
+#
+# Every push of a tag `v*`, or a run from the Actions tab, builds the
+# packages and uploads them as artifacts; a tag also gets them attached
+# to the release marked by it.
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Run the tests
+        run: |
+          python -m pip install --quiet pytest pytest-bdd .
+          python -m pytest -q
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+
+      - name: Build the wheel and the sdist
+        run: |
+          python -m pip install --quiet build
+          python -m build
+
+      - name: Assemble the portable bundle
+        run: sh deploy/make_bundle.sh
+
+      - name: Smoke test the bundle
+        run: |
+          set -euo pipefail
+          STAGE=$(tar -tzf dist/*.tar.gz | head -1 | cut -d/ -f1)
+          tar -xzf dist/*.tar.gz
+          chmod +x "$STAGE/bin/"*
+          # the ingestor answers, without touching the network
+          "$STAGE/bin/ecmwf-service" status
+          ./"$STAGE/bin/ecmwf-download" --help >/dev/null
+        shell: bash
+
+      - name: Upload the artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.os }}
+          path: |
+            dist/*.tar.gz
+            dist/*.whl
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: dist-*
+          merge-multiple: true
+          path: dist
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true

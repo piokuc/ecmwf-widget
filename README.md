@@ -77,7 +77,9 @@ python auto_publish.py --dry-run   # do everything except the push
 ```
 
 Ready-made service definitions for macOS (`launchd`) and Linux
-(`systemd`) are in [`deploy/`](deploy).
+(`systemd`) are in [`deploy/`](deploy), and GitHub Actions builds
+[distributable packages](documentation/workflows.md#the-packages) for
+both platforms — a wheel and a portable bundle per OS.
 
 ## The structure
 

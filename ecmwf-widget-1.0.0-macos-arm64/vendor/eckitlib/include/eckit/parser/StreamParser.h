@@ -1,0 +1,72 @@
+// SPDX-FileCopyrightText: 1996- European Centre for Medium-Range Weather Forecasts (ECMWF)
+// SPDX-License-Identifier: Apache-2.0
+
+/// @author Baudouin Raoult
+/// @author Tiago Quintino
+/// @date Sep 2012
+
+#ifndef eckit_StreamParser_h
+#define eckit_StreamParser_h
+
+#include <set>
+
+#include "eckit/exception/Exceptions.h"
+
+namespace eckit {
+
+//----------------------------------------------------------------------------------------------------------------------
+
+class StreamParser {
+
+public:  // types
+
+    class Error : public Exception {
+    public:
+
+        Error(const std::string& what, size_t line = 0);
+    };
+
+public:  // methods
+
+    StreamParser(std::istream& in, bool comments = false, const char* comment = "#");
+
+    StreamParser(const StreamParser&)            = delete;
+    StreamParser& operator=(const StreamParser&) = delete;
+    StreamParser(StreamParser&&)                 = delete;
+    StreamParser& operator=(StreamParser&&)      = delete;
+
+    virtual ~StreamParser() = default;
+
+    char peek(bool spaces = false);
+    char next(bool spaces = false);
+
+    void consume(char);
+    void consume(const char*);
+
+    void expect(const char*);
+    void putback(char);
+
+    size_t line() const { return line_; };
+
+protected:  // members
+
+    size_t line_;
+    size_t pos_;
+    bool comments_;
+
+private:  // members
+
+    std::istream& in_;
+
+    std::set<char> comment_;
+
+    char _get();
+    char _peek();
+    bool _eof();
+};
+
+//----------------------------------------------------------------------------------------------------------------------
+
+}  // namespace eckit
+
+#endif
