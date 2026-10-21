@@ -1,32 +1,42 @@
-# ECMWF 0.1° forecast widget
+<div align="center">
 
-Point forecasts from ECMWF's free and open 0.1° (about 9 km) IFS data, for
-any set of places, with a small web widget and a service that keeps the data
-up to date.
+# ECMWF forecast widget
 
-![The widget](docs/screenshot.png)
+**A point forecast service for ECMWF's free and open 0.1° data, and the
+widget that shows it.**
+
+[Open the live page](https://piokuc.github.io/ecmwf-widget/) ·
+[Documentation](documentation/index.md) ·
+[ECMWF open data](https://www.ecmwf.int/en/forecasts/datasets/open-data)
+
+</div>
+
+---
+
+<p align="center">
+  <img src="docs/screenshot.png" width="820" alt="The widget showing the forecast for Gliwice">
+</p>
 
 ## What it does
 
-- Downloads ECMWF's highest resolution open forecast data. No API key, no
-  registration, no account. The data is CC-BY-4.0.
-- Evaluates the forecast at the points you care about: cities, villages,
-  summits, anywhere.
-- Keeps running and picks up each new run as it is published.
-- Serves a widget that shows one place at a time, with a searchable list of
-  places, several models to choose from, and a chart where every parameter
-  has its own colour, scale and hover description.
+Since the 20th of October 2026 ECMWF publishes its highest resolution
+forecast at **0.1°, about 9 km**, as free and open data. There is no
+account, no API key and no registration.
 
-## The models
+This project fetches that data, evaluates it at the places you care about
+— cities, villages, summits — and serves it as a page you can use on a
+phone.
 
-| Key | What it is |
-| --- | --- |
-| `ifs` | The high resolution deterministic forecast, 0.1° (about 9 km) |
-| `ifs025` | The same forecast on the 0.25° grid, published sooner |
-| `aifs` | The artificial intelligence forecast |
-
-The AI ensemble is not set up at the moment. ECMWF serves it, and the
-service can ingest an ensemble again by adding the model back to `models.py`.
+- **Every parameter** the 0.1° tier publishes: 48 surface parameters and 10
+  on four pressure levels.
+- **Three models**: IFS at 0.1° and 0.25°, and the AIFS machine learning
+  forecast.
+- **Every capital**, a lot of major cities and some notable peaks, with
+  flags, and any place you add yourself.
+- **Fifteen days** of forecast, grouped by day, with the numbers and the
+  plot of each parameter together.
+- **Local time and UTC**, a switch between the two, and the time the values
+  belong to always in the corner.
 
 ## Getting started
 
@@ -34,19 +44,22 @@ service can ingest an ensemble again by adding the model back to `models.py`.
 pip install -r requirements.txt
 
 python service.py once     # fetch the latest run
-python widget.py --open    # serve the widget on http://localhost:8765
+python widget.py --open    # and look at it
 ```
 
-To keep it up to date, run the service as a daemon:
+The widget is then on <http://localhost:8765>.
+
+To keep it up to date, run the service as a daemon, and optionally the
+publisher with it:
 
 ```bash
-python service.py run      # checks every 15 minutes
+python service.py run
+python auto_publish.py     # waits for each new run, then updates the page
 ```
 
-## Choosing places
+## The places
 
-Your own places live in `places.yml`. Add an entry and it is followed from
-the next run:
+Your own places go in `places.yml`:
 
 ```yaml
 places:
@@ -60,70 +73,67 @@ places:
     flag: 🇵🇱
 ```
 
-There is also a catalogue of every capital, a lot of major cities and some
-notable peaks in `world_places.yml`. To follow them as well, set
-`catalogue: all` in `places.yml`, or list the ones you want.
+And the catalogue of the world is in `world_places.yml`, which you can
+follow all of, or part of:
 
-## Publishing to GitHub Pages
-
-The page is static, with the forecast embedded in it, so it works on GitHub
-Pages without any backend.
-
-```bash
-python publish.py          # fetch, rebuild the page, commit and push
+```yaml
+catalogue: [region:europe, kind:peak]
 ```
 
-That publishes to <https://piokuc.github.io/ecmwf-widget/>.
+## How it works
 
-## Keeping the page up to date
-
-`auto_publish.py` is a daemon that does the whole thing on its own. It works
-out when the next run is due, waits until a minute after that, polls the
-portal until the data shows up, then rebuilds the page and pushes it. The push
-is what makes GitHub Pages publish the new page.
-
-```bash
-python auto_publish.py
+```
+   ECMWF open data portal
+          |  anonymous HTTPS
+          v
+   service.py ────► SQLite ────► widget.py ────► the page
 ```
 
-The 0.1 degree tier appears about two hours after the 0.25 degree tier, which
-is roughly eight hours and forty minutes after the cycle time. The daemon
-uses that as its schedule:
+The service finds the runs that are published, downloads only the fields it
+needs using the index files and HTTP range requests, and evaluates them at
+every place. The widget reads those values and draws them.
 
-| Cycle | Expected on the portal |
+There is more in the [documentation](documentation/index.md):
+
+| | |
 | --- | --- |
-| 00z | 08:40 UTC |
-| 06z | 14:40 UTC |
-| 12z | 20:40 UTC |
-| 18z | 02:40 UTC |
+| [Overview](documentation/overview.md) | How the pieces fit together |
+| [The data](documentation/data.md) | What ECMWF publishes, the parameters, the units, the licence |
+| [The data retriever](documentation/retrieval.md) | How a run is found, fetched, decoded and stored |
+| [The web page](documentation/page.md) | How the page is built and how it renders |
+| [Workflows](documentation/workflows.md) | Every command and when to use it |
+| [Publishing](documentation/publishing.md) | GitHub Pages, the daemon, the size limits |
 
-If the timing shifts, change it with `--delay 07:30`. Other options:
+## The commands
 
-```bash
-python auto_publish.py --now          # check straight away, do not wait
-python auto_publish.py --once         # one cycle, then exit
-python auto_publish.py --dry-run      # everything except the push
-python auto_publish.py --poll 60      # seconds between tries
-```
+| | |
+| --- | --- |
+| `python service.py once` | Fetch the latest run and stop |
+| `python service.py run` | Keep the database up to date |
+| `python service.py status` | What has been fetched |
+| `python widget.py --open` | The widget, in a browser |
+| `python widget.py --text` | The forecast as text |
+| `python publish.py` | Fetch, rebuild the page, commit and push |
+| `python auto_publish.py` | The same, on a schedule |
+| `python make_icons.py` | Generate the weather icons |
+| `python build_places.py` | Rebuild the catalogue of world places |
 
-Each publish writes `docs/latest.json` next to the page, with the run and
-the time of the data in it.
+## A note on the data
 
-## On a phone
+The 0.1° tier is published about two hours after the 0.25° one, and only
+the 00 and 12 UTC runs carry the long range: the 06 and 18 UTC runs stop
+at 144 hours. The widget shows the run that reaches furthest and says where
+each run ends, so there is no guessing.
 
-The page is responsive and works on a phone. It is also an installable web
-app: open it in Safari or Chrome and use "Add to Home Screen", and it opens
-without the browser chrome, with its own icon.
+Every parameter is a full global field, so asking for all of them is a lot
+of downloading — about 6 GB and fifteen minutes per run. `parameters: basic`
+in `places.yml` is the lighter option.
 
-## Notes on the data
+## Credits
 
-- The 0.1° tier is published about two hours after the 0.25° tier.
-- Only the last twelve runs are kept by ECMWF, so the service should not be
-  left off for more than a couple of days.
-- The forecast for a summit comes from the surrounding grid cell, which can
-  be hundreds of metres below the real peak. The widget corrects the
-  temperature for the height difference and shows both heights.
+Generated using [ECMWF free and open data](https://www.ecmwf.int/en/forecasts/datasets/open-data),
+licensed under [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/).
+ECMWF must be attributed.
 
-## Attribution
-
-Generated using ECMWF free and open data, licensed under CC-BY-4.0.
+The weather icons are generated with
+[Z-Image-Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo).

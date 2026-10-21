@@ -1,0 +1,161 @@
+# Workflows
+
+Every command in the project, what it does and when to use it.
+
+## Setting up
+
+```bash
+pip install -r requirements.txt          # requests, PyYAML, eccodes
+pip install -r requirements-icons.txt     # only to regenerate the icons
+```
+
+The service needs `eccodes`, the official ECMWF decoder. The widget does not:
+it only reads the database, so `requests` and `PyYAML` are enough for it.
+
+## The data
+
+```bash
+python service.py once      # check for a new run, fetch what is there, stop
+python service.py run       # the same, but keep going
+python service.py status    # what has been fetched
+python service.py export    # write everything to a CSV
+```
+
+`once` is the one to use by hand. It does the same work as the daemon but
+stops when it is done.
+
+`status` shows every run that has been fetched, with the model, how many
+values it holds and the places that are followed.
+
+## The widget
+
+```bash
+python widget.py            # serve on http://localhost:8765
+python widget.py --open     # and open a browser
+python widget.py --port 9000
+python widget.py --text     # print the forecast as text, no server
+```
+
+The widget reads the database and never writes to it, so it can run on a
+different machine from the service, pointing at a shared database.
+
+## Publishing
+
+```bash
+python publish.py           # fetch, rebuild the page, commit and push
+python publish.py --no-fetch
+python publish.py --dry-run # show what would change, do not push
+```
+
+Pushing is what makes GitHub Pages publish the new page. It takes a minute
+or two, and the page can look stale for up to ten minutes afterwards
+because of the cache in front of it.
+
+## The daemon that keeps it up to date
+
+```bash
+python auto_publish.py      # wait for the next run, then publish it
+```
+
+It works out when the next run is due, waits until a minute after that, and
+polls the portal every two minutes until the data appears. Then it fetches
+it, rebuilds the page and pushes.
+
+| Option | What it does |
+| --- | --- |
+| `--now` | Do not wait, check straight away |
+| `--once` | One cycle, then exit |
+| `--delay 07:30` | When to expect the data, as hours and minutes after the cycle |
+| `--poll 60` | Seconds between tries |
+| `--dry-run` | Everything except the push |
+| `--max-places 40` | How many places the page holds |
+
+**The laptop has to be awake.** If it is asleep when the run comes out, the
+daemon finds it on the next poll and publishes then. The page is never more
+than one run behind, but it will not be exactly on time.
+
+## The places
+
+Your own places are in `places.yml`, and there is a catalogue of the world
+in `world_places.yml` with every capital, a lot of major cities and some
+peaks.
+
+```yaml
+places:
+  - id: sniezka
+    name: Śnieżka
+    latitude: 50.73617
+    longitude: 15.73972
+    elevation: 1603
+    country: Poland
+    country_code: PL
+    flag: 🇵🇱
+```
+
+Which catalogue places are followed is set in `places.yml` too:
+
+```yaml
+catalogue: [region:europe, kind:peak]   # or all, or none, or a list of ids
+```
+
+`region:` and `kind:` pick by region or by kind, and plain ids are picked
+one by one. The catalogue itself is rebuilt with:
+
+```bash
+python build_places.py          # writes world_places.yml
+python build_places.py --check  # how well the capitals matched
+```
+
+## The parameters
+
+```yaml
+parameters: all      # or basic, or a list of names
+pressure_levels: [1000, 850, 700, 500]
+```
+
+`basic` is the small set the widget normally shows. `all` is every
+parameter the 0.1° tier publishes, and it is a lot of downloading: about
+6 GB and fifteen minutes per run, because every parameter is a full global
+field.
+
+The pressure levels are a separate setting, because each level of each
+parameter costs another global field.
+
+## The icons
+
+```bash
+python make_icons.py                    # everything
+python make_icons.py sun rain           # just these two
+python make_icons.py --force            # regenerate the ones that exist
+python make_icons.py --backend ollama   # through Ollama instead
+```
+
+The default backend runs Z-Image-Turbo through PyTorch on the machine's
+Metal GPU, about eighty seconds per icon. The Ollama backend needs an
+Ollama build with image generation, which the current one does not have.
+
+## The forecast steps
+
+```yaml
+steps: [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72,
+        84, 96, 108, 120, 132, 144,
+        168, 192, 216, 240, 288, 336, 360]
+```
+
+Every six hours for the first three days, then every twelve hours to a week,
+then once a day. The open data only has those steps, and a step that the
+current run does not have is simply skipped.
+
+## Checking the data
+
+The extraction is checked against the 0.25° data of the same run, which
+should agree closely, and against the ECMWF charts. The interpolation was
+verified by taking the same point from the 0.1° and the 0.25° files: they
+agree to 0.03 K over flat ground and 0.25 K in the Beskids, and the
+global minimum of the 2 m temperature lands in Antarctica at the same
+place in both.
+
+```bash
+python -m pytest              # if there are tests
+python widget.py --text       # a quick look at what is stored
+```

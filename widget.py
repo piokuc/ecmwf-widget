@@ -681,7 +681,12 @@ function drawChart(place, series, keys, selected, select, box, labelWidth) {
 }
 
 const tip = document.getElementById("tip");
+
+// How many parameters the tooltip lists before it says "and N more".
+const TIP_LIMIT = 14;
+
 function showTip(place, series, keys, index, event) {
+  if (!event) { tip.classList.remove("on"); return; }
   tip.innerHTML = "";
   const head = el("div", "t", displayTimes(place)[index] || "");
   tip.appendChild(head);
@@ -698,6 +703,9 @@ function showTip(place, series, keys, index, event) {
     row.appendChild(strong);
     tip.appendChild(row);
   });
+  if (keys.length > TIP_LIMIT) {
+    tip.appendChild(el("div", "t", "and " + (keys.length - TIP_LIMIT) + " more"));
+  }
   tip.classList.add("on");
   const pad = 14;
   let left = event.clientX + pad;
@@ -1009,7 +1017,7 @@ function renderPlace(place, nowStep, order) {
   table.appendChild(tbody);
   inner.appendChild(table);
   card.appendChild(wrap);
-  return { card, table, wrap, inner, place, series, plots, current };
+  return { card, table, wrap, inner, place, series, plots, current, keys: visible };
 }
 
 function stat(label, value, unit, iconName, big, paramKey) {
@@ -1091,6 +1099,10 @@ function sparkline(entry, column, n) {
 
 // The markers in the plots, which follow the mouse.
 let sparkMarkers = [];
+
+// What the table is showing at the moment: the selected step, or the one
+// under the mouse.
+let hoverState = { index: -1 };
 
 function moveSparkMarkers(index) {
   sparkMarkers.forEach((marker) => {
@@ -1258,12 +1270,18 @@ function choosePlace(id) {
 }
 
 placeInput.addEventListener("focus", () => {
+  // Select the current name, so the first keystroke replaces it.
+  placeInput.select();
   picker.classList.add("open");
-  fillPlaceList(placeInput.value);
+  fillPlaceList("");
 });
 placeInput.addEventListener("input", () => {
   picker.classList.add("open");
   fillPlaceList(placeInput.value);
+});
+placeInput.addEventListener("blur", () => {
+  const item = state.catalogue.find((place) => place.id === state.place);
+  if (item) placeInput.value = item.name;
 });
 placeInput.addEventListener("keydown", (event) => {
   const items = [...placeList.querySelectorAll("li")];
@@ -1312,7 +1330,6 @@ function render() {
     built.inner.style.minWidth = Math.ceil(labelWidth + column * built.place.steps.length) + "px";
 
     sparkMarkers = [];
-    const plotWidth = column * built.place.steps.length;
     built.plots.forEach((plot) => {
       const picture = sparkline(plot.entry, column, built.place.steps.length);
       const marker = picture.querySelector("line");
@@ -1320,6 +1337,28 @@ function render() {
       plot.cell.appendChild(picture);
     });
     moveSparkMarkers(built.current);
+
+    // Moving the mouse over the table shows that hour: the numbers are
+    // highlighted, the marker moves and a box with the values appears.
+    const n = built.place.steps.length;
+    const visible = built.series;
+    const keys = built.keys;
+    const left = built.table.getBoundingClientRect().left + labelWidth;
+    const cellWidth = column;
+
+    built.table.addEventListener("mousemove", (event) => {
+      let index = Math.floor((event.clientX - left) / cellWidth);
+      index = Math.max(0, Math.min(n - 1, index));
+      if (index === hoverState.index) return;
+      hoverState.index = index;
+      updateSummary(built.place, visible, index);
+      showTip(built.place, visible, keys, index, event);
+    });
+    built.table.addEventListener("mouseleave", () => {
+      hoverState.index = -1;
+      updateSummary(built.place, visible, built.current);
+      hideTip();
+    });
   });
 }
 
