@@ -156,6 +156,8 @@ DISPLAY_ORDER: tuple[str, ...] = (
     "apparent_temperature",  # Feels like
     "precip_increment",  # Precipitation
     "tp",  # Precipitation, total since the run
+    "10u",  # The wind components, shown as arrows
+    "10v",
     "wind_speed",  # Wind speed
     "wind_dir",  # Wind direction
     "gust",  # Gusts
