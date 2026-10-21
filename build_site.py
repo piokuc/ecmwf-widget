@@ -63,7 +63,10 @@ def build(
     for model in models.MODELS:
         if model not in newest:
             continue
-        payload = reader.widget_payload(run=newest[model], model=model)
+        # No run is given, so the reader picks the one that reaches furthest,
+        # which is the 00 or 12 UTC run. The page and the run selector then
+        # talk about the same run.
+        payload = reader.widget_payload(model=model)
         if not payload["places"]:
             continue
         embedded[model] = payload
