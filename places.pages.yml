@@ -56,9 +56,13 @@ source: ecmwf
 fallback_sources: [aws, google]
 poll_interval: 900
 
-# Only the newest run is fetched, and only that one is kept.
-backfill_runs: 1
-keep_runs: 1
+# Two runs are fetched: the newest one, and the one before it, which is the
+# 00 or 12 UTC run that reaches all the way to 360 hours. The widget shows
+# the run that reaches furthest.
+backfill_runs: 2
+
+# Both runs are kept, so the widget can show the one that reaches furthest.
+keep_runs: 2
 
 # A separate database, so the published page and the local service do not
 # share one.

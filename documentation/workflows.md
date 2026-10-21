@@ -133,7 +133,14 @@ python build_places.py --check  # how well the capitals matched
 ```yaml
 parameters: [2t, 2d, msl, 10u, 10v, 10fg, tcc, tp, sf, sd, asn, mucape, z]
 pressure_levels: []
+backfill_runs: 2
+keep_runs: 2
 ```
+
+Two runs are fetched and kept: the newest one, and the one before it, which
+is the 00 or 12 UTC run that reaches all the way to 360 hours. The widget
+shows the run that reaches furthest, so the short 06 and 18 UTC runs are not
+what ends up on screen.
 
 The `z` is the orography, which the height correction needs. Without it a
 summit would get the forecast of the cell below it.

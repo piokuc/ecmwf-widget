@@ -100,9 +100,11 @@ fallback_sources: [aws, google]
 # How often the service checks for a new run, in seconds.
 poll_interval: 900
 
-# How many older runs to pick up when the service starts for the first time.
-# ECMWF only keeps the last twelve runs, so there is not much to catch up on.
-backfill_runs: 1
+# How many runs to pick up when the service starts. Two are fetched: the
+# newest one, and the one before it, which is the 00 or 12 UTC run that
+# reaches all the way to 360 hours. The widget shows the run that reaches
+# furthest, so the short 06 and 18 UTC runs are not what ends up on screen.
+backfill_runs: 2
 
 # How many runs of each model to keep in the database. Two is enough to see
 # how the forecast changed, and the database is then about 120 MB.
