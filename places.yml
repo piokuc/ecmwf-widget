@@ -98,8 +98,9 @@ poll_interval: 900
 # ECMWF only keeps the last twelve runs, so there is not much to catch up on.
 backfill_runs: 1
 
-# How many runs of each model to keep in the database.
-keep_runs: 3
+# How many runs of each model to keep in the database. Two is enough to see
+# how the forecast changed, and the database is then about 120 MB.
+keep_runs: 2
 
 # How the value at a point is taken from the model grid.
 #   bilinear - interpolate between the four surrounding grid points (default)

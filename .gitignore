@@ -6,3 +6,7 @@ cities.json
 wc.json
 .env
 .DS_Store
+
+# The page is built by the GitHub Action, so it is not kept in the history.
+docs/index.html
+docs/latest.json

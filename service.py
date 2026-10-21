@@ -382,7 +382,7 @@ class Service:
             return False
         return response.status_code == 200
 
-    def prune_cache(self, keep_runs: int = 2) -> int:
+    def prune_cache(self, keep_runs: int = 1) -> int:
         """Delete cached GRIB files of runs that are no longer needed.
 
         The files are only a cache; the extracted values live in the database.

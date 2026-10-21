@@ -1,0 +1,63 @@
+name: Publish the forecast
+
+# The page is built here rather than on the laptop, so the repository does
+# not fill up with a copy of the forecast on every run.
+#
+# The schedule is a quarter past the ECMWF cycles, with an hour and ten
+# minutes of slack for the 0.1 degree tier to arrive.
+
+on:
+  schedule:
+    - cron: "50 1,7,13,19 * * *"
+  workflow_dispatch:
+    inputs:
+      place:
+        description: Which place to build the page for
+        required: false
+        default: gliwice
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install the dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch the latest forecast
+        run: |
+          python service.py once --config places.pages.yml
+
+      - name: Build the page
+        run: |
+          python build_site.py --config places.pages.yml --out site
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
