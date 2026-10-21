@@ -8,32 +8,44 @@ The published page is at <https://piokuc.github.io/ecmwf-widget/>.
 ## The shape of it
 
 ```
-   ECMWF open data portal
-          |
-          |  anonymous HTTPS, no key, no login
-          v
-   +---------------------------+
-   |  service.py               |  finds a new run, downloads the fields it
-   |  ecmwf_open_data.py       |  needs, evaluates them at every place
-   |  points.py                |  and stores the result
-   |  store.py  (SQLite)       |
-   +---------------------------+
-          |
-          |  one table of values
-          v
-   +---------------------------+
-   |  widget.py                |  serves the page and the data
-   |  forecast.py              |  turns the stored values into a tidy
-   |  parameters.py            |  structure the page can render
-   +---------------------------+
-          |
-          |  a static page with the data in it
-          v
-   build_site.py  -->  site/index.html  -->  GitHub Pages
-                            ^
-                            |
-                 .github/workflows/pages.yml
-                 does this part, in the cloud
+    ECMWF open data portal
+           |
+           |  anonymous HTTPS, no key, no login
+           v
+    +--------------------------------+
+    |  ecmwf_widget/                 |  finds a new run, downloads the
+    |    service.py                  |  fields it needs, evaluates them
+    |    ecmwf_open_data.py          |  at every place and stores the result
+    |    points.py                   |
+    |    store.py  (SQLite)          |
+    +--------------------------------+
+      |           ^
+      |           | ecmwf_widget/scheduler.py tells both
+      |           | how the cycles are scheduled
+      v           |
+    +--------------------------------+
+    |  ecmwf_widget/                 |  keeps the database and the
+    |    auto_publish.py             |  published page up to date:
+    |    publish.py                  |  fetch, build, commit, push
+    |    build_site.py               |
+    +--------------------------------+
+           |
+           |  one table of values
+           v
+    +--------------------------------+
+    |  ecmwf_widget/                 |  serves the page and the data
+    |    widget.py                   |  turns the stored values into a
+    |    forecast.py                 |  structure the page can render
+    |    parameters.py               |
+    +--------------------------------+
+           |
+           |  a static page with the data in it
+           v
+    build_site.py  -->  site/index.html  -->  GitHub Pages
+                             ^
+                             |
+                  .github/workflows/pages.yml
+                  does this part, in the cloud
 ```
 
 Two processes, and they are deliberately separate:
@@ -44,25 +56,54 @@ Two processes, and they are deliberately separate:
 That way the page can be built into a static file and published, and the
 service can keep running on a machine of its own.
 
+## The layout
+
+The application lives in the `ecmwf_widget` package. The files at the top
+of the repository are thin launchers with the same names, so every
+documented command works from the repository root:
+
+```
+ecmwf_widget/          the package
+├── scheduler          the ECMWF publication schedule, as functions
+├── auto_publish       the daemon that follows it: pull, build, push
+├── service            the ingester that keeps the database up to date
+├── publish            one-shot fetch, build, commit, push
+├── build_site         the static page for GitHub Pages
+├── widget             the page itself, and the local server
+├── forecast           stored values turned into display structures
+├── points             places, GRIB grids and point extraction
+├── store              the SQLite database
+├── models, parameters the catalogue of models and parameters
+├── config             places.yml loading and validation
+├── ecmwf_open_data    the client for the portal
+├── build_places       rebuilding world_places.yml
+├── make_icons         generating the weather icons
+└── download_9km       a one-off download, without the database
+tests/                 pytest unit tests, and the Cucumber scenarios for
+                       the published page, executed with pytest-bdd
+deploy/                launchd and systemd service files
+```
+
 ## The modules
 
 | File | What it does |
 | --- | --- |
-| `ecmwf_open_data.py` | Finds and downloads files from the portal, using the index files and HTTP range requests so that only the wanted fields are transferred |
-| `models.py` | The catalogue of models that are published, and how long each one reaches |
-| `parameters.py` | Every parameter the data has, with its label, unit, group and the order it is shown in |
-| `points.py` | Reads a GRIB file and evaluates it at a list of coordinates |
-| `store.py` | The SQLite database: runs, places and values |
-| `config.py` | Reads `places.yml` and `world_places.yml` |
-| `service.py` | The daemon that keeps the database up to date |
-| `forecast.py` | Turns the stored values into what the page needs |
-| `widget.py` | The page itself, and the small server that serves it |
-| `build_site.py` | Builds the static page for GitHub Pages |
-| `download_9km.py` | A small command line tool for a one off download |
-| `auto_publish.py` | Waits for a new run, then rebuilds and pushes the page |
-| `publish.py` | One shot: fetch, rebuild, commit, push |
-| `make_icons.py` | Generates the weather icons with a local image model |
-| `build_places.py` | Builds the catalogue of world places |
+| `ecmwf_widget/scheduler.py` | The cycles (0, 6, 12, 18 UTC) and when each run is expected on the portal, as pure functions a daemon and its tests can share |
+| `ecmwf_widget/ecmwf_open_data.py` | Finds and downloads files from the portal, using the index files and HTTP range requests so that only the wanted fields are transferred |
+| `ecmwf_widget/models.py` | The catalogue of models that are published, and how long each one reaches |
+| `ecmwf_widget/parameters.py` | Every parameter the data has, with its label, unit, group, display conversion and the order it is shown in |
+| `ecmwf_widget/points.py` | Reads a GRIB file and evaluates it at a list of coordinates |
+| `ecmwf_widget/store.py` | The SQLite database: runs, places and values |
+| `ecmwf_widget/config.py` | Reads `places.yml` and `world_places.yml` |
+| `ecmwf_widget/service.py` | The daemon that keeps the database up to date |
+| `ecmwf_widget/forecast.py` | Turns the stored values into what the page needs |
+| `ecmwf_widget/widget.py` | The page itself, and the small server that serves it |
+| `ecmwf_widget/build_site.py` | Builds the static page for GitHub Pages |
+| `ecmwf_widget/download_9km.py` | A small command line tool for a one off download |
+| `ecmwf_widget/auto_publish.py` | Follows the schedule: waits for a new run, then publishes the page |
+| `ecmwf_widget/publish.py` | One shot: fetch, rebuild, commit, push |
+| `ecmwf_widget/make_icons.py` | Generates the weather icons with a local image model |
+| `ecmwf_widget/build_places.py` | Builds the catalogue of world places |
 
 ## The data flow, in one paragraph
 

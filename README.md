@@ -169,7 +169,8 @@ There is more in the [documentation](documentation/index.md):
 | [The data retriever](documentation/retrieval.md) | How a run is found, fetched, decoded and stored |
 | [The web page](documentation/page.md) | How the page is built and how it renders |
 | [Workflows](documentation/workflows.md) | Every command and when to use it |
-| [Publishing](documentation/publishing.md) | GitHub Pages, the daemon, the size limits |
+| [Publishing](documentation/publishing.md) | GitHub Pages, the schedule daemon, the size limits |
+| [The tests](documentation/testing.md) | The unit tests and the Cucumber description of the page |
 
 ## The commands
 

@@ -6,6 +6,7 @@ Every command in the project, what it does and when to use it.
 
 ```bash
 pip install -r requirements.txt          # requests, PyYAML, eccodes
+pip install -r requirements-dev.txt      # only for the tests
 pip install -r requirements-icons.txt     # only to regenerate the icons
 ```
 
@@ -68,9 +69,10 @@ because of the cache in front of GitHub Pages.
 python auto_publish.py      # wait for the next run, then publish it
 ```
 
-It works out when the next run is due, waits until a minute after that, and
-polls the portal every two minutes until the data appears. Then it fetches
-it, rebuilds the page and pushes.
+It follows the ECMWF schedule (`ecmwf_widget/scheduler`): it works out when
+the next run is due — the cycle time plus the delay of publication — waits
+until a minute after that, and polls the portal every two minutes until the
+data appears. Then it fetches it, rebuilds the page and pushes.
 
 | Option | What it does |
 | --- | --- |
@@ -81,6 +83,25 @@ it, rebuilds the page and pushes.
 | `--dry-run` | Everything except the push |
 | `--max-places 40` | How many places the page holds |
 | `--full-places 25` | How many of them get every parameter |
+
+**As a service.** On macOS and Linux the daemon is a user service, defined
+in [`deploy/`](deploy):
+
+```bash
+# macOS, launchd: one substitution, then load it
+sed -e "s|REPOSITORY|$PWD|" -e "s|PYTHON|$(which python3)|" \
+    deploy/com.piokuc.ecmwf-publishd.plist \
+    > ~/Library/LaunchAgents/com.piokuc.ecmwf-publishd.plist
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.piokuc.ecmwf-publishd.plist
+
+# Linux, systemd
+sed -e "s|REPOSITORY|$PWD|" -e "s|PYTHON|$(which python3)|" \
+    deploy/ecmwf-publishd.service > ~/.config/systemd/user/ecmwf-publishd.service
+systemctl --user daemon-reload && systemctl --user enable --now ecmwf-publishd
+```
+
+The daemon logs to `data/publishd.log`, and `launchctl list` (or
+`systemctl --user status ecmwf-publishd`) tells whether it is alive.
 
 **The laptop has to be awake.** If it is asleep when the run comes out, the
 daemon finds it on the next poll and publishes then. The page is never more
@@ -199,6 +220,26 @@ python widget.py --text       # a quick look at what is stored
 python service.py status      # what has been fetched, and how much of it
 ```
 
-There are no unit tests yet. The checks that matter were done by hand:
-the same point taken from the 0.1 degree and the 0.25 degree files of the
-same run, and the values against the ECMWF charts.
+## The tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
+
+There is a whole page about them: [The tests](testing.md). The short
+version: the schedule, the configuration, the parameters, the store, the
+ingester (with the network faked away) and the publishing step (against a
+throwaway git repository) are covered by pytest; the published page is
+described in a Cucumber feature file and exercised with pytest-bdd against
+a served copy of the built bundle.
+
+The hand checks below were done once, about the interpolation itself, and
+they stay true:
+
+```text
+The same point was taken from the 0.1 degree and the 0.25 degree files of
+the same run: they agree to 0.03 K over flat ground and 0.25 K in the
+Beskids, and the global minimum of the 2 m temperature lands in Antarctica
+at the same place in both.
+```
