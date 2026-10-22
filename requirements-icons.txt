@@ -1,9 +1,0 @@
-# Only needed to regenerate the icons with make_icons.py.
-# The widget itself only needs requests, PyYAML and eccodes.
-torch>=2.4
-diffusers>=0.41
-transformers>=4.50
-accelerate>=1.0
-safetensors>=0.5
-Pillow>=10.0
-numpy>=1.26

@@ -1,5 +1,0 @@
-#!/bin/sh
-# ecmwf-publish - part of the ECMWF widget: ecmwf-widget-1.0.0-macos-arm64
-DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-PYTHONPATH="$DIR/vendor${PYTHONPATH:+:$PYTHONPATH}"; export PYTHONPATH
-exec python3 -m ecmwf_widget.publish "$@"

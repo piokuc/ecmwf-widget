@@ -19,7 +19,7 @@ After=network-online.target
 [Service]
 Type=simple
 WorkingDirectory=REPOSITORY
-ExecStart=PYTHON -u auto_publish.py --config places.yml
+ExecStart=PYTHON -u -m ecmwf_widget.auto_publish --config config/places.yml
 Restart=always
 RestartSec=60
 

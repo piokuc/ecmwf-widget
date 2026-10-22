@@ -4,8 +4,8 @@
   The ingestor as a macOS launchd user agent.
 
   It polls the portal for new runs and stores the values, keeping the
-  database current. The ingestor writes its own stamped log with
-  --log-file (data/service.log); anything on stderr lands in
+  database current. The ingestor writes its own stamped log with the
+  log-file option (data/service.log); anything on stderr lands in
   data/ingestd.log as well, including a crash traceback.
 
   Install with:
@@ -25,8 +25,11 @@
     <array>
         <string>PYTHON</string>
         <string>-u</string>
-        <string>service.py</string>
+        <string>-m</string>
+        <string>ecmwf_widget.service</string>
         <string>run</string>
+        <string>--config</string>
+        <string>config/places.yml</string>
         <string>--log-file</string>
         <string>data/service.log</string>
     </array>

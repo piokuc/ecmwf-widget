@@ -6,7 +6,6 @@ import datetime as dt
 import json
 import re
 
-import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
 
 scenarios("published_page.feature")

@@ -1,0 +1,19 @@
+# The files that go into the source distribution, on top of the package.
+#
+# The sdist has to be able to build the packages, run the tests and build
+# the page, so everything the project is made of is in it.
+
+include LICENSE
+include README.md
+include CHANGELOG.md
+include Makefile
+include pyproject.toml
+
+recursive-include config *.yml
+recursive-include deploy *
+recursive-include docs *.md *.png
+recursive-include scripts *.sh
+recursive-include tests *.py *.feature
+
+global-exclude *.py[cod]
+global-exclude __pycache__

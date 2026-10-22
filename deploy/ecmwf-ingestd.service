@@ -19,7 +19,7 @@ After=network-online.target
 [Service]
 Type=simple
 WorkingDirectory=REPOSITORY
-ExecStart=PYTHON -u service.py run --log-file data/service.log
+ExecStart=PYTHON -u -m ecmwf_widget.service run --config config/places.yml --log-file data/service.log
 Restart=always
 RestartSec=60
 

@@ -1,12 +1,31 @@
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Tooling
+.pytest_cache/
 .ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.mypy_cache/
+
+# The state of the machine: the database, the GRIB cache and the logs.
 data/
+
+# The two source lists of the catalogue of world places.
 cities.json
 wc.json
+
+# The built page. The publisher adds the two files it needs by force.
+site/
+
+# The editor and the machine
 .env
 .DS_Store
-
-# The page is built by the GitHub Action, so it is not kept in the history.
-docs/index.html
-docs/latest.json
+.idea/
+.vscode/

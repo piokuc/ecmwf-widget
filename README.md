@@ -6,7 +6,7 @@
 widget that shows it.**
 
 [Open the live page](https://piokuc.github.io/ecmwf-widget/) ·
-[Documentation](documentation/index.md) ·
+[Documentation](docs/index.md) ·
 [ECMWF open data](https://www.ecmwf.int/en/forecasts/datasets/open-data)
 
 </div>
@@ -14,7 +14,7 @@ widget that shows it.**
 ---
 
 <p align="center">
-  <img src="docs/screenshot.png" width="820" alt="The widget showing the forecast for Górki Wielkie">
+  <img src="docs/assets/screenshot.png" width="820" alt="The widget showing the forecast for Górki Wielkie">
 </p>
 
 ## What it does
@@ -48,12 +48,15 @@ repository keeps nothing of it, so it does not fill up.
 
 ## Getting started
 
-```bash
-pip install -r requirements.txt
-pip install -r requirements-dev.txt   # only for the tests
+The package installs with pip, on macOS and on Linux alike. Python 3.10 or
+newer is needed; nothing else.
 
-python service.py once     # fetch the latest run
-python widget.py --open    # and look at it
+```bash
+pip install ecmwf-widget          # from PyPI
+pip install .                     # from a checkout of the repository
+
+ecmwf-service once                # fetch the latest run
+ecmwf-widget --open               # and look at it
 ```
 
 The widget is then on <http://localhost:8765>.
@@ -62,8 +65,13 @@ To keep it up to date, run the service as a daemon, and optionally the
 publisher with it:
 
 ```bash
-python service.py run      # keep the database up to date
+ecmwf-service run                 # keep the database up to date
 ```
+
+The service finds the configuration of the machine by itself: the file
+named by `ECMWF_WIDGET_CONFIG`, then `places.yml` in the working
+directory, then the configuration of a checkout of the repository, and
+lastly the starter configuration that comes with the package.
 
 Run as a service (definitions in [`deploy/`](deploy)), the ingestor keeps
 a stamped log of every run in `data/service.log`; the publisher keeps its
@@ -76,24 +84,25 @@ soon as it appears, rebuilds the page and pushes to GitHub, which is what
 publishes the new version:
 
 ```bash
-python auto_publish.py             # waits for each new run, then pushes
-python auto_publish.py --dry-run   # do everything except the push
+ecmwf-publisher                   # waits for each new run, then pushes
+ecmwf-publisher --dry-run         # do everything except the push
 ```
 
 Ready-made service definitions for macOS (`launchd`) and Linux
 (`systemd`) are in [`deploy/`](deploy) — the ingestor as
 `ecmwf-ingestd`, publishing as `ecmwf-publishd` — and GitHub Actions
 builds
-[distributable packages](documentation/workflows.md#the-packages) for
+[distributable packages](docs/workflows.md#the-packages) for
 both platforms: a wheel and a portable bundle per OS.
 
 ## The structure
 
-The application lives in the `ecmwf_widget` package; the files on the top
-level are thin launchers for the commands above:
+The application lives in the `ecmwf_widget` package, under `src/`, so an
+import from the repository root cannot pick up a stale copy. Everything
+else has a place of its own:
 
 ```
-ecmwf_widget/          the package
+src/ecmwf_widget/     the package
 ├── scheduler          the ECMWF publication schedule (0, 6, 12, 18 UTC)
 ├── service            the ingester: find runs, download, extract, store
 ├── auto_publish       the publishing daemon, on the schedule above
@@ -105,23 +114,37 @@ ecmwf_widget/          the package
 ├── points             places, GRIB grids and point extraction
 ├── ecmwf_open_data    the anonymous HTTPS client for the open data portal
 ├── models, parameters the catalogue of models and parameters
-├── config             places.yml loading and validation
-├── build_places       rebuilding world_places.yml
+├── config             the configuration file, loading and validation
+├── paths              where the files of the package and of the machine are
+├── build_places       rebuilding the catalogue of world places
 ├── make_icons         generating the weather icons
-└── download_9km       downloading a single file, without the database
+├── download_9km       downloading a single file, without the database
+├── assets             the weather icons and the app icons
+└── data               the catalogue of world places, the starter configuration
 tests/                 unit tests (pytest) and the website scenarios
-├── test_*.py          the unit tests
-└── features           Cucumber descriptions of the published page,
+├── unit/              the unit tests, one file per part of the service
+└── features/          Cucumber descriptions of the published page,
                        executed with pytest-bdd against a served bundle
+config/                the configurations of the repository
+docs/                  the documentation of the project
 deploy/                service files for launchd and systemd
+scripts/               the build of the portable bundle
 ```
+
+The names of the directories say what is in them: `src/` is the code,
+`tests/` are the tests, `docs/` are the documents, `config/` are the
+configurations, `deploy/` are the service definitions and `scripts/` are
+the tools of the build. The state of the machine — the database, the GRIB
+cache, the logs — is in `data/`, and the built page is in `site/`. Neither
+is in the repository.
 
 ## The tests
 
 ```bash
-pip install -r requirements-dev.txt
-pytest                    # unit tests and website scenarios
-pytest tests/features     # just the website scenarios
+pip install -e ".[dev]"      # pytest, pytest-bdd and ruff
+pytest                       # unit tests and website scenarios
+pytest tests/unit            # just the unit tests
+pytest tests/features        # just the website scenarios
 ```
 
 The unit tests cover the schedule, the configuration, the parameters, the
@@ -129,8 +152,8 @@ store, the service (with the network faked away) and the publishing step
 (against a throwaway git repository). The scenarios in
 `tests/features/published_page.feature` describe what the published page
 promises; they serve the built bundle over HTTP and check it the way a
-visitor would receive it. Build the page first with `python build_site.py`
-if `docs/index.html` is not there yet.
+visitor would receive it. When no page has been built, a small one is made
+up for the scenarios, so they always run.
 
 ## The places
 
@@ -148,8 +171,8 @@ places:
     flag: 🇵🇱
 ```
 
-And the catalogue of the world is in `world_places.yml`, which you can
-follow all of, or part of:
+And the catalogue of the world comes with the package, and you can follow
+all of it, or part of it:
 
 ```yaml
 catalogue: [region:europe, kind:peak]
@@ -161,42 +184,46 @@ catalogue: [region:europe, kind:peak]
    ECMWF open data portal
           |  anonymous HTTPS
           v
-   service.py ────► SQLite ────► widget.py ────► the page
+   ecmwf-service ────► SQLite ────► ecmwf-widget ────► the page
 ```
 
 The service finds the runs that are published, downloads only the fields it
 needs using the index files and HTTP range requests, and evaluates them at
 every place. The widget reads those values and draws them.
 
-There is more in the [documentation](documentation/index.md):
+There is more in the [documentation](docs/index.md):
 
 | | |
 | --- | --- |
-| [Overview](documentation/overview.md) | How the pieces fit together |
-| [The data](documentation/data.md) | What ECMWF publishes, the parameters, the units, the licence |
-| [The data retriever](documentation/retrieval.md) | How a run is found, fetched, decoded and stored |
-| [The web page](documentation/page.md) | How the page is built and how it renders |
-| [Workflows](documentation/workflows.md) | Every command and when to use it |
-| [Publishing](documentation/publishing.md) | GitHub Pages, the schedule daemon, the size limits |
-| [The tests](documentation/testing.md) | The unit tests and the Cucumber description of the page |
+| [Overview](docs/overview.md) | How the pieces fit together |
+| [The data](docs/data.md) | What ECMWF publishes, the parameters, the units, the licence |
+| [The data retriever](docs/retrieval.md) | How a run is found, fetched, decoded and stored |
+| [The web page](docs/page.md) | How the page is built and how it renders |
+| [Workflows](docs/workflows.md) | Every command and when to use it |
+| [Publishing](docs/publishing.md) | GitHub Pages, the schedule daemon, the size limits |
+| [The tests](docs/testing.md) | The unit tests and the Cucumber description of the page |
+| [Development](docs/development.md) | The layout, the dependencies, the build and the release |
 
 ## The commands
 
 | | |
 | --- | --- |
-| `python service.py once` | Fetch the latest run and stop |
-| `python service.py run` | Keep the database up to date |
-| `python service.py status` | What has been fetched |
-| `python service.py export` | Everything, as a CSV |
-| `python widget.py --open` | The widget, in a browser |
-| `python widget.py --text` | The forecast as text |
-| `python publish.py` | Fetch, rebuild the page, commit and push |
-| `python auto_publish.py` | The same, on a schedule, on the laptop |
+| `ecmwf-service once` | Fetch the latest run and stop |
+| `ecmwf-service run` | Keep the database up to date |
+| `ecmwf-service status` | What has been fetched |
+| `ecmwf-service export` | Everything, as a CSV |
+| `ecmwf-widget --open` | The widget, in a browser |
+| `ecmwf-widget --text` | The forecast as text |
+| `ecmwf-publish` | Fetch, rebuild the page, commit and push |
+| `ecmwf-publisher` | The same, on a schedule, on the laptop |
 | `gh workflow run pages.yml` | Build and publish the page in GitHub |
-| `python make_icons.py` | Generate the weather icons |
-| `python build_places.py` | Rebuild the catalogue of world places |
-| `python build_site.py` | Build the static page on its own |
-| `python download_9km.py` | Download a single file, without the database |
+| `ecmwf-make-icons` | Generate the weather icons |
+| `ecmwf-build-places` | Rebuild the catalogue of world places |
+| `ecmwf-build-site` | Build the static page on its own |
+| `ecmwf-download` | Download a single file, without the database |
+
+Every command is also `python -m ecmwf_widget <command>`, for the times
+when the console scripts are not on the path.
 
 ## A note on the data
 

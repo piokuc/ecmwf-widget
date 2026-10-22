@@ -34,25 +34,56 @@ jobs:
           python-version: "3.12"
           cache: pip
 
-      - name: Run the tests
+      - name: Install the package and the tools of the tests
         run: |
-          python -m pip install --quiet pytest pytest-bdd .
-          python -m pytest -q
-        env:
-          PYTHONPATH: ${{ github.workspace }}
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Run the tests
+        run: python -m pytest
 
       - name: Build the wheel and the sdist
         run: |
-          python -m pip install --quiet build
+          python -m pip install --quiet build twine
           python -m build
+          python -m twine check dist/*
+
+      - name: Check that the package carries its files
+        run: |
+          python - <<'PY'
+          import glob
+          import zipfile
+
+          wheel = glob.glob("dist/*.whl")[0]
+          with zipfile.ZipFile(wheel) as archive:
+              names = archive.namelist()
+          for wanted in (
+              "ecmwf_widget/data/world_places.yml",
+              "ecmwf_widget/data/places.yml",
+              "ecmwf_widget/assets/icons/sun.png",
+              "ecmwf_widget/assets/app-icon-192.png",
+          ):
+              assert wanted in names, f"{wanted} is not in the wheel"
+          print("the wheel carries the catalogue, the icons and the configuration")
+          PY
+
+      - name: Install the wheel and try it
+        run: |
+          python -m venv .venv-wheel
+          .venv-wheel/bin/python -m pip install --upgrade pip
+          .venv-wheel/bin/python -m pip install dist/*.whl
+          # the ingestor answers, without touching the network
+          .venv-wheel/bin/ecmwf-service status
+          .venv-wheel/bin/ecmwf-download --help >/dev/null
+          .venv-wheel/bin/ecmwf-widget --help >/dev/null
 
       - name: Assemble the portable bundle
-        run: sh deploy/make_bundle.sh
+        run: sh scripts/make_bundle.sh
 
       - name: Smoke test the bundle
         run: |
           set -euo pipefail
-          # The sdist is a tar.gz too, so the bundle has to be named exactly.
+          # The bundle is a tar.gz too, so it has to be named exactly.
           ARCHIVE=$(printf '%s\n' dist/ecmwf-widget-*.tar.gz)
           STAGE=$(basename "$ARCHIVE" .tar.gz)
           tar -xzf "$ARCHIVE"

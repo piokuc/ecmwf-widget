@@ -5,9 +5,10 @@ Feature: The published forecast page
   visitor receives: it answers, it carries the forecast of the runs that
   reached furthest, it can be installed on a phone, and it credits ECMWF.
 
-  The page is built by `build_site.py` from the values the service stored.
-  Build it with `python build_site.py` before running these scenarios
-  against a local server (GitHub Pages serves the same bundle).
+  The page is built by `ecmwf-build-site` from the values the service
+  stored. Build it with `ecmwf-build-site` before running these scenarios
+  against a local server (GitHub Pages serves the same bundle); when there
+  is none, the tests build a small bundle of their own.
 
   Background: The page is being served
     Given the published page is served

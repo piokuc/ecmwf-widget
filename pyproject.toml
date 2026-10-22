@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,29 +7,39 @@ name = "ecmwf-widget"
 description = "A point forecast service for ECMWF's free and open 0.1 degree data, and the web page that shows it"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "Piotr Kuczynski" }]
 keywords = ["ecmwf", "forecast", "open-data", "grib", "weather"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
+    "Environment :: Web Environment",
     "Intended Audience :: Science/Research",
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Atmospheric Science",
 ]
-# The version is the single one in ecmwf_widget/__init__.py.
+# The version is the single one in src/ecmwf_widget/__init__.py.
 dynamic = ["version"]
 
+# The runtime dependencies. Everything else is optional and lives in the
+# extras below, so a plain install stays small.
 dependencies = [
     "requests>=2.28",
     "PyYAML>=6.0",
-    "eccodes>=1.6",
+    # The ECMWF decoder. From 2.40 it comes with the ECMWF library as a
+    # binary wheel, so no compiler is needed on macOS or Linux.
+    "eccodes>=2.40",
 ]
 
 [project.optional-dependencies]
-# Only needed to regenerate the weather icons with make_icons.py.
+# Only needed to regenerate the weather icons with ecmwf-make-icons.
 icons = [
     "torch>=2.4",
     "diffusers>=0.41",
@@ -39,12 +49,18 @@ icons = [
     "Pillow>=10.0",
     "numpy>=1.26",
 ]
-# The tests.
-dev = ["pytest", "pytest-bdd"]
+# The tests, the linter and the packaging tools.
+dev = [
+    "pytest>=8.0",
+    "pytest-bdd>=7.0",
+    "ruff>=0.6",
+    "build>=1.2",
+]
 
 [project.urls]
 Homepage = "https://github.com/piokuc/ecmwf-widget"
-Documentation = "https://github.com/piokuc/ecmwf-widget/tree/main/documentation"
+Documentation = "https://github.com/piokuc/ecmwf-widget/tree/main/docs"
+Issues = "https://github.com/piokuc/ecmwf-widget/issues"
 "ECMWF open data" = "https://www.ecmwf.int/en/forecasts/datasets/open-data"
 
 [project.scripts]
@@ -58,8 +74,56 @@ ecmwf-make-icons = "ecmwf_widget.make_icons:main"
 ecmwf-download = "ecmwf_widget.download_9km:main"
 
 [tool.setuptools]
-# The launchers at the top of the repository are not part of the package.
-packages = ["ecmwf_widget"]
+# The src layout: the package lives in src/, so an import from the
+# repository root cannot pick up a stale copy.
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+# The weather icons, the app icons and the catalogue of world places travel
+# with the package, so an installed copy works on its own.
+ecmwf_widget = [
+    "assets/*.png",
+    "assets/icons/*.png",
+    "assets/icons/*.json",
+    "data/*.yml",
+]
 
 [tool.setuptools.dynamic]
 version = { attr = "ecmwf_widget.__version__" }
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+# The tests run against the sources in the tree, so a checkout is enough.
+pythonpath = ["src"]
+bdd_features_base_dir = "tests/features"
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "BLE", "RUF"]
+ignore = [
+    # The package is a script-like tool: the modules are run as commands.
+    "E501",
+    # The page of the widget is written for people, with a real dash in it.
+    "RUF001",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# The tests use the assert statement, and they name the exceptions away.
+"tests/**" = ["S101", "B011"]
+
+[tool.coverage.run]
+source = ["src/ecmwf_widget"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
