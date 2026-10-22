@@ -65,6 +65,10 @@ publisher with it:
 python service.py run      # keep the database up to date
 ```
 
+Run as a service (definitions in [`deploy/`](deploy)), the ingestor keeps
+a stamped log of every run in `data/service.log`; the publisher keeps its
+own in `data/publishd.log`.
+
 The published page is updated by a GitHub Action, so it does not need the
 laptop. To publish from the laptop instead, the publisher daemon follows
 the ECMWF schedule itself — it waits for each cycle, pulls the data as

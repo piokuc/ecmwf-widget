@@ -29,19 +29,36 @@ stops when it is done.
 values it holds and the places that are followed.
 
 What the service prints can be kept with `--log-file`: the log file gets a
-UTC stamp on every line, and it takes over where an output redirect would
-be missing.
+UTC stamp on every line, and it answers even when the terminal that started
+the service is long gone.
 
 ```bash
 python service.py run --log-file data/service.log
-python service.py --log-file data/service.log status    # the option can be on either side
+python service.py status --log-file data/service.log   # the option can come after the command
 ```
 
-**As a service.** On macOS and Linux the ingestor is a user service, defined
-in [`deploy/`](deploy); the same way as the publisher below, with
-`com.piokuc.ecmwf-ingestd.plist` or `ecmwf-ingestd.service`. The service
-runs the command above, so `data/service.log` is the ingestor's log and
-`data/ingestd.log` holds whatever came on stderr, crash included.
+**As a service.** On macOS and Linux the ingestor is a user service,
+defined in [`deploy/`](deploy). It runs the command above, keeps itself
+alive with `Restart` (systemd) or `KeepAlive` (launchd), so a momentary
+network failure does not stop the data flow, and it starts again on its
+own when the machine does:
+
+```bash
+# macOS, launchd
+sed -e "s|REPOSITORY|$PWD|" -e "s|PYTHON|$(which python3)|" \
+    deploy/com.piokuc.ecmwf-ingestd.plist \
+    > ~/Library/LaunchAgents/com.piokuc.ecmwf-ingestd.plist
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.piokuc.ecmwf-ingestd.plist
+
+# Linux, systemd
+sed -e "s|REPOSITORY|$PWD|" -e "s|PYTHON|$(which python3)|" \
+    deploy/ecmwf-ingestd.service > ~/.config/systemd/user/ecmwf-ingestd.service
+systemctl --user daemon-reload && systemctl --user enable --now ecmwf-ingestd
+```
+
+The `--log-file` in the service definition is what makes
+`data/service.log` the ingestor's log; `data/ingestd.log` holds whatever
+came on stderr, a crash traceback included.
 
 ## The widget
 
@@ -265,6 +282,32 @@ place in both.
 python widget.py --text       # a quick look at what is stored
 python service.py status      # what has been fetched, and how much of it
 ```
+
+## The logs
+
+Everything the machine is doing is written down somewhere, and every log
+answers one particular question:
+
+| Log | Kept by | The question it answers |
+| --- | --- | --- |
+| `data/service.log` | the `--log-file` of the ingestor | What the ingestor is doing now, and what each run cost: steps, values, megabytes |
+| `data/ingestd.log` | launchd or systemd | Did the ingestor crash? stderr and the traceback land here |
+| `data/publishd.log` | launchd or systemd | When the publisher will look for a run, what it found, what it pushed |
+| `service.py status` | the database | Which runs are stored, `complete` or `partial`, and how much of each |
+| `gh run list --workflow=pages.yml` | GitHub Actions | Did the cloud build run, succeed, how long did it take |
+| `latest.json` on the site | the published page | The honest verdict: when was the page last actually rebuilt |
+| the commit log of the repository | git | What the publisher pushed, and when |
+
+Two properties make these worth reading. First, both service logs are
+stamped with UTC on every line, so a gap in the timestamps is a gap in
+the work. Second, the three systems check each other: the database holds
+a run that `data/service.log` describes; the publisher's log names a
+push that is in the repository's own history; and `latest.json` on the
+live site carries the built time of the page one of the two pushed.
+
+If the logs and the site disagree — the database has a run that
+`latest.json` does not know about — then the chain is broken and the
+`data/publishd.log` tells which piece went missing.
 
 ## The tests
 
