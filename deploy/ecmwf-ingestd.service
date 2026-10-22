@@ -1,0 +1,27 @@
+# The ingestor as a Linux systemd user service.
+
+# It polls the portal for new runs and stores the values, and writes its
+# stamped log to data/service.log while stderr lands in data/ingestd.log.
+#
+# Install with:
+#
+#     mkdir -p ~/.config/systemd/user
+#     sed -e "s|REPOSITORY|$HOME/work/ecmwf-widget|" \
+#         -e "s|PYTHON|$HOME/.venv/ecmwf-widget/bin/python|" \
+#         deploy/ecmwf-ingestd.service > ~/.config/systemd/user/ecmwf-ingestd.service
+#     systemctl --user daemon-reload
+#     systemctl --user enable --now ecmwf-ingestd
+
+[Unit]
+Description=ECMWF forecast: pull new runs into the local database
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=REPOSITORY
+ExecStart=PYTHON -u service.py run --log-file data/service.log
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=default.target

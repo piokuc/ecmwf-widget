@@ -324,3 +324,67 @@ def test_prune_cache_keeps_the_last_run(tmp_path):
 def test_prune_cache_on_a_missing_directory(tmp_path):
     config = _config(tmp_path)
     assert Service(config).prune_cache() == 0
+
+
+# -- the log -------------------------------------------------------------------- #
+
+def test_stamp_tee_echoes_into_the_log_and_stamps_lines(tmp_path):
+    import io
+
+    from ecmwf_widget.service import StampTee
+
+    stream = io.StringIO()
+    path = tmp_path / "service.log"
+    tee = StampTee(stream, str(path))
+    tee.write("ingesting ifs 2026102100\n")
+    tee.write("  3 steps, 120 values")
+    tee.flush()
+
+    lines = path.read_text().strip().splitlines()
+    assert len(lines) == 2
+    assert re.match(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} ", lines[0])
+    assert "ingesting ifs 2026102100" in lines[0]
+    assert "3 steps, 120 values" in lines[1]
+    # the stream saw exactly what was written
+    assert stream.getvalue() == "ingesting ifs 2026102100\n  3 steps, 120 values"
+    # unknown attributes come from the real stream
+    assert tee.writable() is True
+
+
+def test_stamp_tee_holds_an_unfinished_line_until_a_flush(tmp_path):
+    import io
+
+    from ecmwf_widget.service import StampTee
+
+    path = tmp_path / "service.log"
+    tee = StampTee(io.StringIO(), str(path))
+    tee.write("half a line")
+    assert path.read_text() == ""       # the line is not finished, so it waits
+    tee.flush()
+    assert "half a line" in path.read_text()
+
+
+def test_stamp_tee_uses_the_logs_option_of_the_CLI(tmp_path, monkeypatch, capsys):
+    config = _config(tmp_path)
+    log = tmp_path / "service.log"
+
+    # `status` reads the store; give it a harmless fake so no network and no real db needed
+    class FakeStore:
+        def __init__(self, _path):
+            pass
+
+        def runs(self):
+            return []
+
+        def places(self):
+            return []
+
+        def count_values(self, *a, **kw):
+            return 0
+
+    monkeypatch.setattr(service_module, "ForecastStore", FakeStore)
+    monkeypatch.setattr(service_module, "load_config", lambda *a, **kw: config)
+
+    assert service_module.main(["status", "--log-file", str(log)]) == 0
+    text = log.read_text()
+    assert "0 run(s)" in text and re.match(r"\d{4}-", text.splitlines()[0])

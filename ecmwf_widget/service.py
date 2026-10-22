@@ -42,6 +42,48 @@ class IngestReport:
     errors: list[str] = field(default_factory=list)
 
 
+class StampTee:
+    """Echo a stream into a log file, stamping every line with the UTC time.
+
+    The log file is written line by line, so a daemon that dies mid-line
+    still leaves everything up to the last line break. A line that is not
+    finished is held until the stream is flushed.
+    """
+
+    def __init__(self, stream, path: str):
+        self._stream = stream
+        self._file = open(path, "a", encoding="utf-8", buffering=1)   # line buffered
+        self._remainder = ""
+
+    def _to_file(self, text: str) -> None:
+        text = self._remainder + text
+        lines = text.split("\n")
+        self._remainder = lines.pop()
+        if lines:
+            stamp = dt.datetime.now(dt.UTC).strftime("%Y-%m-%d %H:%M:%S ")
+            self._file.write("".join(stamp + line + "\n" for line in lines))
+
+    def write(self, text: str) -> int:
+        self._stream.write(text)
+        self._to_file(text)
+        return len(text)
+
+    def flush(self) -> None:
+        self._stream.flush()
+        if self._remainder:
+            rest, self._remainder = self._remainder, ""
+            stamp = dt.datetime.now(dt.UTC).strftime("%Y-%m-%d %H:%M:%S ")
+            self._file.write(stamp + rest)
+        self._file.flush()
+
+    def close(self) -> None:
+        self.flush()
+        self._file.close()
+
+    def __getattr__(self, name):
+        return getattr(self._stream, name)
+
+
 class Service:
     """Downloads new ECMWF runs and extracts values at the configured places."""
 
@@ -449,11 +491,14 @@ def main(argv: list[str] | None = None) -> int:
     sub_common = argparse.ArgumentParser(add_help=False)
     sub_common.add_argument("--config", default=argparse.SUPPRESS, help="configuration file")
     sub_common.add_argument("--database", default=argparse.SUPPRESS, help="override the database path")
+    sub_common.add_argument("--log-file", default=argparse.SUPPRESS, help="echo what is printed into a log file")
 
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter, parents=[common]
     )
     sub = parser.add_subparsers(dest="command", required=True)
+
+    parser.add_argument("--log-file", default=None, help="echo what is printed into a log file")
 
     sub.add_parser("once", help="check for new data once and exit", parents=[sub_common])
     sub.add_parser("run", help="keep checking for new data", parents=[sub_common])
@@ -463,6 +508,9 @@ def main(argv: list[str] | None = None) -> int:
     export.add_argument("path", nargs="?", default="data/forecast.csv")
 
     args = parser.parse_args(argv)
+    if args.log_file:
+        sys.stdout = StampTee(sys.stdout, args.log_file)
+        sys.stderr = sys.stdout
     config = load_config(args.config)
     if args.database:
         config.database = args.database

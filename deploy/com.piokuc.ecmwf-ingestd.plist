@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  The ingestor as a macOS launchd user agent.
+
+  It polls the portal for new runs and stores the values, keeping the
+  database current. The ingestor writes its own stamped log with
+  --log-file (data/service.log); anything on stderr lands in
+  data/ingestd.log as well, including a crash traceback.
+
+  Install with:
+
+      PLIST=~/Library/LaunchAgents/com.piokuc.ecmwf-ingestd.plist
+      sed -e "s|REPOSITORY|$HOME/work/ecmwf-widget|" \
+          -e "s|PYTHON|$HOME/.venv/ecmwf-widget/bin/python|" \
+          deploy/com.piokuc.ecmwf-ingestd.plist > "$PLIST"
+      launchctl bootstrap gui/$(id -u) "$PLIST"
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.piokuc.ecmwf-ingestd</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>PYTHON</string>
+        <string>-u</string>
+        <string>service.py</string>
+        <string>run</string>
+        <string>--log-file</string>
+        <string>data/service.log</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPOSITORY</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardErrorPath</key>
+    <string>REPOSITORY/data/ingestd.log</string>
+</dict>
+</plist>

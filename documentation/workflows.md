@@ -28,6 +28,21 @@ stops when it is done.
 `status` shows every run that has been fetched, with the model, how many
 values it holds and the places that are followed.
 
+What the service prints can be kept with `--log-file`: the log file gets a
+UTC stamp on every line, and it takes over where an output redirect would
+be missing.
+
+```bash
+python service.py run --log-file data/service.log
+python service.py --log-file data/service.log status    # the option can be on either side
+```
+
+**As a service.** On macOS and Linux the ingestor is a user service, defined
+in [`deploy/`](deploy); the same way as the publisher below, with
+`com.piokuc.ecmwf-ingestd.plist` or `ecmwf-ingestd.service`. The service
+runs the command above, so `data/service.log` is the ingestor's log and
+`data/ingestd.log` holds whatever came on stderr, crash included.
+
 ## The widget
 
 ```bash
