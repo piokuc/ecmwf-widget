@@ -13,6 +13,48 @@ from ecmwf_widget.scheduler import DEFAULT_DELAY, cycle_times, next_expected
 
 # -- the schedule ------------------------------------------------------------ #
 
+def test_wait_until_sleeps_in_slices_and_never_past_the_deadline():
+    """The deadline comes from the wall clock, not from one long sleep."""
+    class Clock:
+        def __init__(self, start):
+            self.moment = start
+
+        def now(self):
+            return self.moment
+
+        def advance(self, seconds):
+            self.moment += dt.timedelta(seconds=seconds)
+
+    # Eleven minutes to the deadline, and the clock advances by exactly
+    # what sleep was told: a machine that wakes late with the deadline in
+    # the past returns without sleeping.
+    sleeps = []
+
+    def fake_sleep(seconds):
+        sleeps.append(seconds)
+        clock.advance(seconds)
+
+    clock = Clock(dt.datetime(2026, 10, 22, 2, 29))
+    deadline = dt.datetime(2026, 10, 22, 2, 40)
+
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(auto_publish.time, "sleep", fake_sleep)
+        auto_publish._wait_until(deadline, now=clock.now)
+
+    # Sixty second slices, one six-second tail, never past the deadline.
+    assert all(seconds <= 60 for seconds in sleeps)
+    assert sleeps[-1] <= 60
+    assert clock.now() >= deadline
+
+
+def test_wait_until_already_past_returns_at_once():
+    sleeps = []
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(auto_publish.time, "sleep", lambda s: sleeps.append(s))
+        auto_publish._wait_until(dt.datetime(2026, 10, 22, 2, 40, tzinfo=dt.UTC))
+    assert sleeps == []
+
+
 def test_delay_is_the_default_schedule():
     assert DEFAULT_DELAY == dt.timedelta(hours=8, minutes=40)
 

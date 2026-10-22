@@ -29,6 +29,24 @@ from .service import Service
 from .store import ForecastStore
 
 
+def _wait_until(expected: dt.datetime, now=None) -> None:
+    """Sleep until a minute after ``expected``, watching the wall clock.
+
+    The wait is taken in short slices and every slice re-reads the clock.
+    A plain sleep pauses while the machine sleeps, which can make a daemon
+    overshoot its deadline by hours; a deadline checked against the wall
+    clock does not, so the daemon recovers within the minute after the
+    machine wakes.
+    """
+
+    clock = now or (lambda: dt.datetime.now(dt.UTC))
+    while True:
+        wait = (expected + dt.timedelta(minutes=1) - clock()).total_seconds()
+        if wait <= 0:
+            return
+        time.sleep(min(wait, 60.0))
+
+
 def run_git(*arguments: str) -> subprocess.CompletedProcess:
     """Run a git command."""
     return subprocess.run(["git", *arguments], capture_output=True, text=True, check=False)
@@ -114,15 +132,18 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  polling every {args.poll} s")
 
     while True:
-        # Wait until a minute after the expected time.
-        wait = (expected + dt.timedelta(minutes=1) - dt.datetime.now(dt.UTC)).total_seconds()
-        if args.now:
-            wait = 0
-        if wait > 0:
-            print(f"  waiting {wait / 60:.0f} min for the run")
-            if args.once:
-                return 0
-            time.sleep(wait)
+        # Wait until a minute after the expected time. The wait watches the
+        # wall clock in short slices, so a machine that slept does not stay
+        # behind for long.
+        if not args.now:
+            remaining = (
+                expected + dt.timedelta(minutes=1) - dt.datetime.now(dt.UTC)
+            ).total_seconds()
+            if remaining > 0:
+                print(f"  waiting {remaining / 60:.0f} min for the run")
+                if args.once:
+                    return 0
+                _wait_until(expected)
 
         print(f"  {dt.datetime.now(dt.UTC).strftime('%H:%M:%S')} looking for the data")
         while True:
