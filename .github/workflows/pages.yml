@@ -28,6 +28,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v4
 
@@ -41,9 +42,27 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install .
 
-      - name: Fetch the latest forecast
+      - name: Wait for the forecast data, then fetch it
         run: |
-          python -m ecmwf_widget.service once --config config/places.pages.yml
+          python - <<'PY'
+          import datetime as dt
+          import subprocess
+          import sys
+
+          from ecmwf_widget.scheduler import DEFAULT_DELAY, next_expected
+
+          expected = next_expected(dt.datetime.now(dt.timezone.utc), DEFAULT_DELAY)
+          wait_seconds = (expected + dt.timedelta(minutes=1) - dt.datetime.now(dt.timezone.utc)).total_seconds()
+          if wait_seconds > 0:
+              print(f"waiting {wait_seconds / 60:.0f} minutes for the run {expected} to become available")
+              subprocess.run(["sleep", str(int(wait_seconds))], check=True)
+          raise SystemExit(
+              subprocess.run(
+                  [sys.executable, "-u", "-m", "ecmwf_widget.service", "once", "--config", "config/places.pages.yml"],
+                  check=False,
+              ).returncode
+          )
+          PY
 
       - name: Build the page
         run: |
