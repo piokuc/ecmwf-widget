@@ -16,7 +16,7 @@ def test_forecast_controls(browser_page, forecast_app, delivery):
     expect(page.locator("#placeInput")).to_have_value("Warsaw")
     expect(page.locator("#model option")).to_have_count(3)
     expect(page.locator("#run option")).to_have_count(2)
-    expect(page.locator("#tooltips")).to_have_attribute("aria-pressed", "false")
+    expect(page.locator("#tooltips")).not_to_be_checked()
     expect(page.locator("#tip")).not_to_be_visible()
     assert page.locator(".grid svg").count() > 0
     assert page.locator("svg.vector").count() > 0
@@ -100,14 +100,14 @@ def test_forecast_controls(browser_page, forecast_app, delivery):
     cell = page.locator('tbody [data-col="1"]').first
     cell.hover()
     expect(page.locator("#tip")).not_to_be_visible()
-    page.locator("#tooltips").click()
+    page.locator("#tooltips").check()
     cell.hover()
     expect(page.locator("#tip")).to_be_visible()
     page.reload()
-    expect(page.locator("#tooltips")).to_have_attribute("aria-pressed", "true")
+    expect(page.locator("#tooltips")).to_be_checked()
     page.locator('tbody [data-col="1"]').first.hover()
     expect(page.locator("#tip")).to_be_visible()
-    page.locator("#tooltips").click()
+    page.locator("#tooltips").uncheck()
     expect(page.locator("#tip")).not_to_be_visible()
 
     # Horizontal scrolling is contained by the forecast, including on phones.

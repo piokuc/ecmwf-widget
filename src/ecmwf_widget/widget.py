@@ -133,6 +133,8 @@ PAGE = r"""<!DOCTYPE html>
   button { cursor: pointer; }
   button:hover, select:hover, input:hover { border-color: var(--accent); }
   button.on { border-color: var(--accent); color: var(--accent); }
+  .check { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); font-size: 12.5px; cursor: pointer; }
+  .check input { accent-color: var(--accent); width: 14px; height: 14px; margin: 0; cursor: pointer; }
 
   /* Place picker ------------------------------------------------------- */
   .picker { position: relative; min-width: 250px; }
@@ -358,7 +360,10 @@ PAGE = r"""<!DOCTYPE html>
       <select id="run" title="Forecast run"></select>
       <button id="clock" title="Show the times in the local time or in UTC">Local</button>
       <button id="params" title="Choose the parameters to show">Parameters</button>
-      <button id="tooltips" aria-pressed="false">Tooltips: off</button>
+      <label class="check" for="tooltips">
+        <input type="checkbox" id="tooltips" />
+        <span>Tooltips</span>
+      </label>
       <button id="theme" title="Switch between light and dark">Auto</button>
 
       <div class="panel" id="panel">
@@ -1756,19 +1761,17 @@ clockButton.addEventListener("click", () => {
 });
 
 // Forecast tooltips are opt-in; hovering still updates the hour and summary.
-const tooltipButton = document.getElementById("tooltips");
+const tooltipCheck = document.getElementById("tooltips");
 function applyTooltips(enabled) {
   state.tooltips = enabled;
-  tooltipButton.textContent = "Tooltips: " + (enabled ? "on" : "off");
-  tooltipButton.setAttribute("aria-pressed", String(enabled));
-  tooltipButton.classList.toggle("on", enabled);
+  tooltipCheck.checked = enabled;
   if (!enabled) hideTip();
   try { localStorage.setItem("ecmwf-tooltips", String(enabled)); } catch (e) { /* private mode */ }
 }
 let tooltipsEnabled = false;
 try { tooltipsEnabled = localStorage.getItem("ecmwf-tooltips") === "true"; } catch (e) { /* private mode */ }
 applyTooltips(tooltipsEnabled);
-tooltipButton.addEventListener("click", () => applyTooltips(!state.tooltips));
+tooltipCheck.addEventListener("change", () => applyTooltips(tooltipCheck.checked));
 
 // Theme: auto, light or dark, remembered between visits.
 const THEMES = ["auto", "light", "dark"];

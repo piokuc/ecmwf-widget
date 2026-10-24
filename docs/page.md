@@ -164,8 +164,8 @@ can be added to the home screen of a phone.
 
 ## Tooltips and selections
 
-Forecast tooltips are off by default. The **Tooltips: off/on** button enables
-or disables them and remembers the choice in this browser. Hovering still
+Forecast tooltips are off by default. The **Tooltips** checkbox enables or
+disables them and remembers the choice in this browser. Hovering still
 updates the highlighted hour and summary when tooltips are disabled.
 
 The static bundle carries the data for every run offered by its selector.

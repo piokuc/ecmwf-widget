@@ -129,7 +129,7 @@ Embedded metadata escapes script delimiters.
 Model/run changes reset selected hours; stale responses cannot overwrite a
 newer selection. The place picker supports filtered Enter selection and Escape.
 An empty parameter choice remains empty until the user restores defaults.
-Tooltips are opt-in and persisted locally, with a pressed-state button.
+Tooltips are opt-in and persisted locally, with a checkbox.
 Hovering still updates the hour and summary while tooltips are off.
 
 ## Review results
