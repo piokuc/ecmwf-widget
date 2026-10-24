@@ -46,3 +46,13 @@ def test_model_has_catalogue_and_type():
         assert model.model in ("ifs", "aifs-single")
         assert model.stream == "oper"
         assert model.type == "fc"
+
+
+def test_selection_deduplicates_without_reordering():
+    assert [m.key for m in models.resolve(['aifs', 'all', 'ifs'])] == ['aifs', 'ifs', 'ifs025']
+
+
+def test_unrecognized_resolution_is_not_mislabeled():
+    import dataclasses
+
+    assert dataclasses.replace(models.get('ifs'), resol='future').resolution == 'future'

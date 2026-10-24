@@ -55,7 +55,7 @@ def test_get_does_not_guess_a_pressure_level_for_a_surface_name():
 
 def test_restore_split():
     surface, pressure, derived = parameters.resolve(["2t", "u", "wind_speed"])
-    assert surface == ["2t"]
+    assert surface == ["2t", "10u", "10v"]
     assert pressure == ["u"]
     assert derived == ["wind_speed"]
     with pytest.raises(KeyError):

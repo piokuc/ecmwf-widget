@@ -141,11 +141,17 @@ is in the repository.
 ## The tests
 
 ```bash
-pip install -e ".[dev]"      # pytest, pytest-bdd and ruff
-pytest                       # unit tests and website scenarios
+python3 -m venv .venv
+.venv/bin/python -m pip install -e ".[dev]"
+PLAYWRIGHT_BROWSERS_PATH=.playwright .venv/bin/python -m playwright install chromium webkit
+.venv/bin/python -m pytest    # unit tests, HTTP scenarios and real browser tests
 pytest tests/unit            # just the unit tests
-pytest tests/features        # just the website scenarios
+pytest tests/features        # HTTP scenarios
+pytest tests/browser         # desktop/mobile Chromium and WebKit
 ```
+
+Activate the virtual environment (`source .venv/bin/activate`) before using
+the shorter `pytest` commands above.
 
 The unit tests cover the schedule, the configuration, the parameters, the
 store, the service (with the network faked away) and the publishing step
@@ -196,6 +202,7 @@ There is more in the [documentation](docs/index.md):
 | | |
 | --- | --- |
 | [Overview](docs/overview.md) | How the pieces fit together |
+| [Model architecture and review](docs/model-architecture.md) | The forecast model integration and prioritized improvements |
 | [The data](docs/data.md) | What ECMWF publishes, the parameters, the units, the licence |
 | [The data retriever](docs/retrieval.md) | How a run is found, fetched, decoded and stored |
 | [The web page](docs/page.md) | How the page is built and how it renders |

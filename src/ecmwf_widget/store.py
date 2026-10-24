@@ -16,6 +16,7 @@ Schema
 
 from __future__ import annotations
 
+import contextlib
 import dataclasses
 import datetime as dt
 import functools
@@ -28,7 +29,7 @@ from .points import Place, PointValue
 
 __all__ = ["ForecastStore", "RunInfo"]
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 
 def _synchronized(method):
@@ -74,14 +75,30 @@ class ForecastStore:
         self.connection.execute("PRAGMA journal_mode=WAL")
         self.connection.execute("PRAGMA synchronous=NORMAL")
         self._lock = threading.RLock()
-        self._create_schema()
+        try:
+            self._create_schema()
+        except Exception:
+            self.connection.rollback()
+            self.connection.close()
+            raise
 
     # -- schema ----------------------------------------------------------- #
 
     @_synchronized
     def _create_schema(self) -> None:
+        has_meta = self.connection.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='meta'"
+        ).fetchone()
+        if has_meta:
+            row = self.connection.execute(
+                "SELECT value FROM meta WHERE key='schema_version'"
+            ).fetchone()
+            version = int(row[0]) if row else 0
+            if version not in (3, SCHEMA_VERSION):
+                raise ValueError(f"unsupported forecast schema {version}; expected 3 or {SCHEMA_VERSION}")
         self.connection.executescript(
             """
+            BEGIN IMMEDIATE;
             CREATE TABLE IF NOT EXISTS meta (
                 key   TEXT PRIMARY KEY,
                 value TEXT
@@ -133,6 +150,23 @@ class ForecastStore:
                 ON point_values (model, place_id, param, level, step);
             CREATE INDEX IF NOT EXISTS point_values_run
                 ON point_values (model, run);
+
+            CREATE TABLE IF NOT EXISTS ingest_state (
+                model TEXT NOT NULL,
+                run TEXT NOT NULL,
+                fingerprint TEXT NOT NULL,
+                PRIMARY KEY (model, run)
+            );
+            CREATE TABLE IF NOT EXISTS ingest_jobs (
+                model TEXT NOT NULL,
+                run TEXT NOT NULL,
+                step INTEGER NOT NULL,
+                levtype TEXT NOT NULL,
+                status TEXT NOT NULL,
+                source TEXT NOT NULL DEFAULT '',
+                error TEXT NOT NULL DEFAULT '',
+                PRIMARY KEY (model, run, step, levtype)
+            );
             """
         )
         self.connection.execute(
@@ -140,6 +174,58 @@ class ForecastStore:
             (str(SCHEMA_VERSION),),
         )
         self.connection.commit()
+
+    @contextlib.contextmanager
+    def snapshot(self):
+        """Keep a reader payload on one SQLite snapshot, including across processes."""
+        with self._lock:
+            self.connection.execute("BEGIN")
+            try:
+                yield
+            finally:
+                self.connection.rollback()
+
+    @_synchronized
+    def ingest_fingerprint(self, model: str, run: str) -> str | None:
+        row = self.connection.execute(
+            "SELECT fingerprint FROM ingest_state WHERE model=? AND run=?", (model, run)
+        ).fetchone()
+        return row[0] if row else None
+
+    @_synchronized
+    def prepare_ingest(self, model: str, run: str, fingerprint: str) -> None:
+        """Invalidate incompatible values and checkpoints together on config changes."""
+        if self.ingest_fingerprint(model, run) == fingerprint:
+            return
+        with self.connection:
+            for table in ("point_values", "places", "ingest_jobs"):
+                self.connection.execute(f"DELETE FROM {table} WHERE model=? AND run=?", (model, run))
+            self.connection.execute(
+                "INSERT OR REPLACE INTO ingest_state VALUES (?, ?, ?)", (model, run, fingerprint)
+            )
+            self.connection.execute(
+                "UPDATE runs SET status='partial' WHERE model=? AND run=?", (model, run)
+            )
+
+    @_synchronized
+    def ingest_jobs(self, model: str, run: str) -> dict[tuple[int, str], sqlite3.Row]:
+        rows = self.connection.execute(
+            "SELECT * FROM ingest_jobs WHERE model=? AND run=?", (model, run)
+        ).fetchall()
+        return {(row['step'], row['levtype']): row for row in rows}
+
+    @_synchronized
+    def finish_job(self, model: str, run: str, step: int, levtype: str,
+                   values: Sequence[PointValue], *, status: str,
+                   source: str = "", error: str = "") -> int:
+        """Commit values and their coverage checkpoint atomically."""
+        with self.connection:
+            count = self.store_values(run, values, model, _commit=False)
+            self.connection.execute(
+                "INSERT OR REPLACE INTO ingest_jobs VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (model, run, step, levtype, status, source, error),
+            )
+        return count
 
     # -- runs -------------------------------------------------------------- #
 
@@ -154,7 +240,7 @@ class ForecastStore:
         status: str = "partial",
         label: str = "",
     ) -> None:
-        now = dt.datetime.now(dt.UTC).isoformat(timespec="seconds")
+        now = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
         self.connection.execute(
             """
             INSERT INTO runs (model, run, cycle, time, label, resol, status, ingested_at, updated_at)
@@ -170,7 +256,7 @@ class ForecastStore:
 
     @_synchronized
     def set_run_status(self, run: str, status: str, model: str = "ifs") -> None:
-        now = dt.datetime.now(dt.UTC).isoformat(timespec="seconds")
+        now = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
         self.connection.execute(
             "UPDATE runs SET status = ?, updated_at = ? WHERE run = ? AND model = ?",
             (status, now, run, model),
@@ -289,6 +375,8 @@ class ForecastStore:
         run: str,
         values: Iterable[PointValue],
         model: str = "ifs",
+        *,
+        _commit: bool = True,
     ) -> int:
         rows = [
             (
@@ -320,7 +408,8 @@ class ForecastStore:
             """,
             rows,
         )
-        self.connection.commit()
+        if _commit:
+            self.connection.commit()
         return len(rows)
 
     @_synchronized
@@ -342,11 +431,12 @@ class ForecastStore:
         return int(row[0])
 
     @_synchronized
-    def step_counts(self) -> dict[tuple[str, str], tuple[int, int]]:
+    def step_counts(self, place_id: str | None = None) -> dict[tuple[str, str], tuple[int, int]]:
         """How many forecast steps each run holds, and the last one."""
         rows = self.connection.execute(
             "SELECT model, run, COUNT(DISTINCT step) AS count, MAX(step) AS last "
-            "FROM point_values GROUP BY model, run"
+            "FROM point_values " + ("WHERE place_id=? " if place_id else "") + "GROUP BY model, run",
+            (place_id,) if place_id else (),
         ).fetchall()
         return {
             (row["model"], row["run"]): (row["count"], row["last"])
@@ -360,14 +450,18 @@ class ForecastStore:
         The newest runs of every model are kept.
         """
         rows = self.connection.execute(
-            "SELECT model, run FROM runs ORDER BY model, run DESC"
+            "SELECT model, run, status FROM runs ORDER BY model, run DESC"
         ).fetchall()
         seen: dict[str, int] = {}
         stale = []
+        protected = {}
+        for row in rows:
+            if row["status"] == "complete":
+                protected.setdefault(row["model"], row["run"])
         for row in rows:
             model = row["model"]
             seen[model] = seen.get(model, 0) + 1
-            if seen[model] > keep:
+            if seen[model] > keep and row["run"] != protected.get(model):
                 stale.append((model, row["run"]))
         if not stale:
             return 0
@@ -377,6 +471,8 @@ class ForecastStore:
             )
             self.connection.execute("DELETE FROM places WHERE model = ? AND run = ?", (model, run))
             self.connection.execute("DELETE FROM runs WHERE model = ? AND run = ?", (model, run))
+            self.connection.execute("DELETE FROM ingest_state WHERE model = ? AND run = ?", (model, run))
+            self.connection.execute("DELETE FROM ingest_jobs WHERE model = ? AND run = ?", (model, run))
         self.connection.commit()
         return len(stale)
 
@@ -424,6 +520,14 @@ class ForecastStore:
         return [(row["param"], row["level"]) for row in rows]
 
     # -- export ------------------------------------------------------------ #
+
+    @_synchronized
+    def place_values(self, model: str, run: str, place_id: str) -> list[sqlite3.Row]:
+        """Fetch a product's entire place forecast in one query."""
+        return self.connection.execute(
+            "SELECT * FROM point_values WHERE model=? AND run=? AND place_id=? ORDER BY param, level, step",
+            (model, run, place_id),
+        ).fetchall()
 
     @_synchronized
     def export_csv(self, path: str | os.PathLike[str]) -> str:

@@ -78,12 +78,25 @@ def build(
             "no forecast data in the database; run 'ecmwf-service once' first"
         )
 
+    # Every offered run must have actual data in the static bundle.
+    embedded_runs = {}
+    for info in store.runs():
+        payload = reader.widget_payload(run=info.run, model=info.model)
+        if payload["places"]:
+            embedded_runs.setdefault(info.model, {})[info.run] = payload
+    store.close()
+
     # Keep the page a sensible size: every parameter for the first few
     # places, the basic set for the rest.
-    if max_places:
-        for payload in embedded.values():
+    payloads = list(embedded.values()) + [p for runs in embedded_runs.values() for p in runs.values()]
+    for payload in payloads:
+        if max_places:
             payload["places"] = payload["places"][:max_places]
-    for payload in embedded.values():
+        kept = {place["id"] for place in payload["places"]}
+        payload["place_list"] = [place for place in payload["place_list"] if place["id"] in kept]
+        payload["runs"] = [run for run in payload["runs"]
+                           if run["run"] in embedded_runs.get(run["model"], {})]
+    for payload in payloads:
         places = payload["places"]
         payload["places"] = places[:full_places] + [_trim(p) for p in places[full_places:]]
 
@@ -97,7 +110,7 @@ def build(
     # A small file with the state of the data. It changes on every publish, so
     # the commit is a visible data change and not just a rebuilt page.
     latest = {
-        "updated": dt.datetime.now(dt.UTC).isoformat(timespec="seconds"),
+        "updated": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         "models": {
             model: {
                 "run": payload["run"],
@@ -119,10 +132,12 @@ def build(
         if source.exists():
             shutil.copy(source, os.path.join(out_dir, f"app-icon-{size}.png"))
 
-    data = json.dumps(embedded, separators=(",", ":"))
+    # Escape script delimiters in user-supplied place metadata.
+    data = json.dumps(embedded, separators=(",", ":")).replace("<", "\\u003c")
+    runs_data = json.dumps(embedded_runs, separators=(",", ":")).replace("<", "\\u003c")
     page = widget.PAGE.replace(
         "<script>\nconst REFRESH_MS = 60000;",
-        "<script>window.FORECAST_DATA = " + data + ";</script>\n"
+        "<script>window.FORECAST_DATA = " + data + ";</script>\n<script>window.FORECAST_RUNS = " + runs_data + ";</script>\n"
         "<script>\nconst REFRESH_MS = 60000;",
         1,
     )

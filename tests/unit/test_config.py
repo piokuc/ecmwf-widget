@@ -6,6 +6,7 @@ import textwrap
 from pathlib import Path
 
 import pytest
+import yaml
 
 from ecmwf_widget import config, models, parameters
 
@@ -44,6 +45,19 @@ def test_the_catalogue_of_the_world_comes_with_the_package():
     loaded = config.load_config(PAGES_CONFIG)
     assert loaded.catalogue
     assert all(place.country_code for place in loaded.catalogue)
+
+
+def test_the_world_catalogue_carries_time_zones():
+    """The world places know their time zone, so the page can show local time."""
+
+    from ecmwf_widget import paths
+
+    with paths.WORLD_PLACES.open() as handle:
+        entries = yaml.safe_load(handle)["places"]
+    by_id = {entry["id"]: entry for entry in entries}
+    assert by_id["berlin"]["timezone"] == "Europe/Berlin"
+    assert by_id["reykjavik"]["timezone"].startswith("Atlantic/Reykjavik")
+    assert all(entry.get("timezone") for entry in entries)
 
 
 def test_own_places_come_first_in_all_places():

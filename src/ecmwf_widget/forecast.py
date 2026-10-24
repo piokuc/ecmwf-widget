@@ -76,7 +76,7 @@ def local_time(moment: dt.datetime, timezone: str) -> dt.datetime:
         zone = ZoneInfo(timezone)
     except Exception:  # noqa: BLE001 - an unknown timezone is not fatal
         return moment
-    return moment.replace(tzinfo=dt.UTC).astimezone(zone)
+    return moment.replace(tzinfo=dt.timezone.utc).astimezone(zone)
 
 
 def local_label(moment: dt.datetime, timezone: str) -> str:
@@ -164,11 +164,15 @@ class ForecastReader:
 
     # -- places ------------------------------------------------------------ #
 
-    def places(self, run: str | None = None) -> list[Place]:
+    def places(self, run: str | None = None, model: str | None = None) -> list[Place]:
         """The places known for a run."""
-        rows = self.store.places(run)
+        rows = self.store.places(run, self._model(model, run))
         if not rows and self.catalogue:
             return list(self.catalogue)
+        # The catalogue is the source of truth for display metadata. Database
+        # rows can be older and, for the world catalogue, carry the UTC that
+        # was stored before the places learned their time zone.
+        catalogue = {place.id: place for place in self.catalogue}
         return [
             Place(
                 id=row["place_id"],
@@ -176,7 +180,11 @@ class ForecastReader:
                 latitude=row["latitude"],
                 longitude=row["longitude"],
                 elevation=row["elevation"],
-                timezone=row["timezone"] or "UTC",
+                timezone=(
+                    catalogue[row["place_id"]].timezone
+                    if row["place_id"] in catalogue
+                    else row["timezone"]
+                ) or "UTC",
                 country=row["country"] or "",
                 country_code=row["country_code"] or "",
                 flag=row["flag"] or "",
@@ -185,25 +193,28 @@ class ForecastReader:
             for row in rows
         ]
 
+    def _model(self, model: str | None, run: str | None = None) -> str:
+        if model is not None:
+            models.get(model)
+            return model
+        present = {info.model for info in self.store.runs() if run is None or info.run == run}
+        return next((key for key in models.names() if key in present), "ifs")
+
     def latest_run(self, model: str | None = None) -> str | None:
-        return self.store.latest_run(model)
+        model = self._model(model)
+        return self._best_run(model, self.store.step_counts())
 
-    def _best_run(self, model: str, step_counts: dict[tuple[str, str], int]) -> str | None:
-        """The run of a model that reaches furthest.
-
-        The 00 and 12 UTC runs of the 0.1 degree tier go out to 360 hours,
-        while the 06 and 18 UTC runs stop at 144 hours. The run that reaches
-        furthest is therefore the more useful one, even if it is a few hours
-        older.
-        """
-        runs = [
-            (count, run)
-            for (name, run), count in step_counts.items()
-            if name == model
-        ]
-        if not runs:
-            return self.store.latest_run(model)
-        return max(runs)[1]
+    def _best_run(self, model: str, step_counts: dict[tuple[str, str], tuple[int, int]]) -> str | None:
+        """Prefer complete runs, then the latest valid forecast time and freshest cycle."""
+        candidates = [info for info in self.store.runs(model)
+                      if (model, info.run) in step_counts]
+        complete = [info for info in candidates if info.status == "complete"]
+        candidates = complete or candidates
+        if not candidates:
+            return None
+        return max(candidates, key=lambda info: (
+            _valid_time(info.run, step_counts[(model, info.run)][1]), info.run
+        )).run
 
     def known_place(self, place_id: str) -> bool:
         """Whether a place can be chosen."""
@@ -225,6 +236,7 @@ class ForecastReader:
         Returns a mapping of parameter name to a dictionary with the label,
         the unit, and the list of steps.
         """
+        model = self._model(model, run)
         run = run or self.latest_run(model)
         if run is None:
             return {}
@@ -232,12 +244,14 @@ class ForecastReader:
         wanted = list(params) if params else None
         result: dict[str, dict] = {}
 
-        for param, level in self.store.distinct_params(run, model=model):
+        grouped = {}
+        for row in self.store.place_values(model, run, place_id):
+            grouped.setdefault((row["param"], row["level"]), []).append(row)
+        for (param, level), rows in grouped.items():
             if wanted is not None and param not in wanted:
                 continue
             key = f"{param}:{level}" if level >= 0 else param
 
-            rows = self.store.series(place_id, param, level=level, run=run, model=model)
             points = []
             for row in rows:
                 if row["value"] is None:
@@ -251,7 +265,7 @@ class ForecastReader:
                         }
                     )
                     continue
-                display_value, display_unit = self._convert(param, row["value"], row["units"])
+                display_value, display_unit = self._convert(param, row["value"], row["units"], model)
                 points.append(
                     {
                         "step": row["step"],
@@ -342,7 +356,7 @@ class ForecastReader:
             ],
         }
 
-        place = next((p for p in self.places(run) if p.id == place_id), None)
+        place = next((p for p in self.places(run, model) if p.id == place_id), None)
         temperature = result.get("2t")
         if place is None or place.elevation is None or temperature is None:
             return
@@ -374,8 +388,15 @@ class ForecastReader:
         }
 
     @staticmethod
-    def _convert(param: str, value: float, units: str) -> tuple[float, str]:
+    def _convert(param: str, value: float, units: str, model: str = "ifs") -> tuple[float, str]:
         """Convert a stored SI value into the unit used for display."""
+        # Older databases omitted GRIB units. Resolve only known product-specific
+        # encodings; never infer a fraction/percentage from the numeric magnitude.
+        if not units:
+            if param in {"tcc", "hcc", "mcc", "lcc"}:
+                units = "%" if model == "aifs" else "(0 - 1)"
+            elif param in {"tp", "cp", "sf"}:
+                units = "kg m-2" if model == "aifs" else "m"
         converted, display = parameters.to_display(value, units, param)
         if param in _UNITS:
             display = _UNITS[param]
@@ -386,18 +407,16 @@ class ForecastReader:
         """Turn an accumulation into per step increments."""
         result = []
         previous = 0.0
+        previous_step = 0
         for point in points:
-            value = point["value"] or 0.0
-            result.append(
-                {
-                    "step": point["step"],
-                    "valid": point["valid"],
-                    "value": max(value - previous, 0.0),
-                    "raw": point["raw"],
-                    "units": "mm",
-                }
-            )
+            value = point["value"]
+            increment = None
+            if value is not None and previous is not None and value >= previous:
+                increment = value - previous
+            result.append({**point, "value": increment, "units": "mm",
+                           "interval_start": previous_step, "interval_end": point["step"]})
             previous = value
+            previous_step = point["step"]
         return result
 
     # -- whole places ------------------------------------------------------ #
@@ -409,8 +428,9 @@ class ForecastReader:
         model: str | None = None,
     ) -> dict:
         """Everything a widget needs about one place."""
+        model = self._model(model, run)
         run = run or self.latest_run(model)
-        places = {place.id: place for place in self.places(run)}
+        places = {place.id: place for place in self.places(run, model)}
         place = places.get(place_id)
         return {
             "run": run,
@@ -431,12 +451,18 @@ class ForecastReader:
 
     def all_places(self, run: str | None = None, model: str | None = None) -> list[dict]:
         """The forecast of every place, for a dashboard."""
+        model = self._model(model, run)
         run = run or self.latest_run(model)
-        return [self.place_forecast(place.id, run, model) for place in self.places(run)]
+        return [self.place_forecast(place.id, run, model) for place in self.places(run, model)]
 
     # -- the widget payload ------------------------------------------------ #
 
-    def widget_payload(
+    def widget_payload(self, run: str | None = None, place: str | None = None,
+                       model: str | None = None) -> dict:
+        with self.store.snapshot():
+            return self._widget_payload(run, place, model)
+
+    def _widget_payload(
         self,
         run: str | None = None,
         place: str | None = None,
@@ -449,12 +475,11 @@ class ForecastReader:
         only that place is included; the list of all places comes back
         separately so the page can offer a choice.
         """
-        now = dt.datetime.now(dt.UTC)
+        now = dt.datetime.now(dt.timezone.utc)
+        model = self._model(model, run)
 
         # The models that have data, and their runs.
         step_counts = self.store.step_counts()
-        places_now = self.places(run) if run else []
-        timezone = places_now[0].timezone if places_now else "UTC"
 
         model_list = []
         seen_models: set[str] = set()
@@ -492,9 +517,8 @@ class ForecastReader:
             count, last = step_counts.get((info.model, info.run), (0, 0))
             until = ""
             if info.run and last:
-                until = local_time(
-                    _valid_time(info.run, last), timezone
-                ).strftime("%a %d %b %H:%M")
+                # The cycle in the same option is UTC, so the end is too.
+                until = _valid_time(info.run, last).strftime("%a %d %b %H:%M")
             run_list.append(
                 {
                     "model": info.model,
@@ -509,14 +533,14 @@ class ForecastReader:
         if model is None and model_list:
             model = model_list[0]["key"]
         if run is None and model:
-            run = self._best_run(model, step_counts)
+            run = self._best_run(model, self.store.step_counts(place) if place else step_counts)
 
         # Every place that can be chosen.
         place_list = []
         seen_places: set[str] = set()
         # The configured order comes first, so the page opens on the place
         # the user cares about most.
-        for item in list(self.catalogue) + list(self.places(run)):
+        for item in list(self.catalogue) + list(self.places(run, model)):
             if item.id in seen_places:
                 continue
             seen_places.add(item.id)
@@ -546,7 +570,7 @@ class ForecastReader:
                 "places": [],
             }
 
-        known = self.places(run)
+        known = self.places(run, model)
         chosen = [item for item in known if item.id == place] if place else known
 
         places = []
@@ -576,6 +600,9 @@ class ForecastReader:
                     "short": entry.get("short") or entry["label"],
                     "unit": entry["units"],
                     "values": [by_step.get(step) for step in place_steps],
+                    **({"intervals": [[point["interval_start"], point["interval_end"]]
+                                      for point in entry["points"]]}
+                       if key == "precip_increment" else {}),
                 }
                 available.add(key)
 
@@ -604,9 +631,15 @@ class ForecastReader:
                     ],
                     # When the forecast runs out. The 0.1 degree tier only goes
                     # to 360 hours for the 00 and 12 UTC runs; the 06 and 18
-                    # UTC runs stop at 90 hours.
+                    # UTC runs stop at 144 hours.
                     "until": (
                         local_time(_valid_time(run, place_steps[-1]), timezone).strftime("%a %d %b %H:%M")
+                        if place_steps
+                        else ""
+                    ),
+                    # The header's run is given in UTC, so its end is too.
+                    "until_utc": (
+                        _valid_time(run, place_steps[-1]).strftime("%a %d %b %H:%M")
                         if place_steps
                         else ""
                     ),

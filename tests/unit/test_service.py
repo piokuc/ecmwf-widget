@@ -56,7 +56,7 @@ def _fake_value(step, param="2t", value=280.0):
 def test_service_resolves_the_parameters(tmp_path):
     config = _config(tmp_path, params=("2t", "wind_speed"))
     service = Service(config)
-    assert service.surface_params == ["2t"]
+    assert service.surface_params == ["2t", "10u", "10v"]
     assert service.pressure_params == []
     # the derived quantities are always computed, they cost nothing
     assert "wind_speed" in service.derived_params
@@ -89,7 +89,7 @@ def test_candidate_runs_are_aligned_and_descending():
 def test_candidate_runs_start_two_hours_behind():
     runs = Service.__new__(Service).candidate_runs(count=1)
     newest = dt.datetime.strptime(runs[0], "%Y%m%d%H")
-    now = dt.datetime.now(dt.UTC).replace(tzinfo=None)
+    now = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
     # the newest cycle it may consider is two hours old
     assert now - newest >= dt.timedelta(hours=1, minutes=55)
     assert now - newest <= dt.timedelta(hours=8)
@@ -172,7 +172,7 @@ def test_service_derives_what_it_can(tmp_path, store):
 # -- ingest_run with everything faked ------------------------------------------- #
 
 def test_ingest_run_downloads_and_stores(tmp_path, store, monkeypatch):
-    config = _config(tmp_path, steps=(0,))
+    config = _config(tmp_path, steps=(0,), params=("2t",))
     service = Service(config, store)
     grib = tmp_path / "grib" / "ifs" / RUN / f"{RUN}-0h-sfc.grib2"
     grib.parent.mkdir(parents=True)

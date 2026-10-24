@@ -252,7 +252,8 @@ PAGE = r"""<!DOCTYPE html>
     background: var(--card); border: 1px solid var(--line); border-radius: 10px;
     box-shadow: var(--shadow); padding: 9px 11px; font-size: 12.5px; min-width: 150px;
   }
-  .tip.on { opacity: 1; }
+  .tip { visibility: hidden; }
+  .tip.on { opacity: 1; visibility: visible; }
   .tip .t { color: var(--muted); margin-bottom: 5px; font-size: 11.5px; }
   .tip .r { display: flex; align-items: center; gap: 7px; }
   .tip .r i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
@@ -357,6 +358,7 @@ PAGE = r"""<!DOCTYPE html>
       <select id="run" title="Forecast run"></select>
       <button id="clock" title="Show the times in the local time or in UTC">Local</button>
       <button id="params" title="Choose the parameters to show">Parameters</button>
+      <button id="tooltips" aria-pressed="false">Tooltips: off</button>
       <button id="theme" title="Switch between light and dark">Auto</button>
 
       <div class="panel" id="panel">
@@ -369,7 +371,7 @@ PAGE = r"""<!DOCTYPE html>
 
   <div id="content"><div class="empty">Loading&hellip;</div></div>
   <p class="foot">
-    <span class="dot"></span>Generated using ECMWF free and open data (CC-BY-4.0) &middot; refreshed every 60&nbsp;s
+    <span class="dot"></span>Generated using ECMWF free and open data (CC-BY-4.0)<span id="refresh"> &middot; refreshed every 60&nbsp;s</span>
   </p>
 </div>
 <div class="tip" id="tip"></div>
@@ -604,6 +606,8 @@ const state = {
   selected: null,
   // "local" or "utc".
   clock: "local",
+  tooltips: false,
+  selectionLoaded: false,
 };
 
 function colourFor(key, index) {
@@ -619,7 +623,7 @@ function saveState() {
 function loadState() {
   try {
     const raw = localStorage.getItem("ecmwf-visible");
-    if (raw) state.visible = new Set(JSON.parse(raw));
+    if (raw) { state.visible = new Set(JSON.parse(raw)); state.selectionLoaded = true; }
   } catch (e) { /* private mode */ }
 }
 loadState();
@@ -793,11 +797,11 @@ const tip = document.getElementById("tip");
 const TIP_LIMIT = 14;
 
 function showTip(place, series, keys, index, event) {
-  if (!event) { tip.classList.remove("on"); return; }
+  if (!state.tooltips || !event) { hideTip(); return; }
   tip.innerHTML = "";
   const head = el("div", "t", displayTimes(place)[index] || "");
   tip.appendChild(head);
-  keys.forEach((key, i) => {
+  keys.slice(0, TIP_LIMIT).forEach((key, i) => {
     const entry = series[key];
     if (!entry) return;
     const value = entry.values[index];
@@ -857,12 +861,14 @@ function daySummary(series, from, to) {
     return values.length ? values : null;
   };
   const temps = range("2t");
-  const rain = range("precip_increment");
+  const rain = series.precip_increment ? series.precip_increment.values.slice(from, to + 1) : null;
   const parts = [];
   if (temps) {
     parts.push(Math.round(Math.min(...temps)) + "–" + Math.round(Math.max(...temps)) + "°");
   }
-  if (rain) {
+  if (rain && rain.some(v => v === null || v === undefined)) {
+    parts.push("Rain incomplete");
+  } else if (rain) {
     const total = rain.reduce((sum, v) => sum + v, 0);
     if (total > 0.05) parts.push(total.toFixed(1) + " mm");
   }
@@ -877,7 +883,7 @@ function renderPlace(place, nowStep, order) {
   const nowIndex = index >= 0 ? index : 0;
   const current = state.selected !== null && state.selected < steps.length ? state.selected : nowIndex;
 
-  const chosen = state.visible.size ? state.visible : defaultSelection(state.data);
+  const chosen = state.visible;
   // The catalogue gives the order things are shown in.
   const rank = (key) => {
     const index = order.findIndex((item) => item.key === key);
@@ -927,7 +933,10 @@ function renderPlace(place, nowStep, order) {
     const button = el("button", null, "Use the default set");
     button.addEventListener("click", () => {
       state.visible = defaultSelection(state.data);
+      state.selectionLoaded = true;
       saveState();
+      syncUrl();
+      renderPanel(state.data.catalogue || state.data.params);
       render();
     });
     empty.appendChild(button);
@@ -974,7 +983,7 @@ function renderPlace(place, nowStep, order) {
     const value = get(key);
     if (!entry || value === null) return;
     const big = key === "2t" || key === "temperature_adjusted";
-    const unit = key === "wind_dir" ? "" : entry.unit;
+    const unit = key === "wind_dir" ? "" : displayUnit(entry.unit);
     const text = key === "wind_dir" ? Math.round(value) + "°" : formatValue(entry, value);
     now.appendChild(stat(entry.short || entry.label, text, unit, PARAM_ICON[key] || "cloud", big, key));
   });
@@ -1149,10 +1158,12 @@ function renderPlace(place, nowStep, order) {
       } else if (["2t", "temperature_adjusted", "apparent_temperature"].includes(s.param)) {
         cell.textContent = value.toFixed(1) + "°";
       } else if (s.param === "wind_dir") {
-        const speed = get("wind_speed");
+        // The arrow carries the direction; the number under it is the
+        // direction in degrees, and the colour follows this column's speed.
+        const speed = series["wind_speed"] ? series["wind_speed"].values[i] : null;
         cell.appendChild(arrow(value, speed));
         const text = el("span", "wind");
-        text.textContent = speed === null ? Math.round(value) + "°" : Math.round(speed) + " km/h";
+        text.textContent = Math.round(value) + "°";
         cell.appendChild(text);
       } else if (s.param === "precip_increment" || s.param === "tp") {
         cell.classList.add("precip");
@@ -1317,6 +1328,12 @@ function localStamp(run, step, timezone) {
   }
 }
 
+// The unit shown in the cards. The data uses the GRIB spelling for degrees
+// Celsius, which is not what a person expects to read next to a number.
+function displayUnit(unit) {
+  return unit === "degC" ? "°C" : unit;
+}
+
 // The value of a parameter without its unit, the way the cards show it.
 function formatValue(entry, value) {
   if (value === null || value === undefined) return "\u2013";
@@ -1451,6 +1468,7 @@ function fillPlaceList(filter) {
     const hay = (item.name + " " + item.country + " " + item.id).toLowerCase();
     if (needle && !hay.includes(needle)) return;
     const entry = el("li");
+    entry.dataset.place = item.id;
     entry.appendChild(document.createTextNode((item.flag || "") + " " + item.name));
     if (item.country) entry.appendChild(el("span", "c", item.country));
     if (item.kind) entry.appendChild(el("span", "k", item.kind));
@@ -1475,7 +1493,7 @@ function choosePlace(id) {
     pickerFlag.textContent = item.flag || "";
   }
   syncUrl();
-  load(state.run, id);
+  load(state.run, id).catch(showError);
 }
 
 placeInput.addEventListener("focus", () => {
@@ -1503,7 +1521,7 @@ placeInput.addEventListener("keydown", (event) => {
   } else if (event.key === "Enter") {
     event.preventDefault();
     if (items[highlighted]) items[highlighted].dispatchEvent(new MouseEvent("mousedown"));
-    else if (state.catalogue.length) choosePlace(state.catalogue[0].id);
+    else if (items.length && items[0].dataset.place) choosePlace(items[0].dataset.place);
   } else if (event.key === "Escape") {
     picker.classList.remove("open");
   }
@@ -1518,6 +1536,8 @@ document.addEventListener("click", (event) => {
 function render() {
   const data = state.data;
   if (!data) return;
+  hideTip();
+  hoverState.index = -1;
   const content = document.getElementById("content");
   content.innerHTML = "";
   if (!data.places.length) {
@@ -1552,13 +1572,13 @@ function render() {
     const n = built.place.steps.length;
     const visible = built.series;
     const keys = built.keys;
-    const left = built.table.getBoundingClientRect().left + labelWidth;
     const cellWidth = column;
 
     built.table.addEventListener("mousemove", (event) => {
+      const left = built.table.getBoundingClientRect().left + labelWidth;
       let index = Math.floor((event.clientX - left) / cellWidth);
       index = Math.max(0, Math.min(n - 1, index));
-      if (index === hoverState.index) return;
+
       hoverState.index = index;
       updateSummary(built.place, visible, index);
       showTip(built.place, visible, keys, index, event);
@@ -1573,6 +1593,11 @@ function render() {
 
 // The static build embeds the forecast instead of fetching it.
 const EMBEDDED = window.FORECAST_DATA || null;
+if (EMBEDDED) {
+  // A static page has no endpoint to refresh from, so it is a snapshot.
+  const refresh = document.getElementById("refresh");
+  if (refresh) refresh.textContent = " \u00b7 static snapshot";
+}
 
 // What is shown when nothing has been picked.
 const DEFAULT_PARAMS = ["2t", "wind_speed", "msl", "tp"];
@@ -1585,21 +1610,17 @@ function defaultSelection(data) {
   return set;
 }
 
+let loadSequence = 0;
 async function load(run, place) {
+  const sequence = ++loadSequence;
   let data;
   if (EMBEDDED) {
     const keys = Object.keys(EMBEDDED);
     if (!state.model && keys.length) state.model = keys[0];
     const key = state.model && EMBEDDED[state.model] ? state.model : keys[0];
-    data = JSON.parse(JSON.stringify(EMBEDDED[key]));
-    if (state.model) {
-      const model = (data.models || []).find(m => m.key === state.model);
-      if (model) {
-        data.run = model.run;
-        data.cycle_utc = model.cycle;
-        data.now_step = data.now_step;
-      }
-    }
+    const runs = (window.FORECAST_RUNS || {})[key] || {};
+    const payload = run && runs[run] ? runs[run] : EMBEDDED[key];
+    data = JSON.parse(JSON.stringify(payload));
     if (place) data.places = data.places.filter(p => p.id === place);
   } else {
     const params = new URLSearchParams();
@@ -1611,7 +1632,11 @@ async function load(run, place) {
     if (!response.ok) throw new Error("HTTP " + response.status);
     data = await response.json();
   }
+  if (sequence !== loadSequence) return;
+  state.model = data.model;
+  state.run = data.run;
   state.data = data;
+  syncUrl();
 
   const meta = document.getElementById("meta");
   meta.innerHTML = "";
@@ -1622,11 +1647,13 @@ async function load(run, place) {
   }
   meta.appendChild(el("span", null, "Run "));
   meta.appendChild(el("b", null, data.cycle_utc));
-  if (data.places.length && data.places[0].until) {
-    meta.appendChild(el("span", null, "· until " + data.places[0].until));
+  if (data.places.length && (data.places[0].until_utc || data.places[0].until)) {
+    const until = data.places[0].until_utc || data.places[0].until;
+    meta.appendChild(el("span", null, "· until " + until + (data.places[0].until_utc ? " UTC" : "")));
   }
 
-  if (modelSelect.dataset.filled !== "yes" && data.models.length) {
+  if (data.models.length) {
+    modelSelect.innerHTML = "";
     data.models.forEach(info => {
       const option = el("option", null, info.label);
       option.value = info.key;
@@ -1644,9 +1671,9 @@ async function load(run, place) {
     option.value = item.run;
     runSelect.appendChild(option);
   });
-  runSelect.value = run || data.run;
+  runSelect.value = data.run;
 
-  if (state.catalogue.length !== data.place_list.length) {
+  if (JSON.stringify(state.catalogue) !== JSON.stringify(data.place_list)) {
     state.catalogue = data.place_list;
     fillPlaceList("");
   }
@@ -1665,7 +1692,7 @@ async function load(run, place) {
   }
 
   // Default to the first few parameters of the display order that are there.
-  if (!state.visible.size) {
+  if (!state.selectionLoaded) {
     // The accumulation of the rain since the run is left out: the per step
     // amount and the total for the day in the summary row say more.
     const order = ["2t", "temperature_adjusted", "apparent_temperature",
@@ -1676,6 +1703,7 @@ async function load(run, place) {
       Object.keys(place.series).forEach((key) => available.add(key));
     });
     order.filter((key) => available.has(key)).slice(0, 6).forEach((key) => state.visible.add(key));
+    state.selectionLoaded = true;
     saveState();
   }
   renderPanel(data.catalogue || data.params);
@@ -1683,12 +1711,13 @@ async function load(run, place) {
 }
 
 function showError(error) {
-  document.getElementById("content").innerHTML =
-    '<div class="empty">Could not load the forecast: ' + error.message + "</div>";
+  const content = document.getElementById("content");
+  content.replaceChildren(el("div", "empty", "Could not load the forecast: " + error.message));
 }
 
 modelSelect.addEventListener("change", (event) => {
   state.model = event.target.value;
+  state.selected = null;
   // Each model has a run that reaches furthest, use that one.
   const model = state.data.models.find(item => item.key === state.model);
   state.run = model ? model.run : null;
@@ -1697,6 +1726,7 @@ modelSelect.addEventListener("change", (event) => {
 });
 document.getElementById("run").addEventListener("change", (event) => {
   state.run = event.target.value || null;
+  state.selected = null;
   syncUrl();
   load(state.run, state.place).catch(showError);
 });
@@ -1725,6 +1755,21 @@ clockButton.addEventListener("click", () => {
   render();
 });
 
+// Forecast tooltips are opt-in; hovering still updates the hour and summary.
+const tooltipButton = document.getElementById("tooltips");
+function applyTooltips(enabled) {
+  state.tooltips = enabled;
+  tooltipButton.textContent = "Tooltips: " + (enabled ? "on" : "off");
+  tooltipButton.setAttribute("aria-pressed", String(enabled));
+  tooltipButton.classList.toggle("on", enabled);
+  if (!enabled) hideTip();
+  try { localStorage.setItem("ecmwf-tooltips", String(enabled)); } catch (e) { /* private mode */ }
+}
+let tooltipsEnabled = false;
+try { tooltipsEnabled = localStorage.getItem("ecmwf-tooltips") === "true"; } catch (e) { /* private mode */ }
+applyTooltips(tooltipsEnabled);
+tooltipButton.addEventListener("click", () => applyTooltips(!state.tooltips));
+
 // Theme: auto, light or dark, remembered between visits.
 const THEMES = ["auto", "light", "dark"];
 const themeButton = document.getElementById("theme");
@@ -1750,9 +1795,12 @@ state.run = query.get("run");
 state.place = query.get("place");
 if (query.get("params")) {
   state.visible = new Set(query.get("params").split(",").filter(Boolean));
+  state.selectionLoaded = true;
 }
 load(state.run, state.place).catch(showError);
-setInterval(() => load(state.run, state.place).catch(() => {}), REFRESH_MS);
+if (!EMBEDDED) {
+  setInterval(() => load(state.run, state.place).catch(() => {}), REFRESH_MS);
+}
 </script>
 </body>
 </html>
@@ -1792,7 +1840,9 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         path = self.path.split("?")[0]
         query = self.path.split("?")[1] if "?" in self.path else ""
-        params = dict(p.split("=", 1) for p in query.split("&") if "=" in p)
+        from urllib.parse import parse_qsl
+
+        params = dict(parse_qsl(query))
 
         if path in ("/", "/index.html"):
             self._send(PAGE.encode("utf-8"), "text/html; charset=utf-8")

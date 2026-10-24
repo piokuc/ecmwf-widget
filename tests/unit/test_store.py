@@ -237,3 +237,51 @@ def test_existing_database_reopens(tmp_path):
         first.upsert_run("2026102100", "20261021", "00", model="ifs")
     with ForecastStore(path) as second:
         assert second.run_status("2026102100", model="ifs") == "partial"
+
+
+def test_version_three_migration_preserves_data(tmp_path):
+    import sqlite3
+
+    path = tmp_path / 'old.sqlite'
+    with ForecastStore(path) as store:
+        store.upsert_run('2026102100', '20261021', '00', status='complete')
+        store.store_values('2026102100', [_value('gliwice')])
+    with sqlite3.connect(path) as connection:
+        connection.execute('DROP TABLE ingest_jobs')
+        connection.execute('DROP TABLE ingest_state')
+        connection.execute("UPDATE meta SET value='3' WHERE key='schema_version'")
+    with ForecastStore(path) as migrated:
+        assert migrated.count_values() == 1
+        assert migrated.connection.execute("SELECT value FROM meta WHERE key='schema_version'").fetchone()[0] == '4'
+        assert migrated.ingest_jobs('ifs', '2026102100') == {}
+
+
+def test_newer_schema_is_refused_without_relabeling(tmp_path):
+    import sqlite3
+
+    path = tmp_path / 'future.sqlite'
+    with ForecastStore(path) as store:
+        store.connection.execute("UPDATE meta SET value='99' WHERE key='schema_version'")
+        store.connection.commit()
+    with pytest.raises(ValueError, match='unsupported forecast schema 99'):
+        ForecastStore(path)
+    with sqlite3.connect(path) as connection:
+        assert connection.execute("SELECT value FROM meta WHERE key='schema_version'").fetchone()[0] == '99'
+
+
+def test_job_checkpoint_and_values_roll_back_together(store):
+    import sqlite3
+
+    store.connection.execute("CREATE TRIGGER fail_job BEFORE INSERT ON ingest_jobs BEGIN SELECT RAISE(ABORT, 'failure'); END")
+    store.connection.commit()
+    with pytest.raises(sqlite3.IntegrityError):
+        store.finish_job('ifs', '2026102100', 0, 'sfc', [_value('gliwice')], status='complete')
+    assert store.count_values() == 0
+    assert store.ingest_jobs('ifs', '2026102100') == {}
+
+
+def test_pruning_protects_last_complete_run(store):
+    for run, status in [('2026102100', 'complete'), ('2026102106', 'partial'), ('2026102112', 'partial')]:
+        store.upsert_run(run, run[:8], run[8:], status=status)
+    store.prune_runs(keep=1)
+    assert store.known_runs('ifs') == ['2026102100', '2026102112']

@@ -1,0 +1,84 @@
+# The starter configuration of the ECMWF point forecast service.
+#
+# This file comes with the package and is used when the machine has no
+# configuration of its own. Copy it to places.yml in the directory the
+# service runs in and edit it:
+#
+#     cp $(python -c "import ecmwf_widget.paths as p; print(p.PACKAGED_CONFIG)") places.yml
+#
+# The full description of every setting is in the repository, in
+# config/places.yml.
+
+# Your own places. These are always followed.
+places:
+  - id: gliwice
+    name: Gliwice
+    latitude: 50.29417
+    longitude: 18.66583
+    elevation: 230
+    timezone: Europe/Warsaw
+    country: Poland
+    country_code: PL
+    flag: 🇵🇱
+
+# Which world places to follow on top of your own. The catalogue lives in
+# the package and holds every capital, a lot of major cities and some
+# notable peaks.
+#   all          - the whole catalogue
+#   none         - only your own places
+#   region:europe- every capital in Europe
+#   kind:peak    - the mountains
+#   a list of place ids, for example [warsaw, zurich, sniezka]
+catalogue: none
+
+# Which models to download.
+#   ifs      - the high resolution forecast, about 9 km (0.1°)
+#   ifs025   - the same forecast on the 0.25° grid, available sooner
+#   aifs     - the artificial intelligence forecast
+models: [ifs]
+
+# Which parameters to fetch.
+#   basic  - the small set the widget normally shows
+#   all    - every parameter the 0.1 deg tier publishes, which is a lot of
+#            downloading: every parameter is a full global field
+#   a list - explicit parameter names, as below
+parameters: [2t, 2d, msl, 10u, 10v, 10fg, tcc, tp, sf, sd, asn, mucape, z]
+
+# Pressure levels to fetch when pressure level parameters are selected.
+# Each level of each parameter is a full global field too, so every level
+# costs another download. There are none here: the list above is surface
+# only.
+pressure_levels: []
+
+# Forecast steps in hours. 0 is the analysis (model run time).
+steps: [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72,
+        84, 96, 108, 120, 132, 144,
+        168, 192, 216, 240, 288, 336, 360]
+
+# Where to get the data. The ECMWF portal is the primary source; the cloud
+# mirrors are identical copies and are used as a fallback when the portal is
+# busy or unreachable.
+source: ecmwf
+fallback_sources: [aws, google]
+
+# How often the service checks for a new run, in seconds.
+poll_interval: 900
+
+# How many runs to pick up when the service starts.
+backfill_runs: 1
+
+# How many runs of each model to keep in the database.
+keep_runs: 2
+
+# How the value at a point is taken from the model grid.
+#   bilinear - interpolate between the four surrounding grid points (default)
+#   nearest  - take the closest grid point, about 5 km away
+method: bilinear
+
+# Temperature correction for points that sit above the model's own terrain,
+# in K per km.
+lapse_rate: 6.5
+
+# Where the database and the downloaded GRIB files live.
+database: data/forecast.sqlite
+cache_dir: data/grib

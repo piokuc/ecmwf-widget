@@ -32,11 +32,28 @@ class Model:
     stream: str
     type: str = "fc"
     description: str = ""
+    cycles: tuple[int, ...] = (0, 6, 12, 18)
+    short_horizon: int = 144
+    step_interval: int = 3
+    surface_parameters: tuple[str, ...] | None = None
+    pressure_parameters: tuple[str, ...] | None = None
+
+    def steps(self, hour: int) -> tuple[int, ...]:
+        """Supported lead hours, following ECMWF's open-data product schedule."""
+        if hour not in self.cycles:
+            return ()
+        horizon = 360 if hour in (0, 12) else self.short_horizon
+        return tuple(step for step in range(0, horizon + 1, self.step_interval)
+                     if step <= 144 or step % 6 == 0)
+
+    def supports(self, param: str, levtype: str) -> bool:
+        supported = self.surface_parameters if levtype == "sfc" else self.pressure_parameters
+        return supported is None or param in supported
 
     @property
     def resolution(self) -> str:
         """Human readable resolution."""
-        return "0.1° (~9 km)" if self.resol == "0p1" else "0.25° (~25 km)"
+        return {"0p1": "0.1° (~9 km)", "0p25": "0.25° (~25 km)"}.get(self.resol, self.resol)
 
 
 MODELS: dict[str, Model] = {
@@ -64,6 +81,12 @@ MODELS: dict[str, Model] = {
         ),
         Model(
             key="aifs",
+            short_horizon=360,
+            step_interval=6,
+            surface_parameters=("z", "sp", "tcw", "msl", "sdor", "slor", "10u", "10v",
+                                "2t", "2d", "ssrd", "lsm", "strd", "skt", "lcc", "mcc",
+                                "hcc", "cp", "sf", "tcc", "tp", "100u", "100v", "rowe", "fscov"),
+            pressure_parameters=("z", "t", "u", "v", "q", "w"),
             label="AIFS",
             short="AIFS",
             model="aifs-single",
@@ -98,4 +121,4 @@ def resolve(selection) -> list[Model]:
             result.extend(MODELS.values())
         else:
             result.append(get(item))
-    return result
+    return list(dict.fromkeys(result))

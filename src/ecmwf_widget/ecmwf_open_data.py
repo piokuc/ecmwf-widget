@@ -481,7 +481,7 @@ def latest_run(
     """
     session = session or _session()
     token_cache: dict[str, str] = {}
-    now = dt.datetime.now(dt.UTC)
+    now = dt.datetime.now(dt.timezone.utc)
     # Give the 0.1 deg files a two hour grace period before probing.
     candidate = now - dt.timedelta(hours=2)
     candidate = candidate.replace(minute=0, second=0, microsecond=0)

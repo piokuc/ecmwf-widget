@@ -102,7 +102,7 @@ repository are gone: they only ever repeated what the console scripts do.
 | --- | --- |
 | `ecmwf_widget/scheduler.py` | The cycles (0, 6, 12, 18 UTC) and when each run is expected on the portal, as pure functions a daemon and its tests can share |
 | `ecmwf_widget/ecmwf_open_data.py` | Finds and downloads files from the portal, using the index files and HTTP range requests so that only the wanted fields are transferred |
-| `ecmwf_widget/models.py` | The catalogue of models that are published, and how long each one reaches |
+| `ecmwf_widget/models.py` | Model product identities, download routing and display metadata; see the [architecture review](model-architecture.md) for capability and horizon limitations |
 | `ecmwf_widget/parameters.py` | Every parameter the data has, with its label, unit, group, display conversion and the order it is shown in |
 | `ecmwf_widget/points.py` | Reads a GRIB file and evaluates it at a list of coordinates |
 | `ecmwf_widget/store.py` | The SQLite database: runs, places and values |

@@ -188,6 +188,7 @@ class Derived:
     level: int | None = None
     basic: bool = True
     short: str = ""
+    levtype: str = "sfc"
 
 
 DERIVED: dict[str, Derived] = {
@@ -203,11 +204,11 @@ DERIVED: dict[str, Derived] = {
             "temperature",
             ("2t", "2d", "10u", "10v"),
         ),
-        Derived("wind_speed_pl", "Wind speed", "m s-1", "wind", ("u", "v"), basic=False),
-        Derived("wind_dir_pl", "Wind direction", "deg", "wind", ("u", "v"), basic=False),
+        Derived("wind_speed_pl", "Wind speed", "m s-1", "wind", ("u", "v"), basic=False, levtype="pl"),
+        Derived("wind_dir_pl", "Wind direction", "deg", "wind", ("u", "v"), basic=False, levtype="pl"),
         # Computed from the total precipitation, not requested from ECMWF.
         Derived(
-            "precip_increment", "Precipitation", "mm", "precipitation", (),
+            "precip_increment", "Precipitation", "mm", "precipitation", ("tp",),
             basic=False, short="Rain, each step",
         ),
         # The temperature at the real height of the place, corrected for the
@@ -217,7 +218,7 @@ DERIVED: dict[str, Derived] = {
             "Temperature at height",
             "K",
             "temperature",
-            (),
+            ("2t", "z"),
             basic=False,
         ),
     ]
@@ -466,10 +467,12 @@ def resolve(
     for name in selection:
         if name in DERIVED:
             derived.append(name)
+            target = pressure if DERIVED[name].levtype == "pl" else surface
+            target.extend(DERIVED[name].needs)
         elif name in PARAMETERS:
             surface.append(name)
         elif name in PRESSURE_PARAMETERS:
             pressure.append(name)
         else:
             raise KeyError(f"unknown parameter {name!r}")
-    return surface, pressure, derived
+    return list(dict.fromkeys(surface)), list(dict.fromkeys(pressure)), list(dict.fromkeys(derived))

@@ -7,10 +7,13 @@ directly, and everything that talks to the portal or to git is faked away.
 ## Running them
 
 ```bash
-pip install -e ".[dev]"         # pytest, pytest-bdd and ruff
-pytest                          # everything: unit tests and scenarios
+python3 -m venv .venv
+.venv/bin/python -m pip install -e ".[dev]"
+PLAYWRIGHT_BROWSERS_PATH=.playwright .venv/bin/python -m playwright install chromium webkit
+.venv/bin/python -m pytest       # unit, HTTP scenarios and real browsers
 pytest tests/unit               # only the pytest suite (no Cucumber)
-pytest tests/features           # only the website scenarios
+pytest tests/features           # HTTP scenarios
+pytest tests/browser            # Chromium/WebKit, live/static, desktop/mobile
 ```
 
 The configuration of pytest is in `pyproject.toml`, and it points Python at
@@ -123,3 +126,26 @@ the honest verdict: its `updated` stamp is the moment the page last changed.
   scenarios check that it answers, embeds data and links its manifest, not
   that every pixel looks right.
 - The icon generation, which is a slow local image model.
+
+
+## Browser coverage
+
+`tests/browser` builds a fresh deterministic three-model, two-run database,
+then serves both the real widget API and its static bundle. Chromium and WebKit
+run at desktop and phone widths, with JavaScript exceptions failing the test.
+The tests exercise model/run selection and reload, filtered place selection,
+parameter search and availability, empty selection and recovery, time zones,
+theme persistence, selected hours, horizontal scrolling, icon loading, tooltip
+opt-in and persistence, missing precipitation, HTTP errors and periodic refresh.
+Browser binaries must be installed first; CI installs them with `--with-deps`.
+Screenshots are written to the ignored `test-results/` directory.
+
+`test_ingest.py` covers field coverage, model-specific steps, retries, changed
+configuration, pressure derivations and mirror discovery. `test_forecast.py`
+covers model isolation, run selection, null accumulation intervals, legacy
+units and bulk reads. Store tests cover migration, newer-schema rejection,
+transaction rollback and preservation of a complete run during pruning.
+
+The browser fixtures always build from the current sources. HTTP feature tests
+can still exercise an existing `site/` bundle; remove or rebuild it if testing a
+new source version. No test downloads operational global forecast fields.

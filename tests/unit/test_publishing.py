@@ -50,7 +50,7 @@ def test_wait_until_already_past_returns_at_once():
     sleeps = []
     with pytest.MonkeyPatch.context() as patch:
         patch.setattr(auto_publish.time, "sleep", lambda s: sleeps.append(s))
-        auto_publish._wait_until(dt.datetime(2026, 10, 22, 2, 40, tzinfo=dt.UTC))
+        auto_publish._wait_until(dt.datetime(2026, 10, 22, 2, 40, tzinfo=dt.timezone.utc))
     assert sleeps == []
 
 

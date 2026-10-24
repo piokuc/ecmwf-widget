@@ -39,6 +39,11 @@ jobs:
       - name: Lint the code
         run: python -m ruff check src tests
 
+      - name: Install test browsers
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: .playwright
+        run: python -m playwright install --with-deps chromium webkit
+
       - name: Run the tests
         run: python -m pytest
 

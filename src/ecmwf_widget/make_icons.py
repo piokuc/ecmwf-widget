@@ -35,9 +35,11 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from typing import TYPE_CHECKING
 
-import numpy as np
-from PIL import Image
+if TYPE_CHECKING:
+    import numpy as np
+    from PIL import Image
 
 from . import paths
 
@@ -107,6 +109,8 @@ def generate_ollama(prompt: str, model: str = OLLAMA_MODEL, timeout: int = 900) 
     images = body.get("images") or []
     if not images:
         raise RuntimeError(f"no image in the response: {str(body)[:300]}")
+    from PIL import Image
+
     return Image.open(io.BytesIO(base64.b64decode(images[0]))).convert("RGB")
 
 
@@ -146,6 +150,8 @@ def _corner_colour(array: np.ndarray) -> np.ndarray:
     """Average colour of the four corners, used as the background colour."""
     h, w, _ = array.shape
     size = max(2, min(h, w) // 40)
+    import numpy as np
+
     corners = np.concatenate(
         [
             array[:size, :size].reshape(-1, 3),
@@ -164,6 +170,9 @@ def remove_background(image: Image.Image, tolerance: int = 38) -> Image.Image:
     border and only spreads over pixels that are close to that colour, so
     white areas inside the artwork are kept.
     """
+    import numpy as np
+    from PIL import Image
+
     array = np.array(image.convert("RGB")).astype(np.int16)
     background = _corner_colour(array)
     distance = np.abs(array - background).sum(axis=2)
@@ -202,6 +211,8 @@ def trim(image: Image.Image, padding: int = 12) -> Image.Image:
     artwork = image.crop(bbox)
 
     side = max(artwork.width, artwork.height) + 2 * padding
+    from PIL import Image
+
     canvas = Image.new("RGBA", (side, side), (0, 0, 0, 0))
     canvas.paste(
         artwork,
@@ -213,6 +224,8 @@ def trim(image: Image.Image, padding: int = 12) -> Image.Image:
 
 def finish(image: Image.Image, size: int = SIZE) -> Image.Image:
     """Remove the background, trim and resize."""
+    from PIL import Image
+
     return trim(remove_background(image)).resize((size, size), Image.LANCZOS)
 
 

@@ -55,6 +55,9 @@ dev = [
     "pytest-bdd>=7.0",
     "ruff>=0.6",
     "build>=1.2",
+    "playwright>=1.49",
+    "setuptools>=77",
+    "tomli>=2; python_version < '3.11'",
 ]
 
 [project.urls]

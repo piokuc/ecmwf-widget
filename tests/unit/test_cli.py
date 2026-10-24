@@ -70,7 +70,10 @@ def test_a_command_is_passed_its_arguments():
 
 def test_the_console_scripts_are_declared():
     """Every command of the package has a console script."""
-    import tomllib
+    try:
+        import tomllib
+    except ModuleNotFoundError:  # Python 3.10
+        import tomli as tomllib
 
     with open(REPO_ROOT / "pyproject.toml", "rb") as handle:
         pyproject = tomllib.load(handle)
@@ -92,7 +95,10 @@ def test_the_console_scripts_are_declared():
 
 def test_the_package_data_is_declared():
     """The icons and the catalogue have to travel with the package."""
-    import tomllib
+    try:
+        import tomllib
+    except ModuleNotFoundError:  # Python 3.10
+        import tomli as tomllib
 
     with open(REPO_ROOT / "pyproject.toml", "rb") as handle:
         pyproject = tomllib.load(handle)

@@ -8,6 +8,11 @@ which comes with the package.
     ecmwf-build-places                 # write the catalogue of the package
     ecmwf-build-places --fetch         # download the two source lists first
     ecmwf-build-places --check         # report how well capitals matched
+
+When ``timezonefinder`` is installed the catalogue carries the IANA time
+zone of every place, so the page can show its local time. Without it, the
+time zones already present in the output file are kept and new places get
+UTC.
 """
 
 from __future__ import annotations
@@ -17,6 +22,8 @@ import json
 import os
 import re
 import unicodedata
+
+import yaml
 
 from . import paths
 
@@ -249,6 +256,24 @@ def main(argv: list[str] | None = None) -> int:
                     return candidate
         return None
 
+    # The time zone needs a lookup by coordinates. timezonefinder is an
+    # optional build-time tool; a catalogue that already has the field keeps
+    # it when the tool is not installed.
+    try:
+        from timezonefinder import TimezoneFinder
+    except ImportError:
+        finder = None
+    else:
+        finder = TimezoneFinder()
+
+    existing_timezones: dict[str, str] = {}
+    if os.path.isfile(args.out):
+        with open(args.out) as handle:
+            previous = yaml.safe_load(handle) or {}
+        for entry in previous.get("places") or []:
+            if entry.get("id") and entry.get("timezone"):
+                existing_timezones[entry["id"]] = str(entry["timezone"])
+
     entries: list[dict] = []
     seen: set[str] = set()
     unmatched: list[str] = []
@@ -258,6 +283,11 @@ def main(argv: list[str] | None = None) -> int:
         while identifier in seen:
             identifier += "-2"
         seen.add(identifier)
+        latitude = round(float(latitude), 5)
+        longitude = round(float(longitude), 5)
+        timezone = existing_timezones.get(identifier)
+        if finder is not None:
+            timezone = finder.timezone_at(lat=latitude, lng=longitude) or timezone
         entries.append(
             {
                 "id": identifier,
@@ -265,11 +295,12 @@ def main(argv: list[str] | None = None) -> int:
                 "country": country_name,
                 "country_code": code,
                 "flag": flag,
-                "latitude": round(float(latitude), 5),
-                "longitude": round(float(longitude), 5),
+                "latitude": latitude,
+                "longitude": longitude,
                 "elevation": int(elevation) if elevation is not None else None,
                 "kind": kind,
                 "region": region,
+                "timezone": timezone or "UTC",
             }
         )
 
@@ -344,6 +375,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.check:
         return 0
 
+    if finder is None and not existing_timezones:
+        print("timezonefinder is not installed; writing UTC for every place")
+
     parent = os.path.dirname(args.out)
     if parent:
         os.makedirs(parent, exist_ok=True)
@@ -363,6 +397,7 @@ def main(argv: list[str] | None = None) -> int:
             handle.write(f"    flag: {entry['flag'] or ''}\n")
             handle.write(f"    kind: {entry['kind']}\n")
             handle.write(f"    region: {entry['region']}\n")
+            handle.write(f"    timezone: {entry['timezone']}\n")
     print(f"wrote {args.out}")
     return 0
 

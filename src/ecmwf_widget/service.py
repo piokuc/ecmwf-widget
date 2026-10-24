@@ -20,8 +20,10 @@ import sys
 import time
 from dataclasses import dataclass, field
 
+import requests
+
 from . import ecmwf_open_data as eod
-from . import models, parameters
+from . import ingest, models, parameters
 from .config import Config, load_config
 from .points import PointValue, extract_points
 from .store import ForecastStore
@@ -59,7 +61,7 @@ class StampTee:
         lines = text.split("\n")
         self._remainder = lines.pop()
         if lines:
-            stamp = dt.datetime.now(dt.UTC).strftime("%Y-%m-%d %H:%M:%S ")
+            stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M:%S ")
             self._file.write("".join(stamp + line + "\n" for line in lines))
 
     def write(self, text: str) -> int:
@@ -71,7 +73,7 @@ class StampTee:
         self._stream.flush()
         if self._remainder:
             rest, self._remainder = self._remainder, ""
-            stamp = dt.datetime.now(dt.UTC).strftime("%Y-%m-%d %H:%M:%S ")
+            stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M:%S ")
             self._file.write(stamp + rest)
         self._file.flush()
 
@@ -123,7 +125,8 @@ class Service:
     ) -> str | None:
         """Download one step, trying the mirrors in order."""
         suffix = "sfc" if levtype in ("sfc", "sol") else "pl"
-        for candidate in self._sources():
+        errors = []
+        for candidate in dict.fromkeys([source, *self._sources()]):
             try:
                 path = eod.download_step(
                     run[:8],
@@ -145,12 +148,14 @@ class Service:
                     stream=model.stream,
                     type=model.type,
                 )
-            except eod.OpenDataError as exc:
-                print(f"  {candidate}: {exc}", file=sys.stderr)
+            except (eod.OpenDataError, requests.RequestException) as exc:
+                errors.append(f"{candidate}: {exc}")
                 continue
             if path:
+                self._download_source = candidate
                 return path
-        return None
+            errors.append(f"{candidate}: no matching data")
+        raise eod.OpenDataError("; ".join(errors))
 
     # -- ingestion --------------------------------------------------------- #
 
@@ -158,85 +163,77 @@ class Service:
         """Download and extract one forecast run of one model."""
         cycle, time = run[:8], run[8:]
         report = IngestReport(model=model.key, run=run)
-        self.store.upsert_run(
-            run,
-            cycle,
-            time,
-            model=model.key,
-            resol=model.resol,
-            status="partial",
-            label=model.label,
-        )
+        self.store.prepare_ingest(model.key, run, ingest.fingerprint(self.config, model))
+        self.store.upsert_run(run, cycle, time, model=model.key, resol=model.resol,
+                              status="partial", label=model.label)
         self.store.store_places(run, self.places, model=model.key)
-
-        jobs: list[tuple[int, str]] = []
-        for step in self.config.steps:
-            if self.surface_params:
-                jobs.append((step, "sfc"))
-            if self.pressure_params:
-                jobs.append((step, "pl"))
-
-        for step, levtype in jobs:
-            params = self.surface_params if levtype == "sfc" else self.pressure_params
-            levels = None if levtype == "sfc" else self.levels
-
-            # Some parameters only exist at certain steps, for example the
-            # orography at step 0. Ask the index which of the wanted
-            # parameters this step actually has before requesting anything.
+        jobs = ingest.plan(self.config, model, run)
+        checkpoints = self.store.ingest_jobs(model.key, run)
+        complete = 0
+        for job in jobs:
+            step, levtype = job.step, job.levtype
+            checkpoint = checkpoints.get((step, levtype))
+            if checkpoint is not None and checkpoint["status"] == "complete":
+                complete += 1
+                continue
+            source = ""
             try:
-                index_url = eod.build_index_url(
-                    self.config.source,
-                    run[:8],
-                    run[8:],
-                    step,
-                    levtype=levtype,
-                    model=model.model,
-                    resol=model.resol,
-                    stream=model.stream,
-                    type=model.type,
-                )
-                entries = eod.fetch_index(index_url, session=self.session)
-            except eod.OpenDataError:
-                # The step is not published for this cycle.
-                continue
-            present = {entry.param for entry in entries}
-            wanted = [param for param in params if param in present]
-            if not wanted:
-                continue
-
-            try:
-                path = self._download(
-                    self.config.source, model, run, step, levtype, wanted, levels
-                )
-            except eod.OpenDataError as exc:
-                report.errors.append(f"step {step} {levtype}: {exc}")
-                continue
-
-            if not path:
-                continue
-
-            try:
-                values = extract_points(
-                    path,
-                    self.places,
-                    params=wanted,
-                    levels=levels,
-                    method=self.config.method,
-                    levtype=levtype,
-                    step=step,
-                )
-            except Exception as exc:  # noqa: BLE001 - keep the service alive
-                report.errors.append(f"step {step} {levtype}: {exc}")
-                continue
-
-            values = values + self._derived(values, step)
-            report.values_stored += self.store.store_values(run, values, model=model.key)
-            report.steps_ingested += 1
-            report.bytes_downloaded += os.path.getsize(path)
-
-        status = "complete" if report.steps_ingested >= len(jobs) else "partial"
-        self.store.set_run_status(run, status, model=model.key)
+                source, entries = self._index(model, run, step, levtype)
+                present = {entry.param for entry in entries
+                           if getattr(entry, "levtype", levtype) == levtype}
+                wanted = [param for param in job.params if param in present]
+                if not wanted:
+                    raise eod.OpenDataError("none of the required fields are published")
+                self._download_source = source
+                path = self._download(source, model, run, step, levtype, wanted,
+                                      list(job.levels) if job.levels else None)
+                source = self._download_source
+                if not path:
+                    raise eod.OpenDataError("no data downloaded")
+                values = extract_points(path, self.places, params=wanted,
+                                        levels=list(job.levels) if job.levels else None,
+                                        method=self.config.method, levtype=levtype, step=step)
+                expected = job.expected([place.id for place in self.places])
+                received = {(v.place_id, v.param, v.level if v.levtype == "pl" else None)
+                            for v in values if v.step == step and v.levtype == levtype}
+                missing = expected - received
+                status = "complete" if expected and not missing else "partial"
+                error = f"missing {len(missing)} required point values" if missing else ""
+                if not expected:
+                    error = "no places configured"
+                report.values_stored += self.store.finish_job(
+                    model.key, run, step, levtype, values + self._derived(values, step),
+                    status=status, source=source, error=error)
+                report.bytes_downloaded += os.path.getsize(path)
+                if status == "complete":
+                    report.steps_ingested += 1
+                    complete += 1
+                else:
+                    report.errors.append(f"step {step} {levtype}: {error}")
+            except Exception as exc:  # noqa: BLE001 - record failed jobs for retry
+                error = f"{type(exc).__name__}: {exc}"
+                report.errors.append(f"step {step} {levtype}: {error}")
+                self.store.finish_job(model.key, run, step, levtype, [],
+                                      status="failed", source=source, error=error)
+        if not jobs:
+            report.errors.append("no supported jobs for this model, cycle and configuration")
+        self.store.set_run_status(run, "complete" if jobs and complete == len(jobs) else "partial",
+                                  model=model.key)
         return report
+
+    def _index(self, model: models.Model, run: str, step: int, levtype: str):
+        """Discover fields through the same mirrors used for downloads."""
+        errors = []
+        for source in self._sources():
+            try:
+                url = eod.build_index_url(source, run[:8], run[8:], step, levtype=levtype,
+                                          model=model.model, resol=model.resol,
+                                          stream=model.stream, type=model.type)
+                url = eod.authorize_url(url, source, self.session, {})
+                return source, eod.fetch_index(url, session=self.session)
+            except (eod.OpenDataError, requests.RequestException) as exc:
+                errors.append(f"{source}: {exc}")
+        raise eod.OpenDataError("; ".join(errors))
 
     def _derived(self, values: list[PointValue], step: int) -> list[PointValue]:
         """Compute the derived quantities for one step."""
@@ -251,7 +248,8 @@ class Service:
                 surface.setdefault(value.place_id, {})[value.param] = value
 
         result: list[PointValue] = []
-        for place_id, fields in surface.items():
+        for place_id in surface.keys() | pressure.keys():
+            fields = surface.get(place_id, {})
             for name in self.derived_params:
                 spec = parameters.DERIVED.get(name)
                 if spec is None:
@@ -327,7 +325,10 @@ class Service:
             ]
 
         if spec.name in ("wind_speed_pl", "wind_dir_pl"):
-            levels = sorted({level for (param, level) in pressure if param == "u"})
+            levels = sorted({level for (param, level) in pressure if param == "u"
+                             and ("v", level) in pressure
+                             and pressure[("u", level)].value is not None
+                             and pressure[("v", level)].value is not None})
             result = []
             for level in levels:
                 u = pressure[("u", level)]
@@ -361,7 +362,7 @@ class Service:
         The 0.1 deg tier is published about two hours after the 0.25 deg tier,
         so the newest run is usually older than the current cycle.
         """
-        now = dt.datetime.now(dt.UTC) - dt.timedelta(hours=2)
+        now = dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=2)
         now = now.replace(minute=0, second=0, microsecond=0)
         now -= dt.timedelta(hours=now.hour % 6)
         return [
@@ -377,7 +378,9 @@ class Service:
             incomplete = [
                 run
                 for run in candidates
-                if self.store.run_status(run, model=model.key) not in (None, "complete")
+                if self.store.run_status(run, model=model.key) is not None
+                and (self.store.run_status(run, model=model.key) != "complete"
+                     or self.store.ingest_fingerprint(model.key, run) != ingest.fingerprint(self.config, model))
             ]
             # Take the newest runs that are actually published.
             fresh = []
@@ -411,21 +414,10 @@ class Service:
     def _published(self, model: models.Model, run: str) -> bool:
         """Whether the run of this model is on the portal."""
         try:
-            index_url = eod.build_index_url(
-                self.config.source,
-                run[:8],
-                run[8:],
-                0,
-                levtype="sfc",
-                model=model.model,
-                resol=model.resol,
-                stream=model.stream,
-                type=model.type,
-            )
-            response = self.session.get(index_url, timeout=30)
-        except Exception:  # noqa: BLE001 - network hiccup, try the next cycle
+            self._index(model, run, 0, "sfc")
+            return True
+        except (eod.OpenDataError, requests.RequestException):
             return False
-        return response.status_code == 200
 
     def prune_cache(self, keep_runs: int = 1) -> int:
         """Delete cached GRIB files of runs that are no longer needed.

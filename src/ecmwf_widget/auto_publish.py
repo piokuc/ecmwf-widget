@@ -39,7 +39,7 @@ def _wait_until(expected: dt.datetime, now=None) -> None:
     machine wakes.
     """
 
-    clock = now or (lambda: dt.datetime.now(dt.UTC))
+    clock = now or (lambda: dt.datetime.now(dt.timezone.utc))
     while True:
         wait = (expected + dt.timedelta(minutes=1) - clock()).total_seconds()
         if wait <= 0:
@@ -122,7 +122,7 @@ def main(argv: list[str] | None = None) -> int:
     store = ForecastStore(config.database)
     service = Service(config, store)
 
-    now = dt.datetime.now(dt.UTC)
+    now = dt.datetime.now(dt.timezone.utc)
     expected = next_expected(now, delay)
     print("ECMWF open data publisher")
     print(f"  database  {config.database}")
@@ -137,7 +137,7 @@ def main(argv: list[str] | None = None) -> int:
         # behind for long.
         if not args.now:
             remaining = (
-                expected + dt.timedelta(minutes=1) - dt.datetime.now(dt.UTC)
+                expected + dt.timedelta(minutes=1) - dt.datetime.now(dt.timezone.utc)
             ).total_seconds()
             if remaining > 0:
                 print(f"  waiting {remaining / 60:.0f} min for the run")
@@ -145,7 +145,7 @@ def main(argv: list[str] | None = None) -> int:
                     return 0
                 _wait_until(expected)
 
-        print(f"  {dt.datetime.now(dt.UTC).strftime('%H:%M:%S')} looking for the data")
+        print(f"  {dt.datetime.now(dt.timezone.utc).strftime('%H:%M:%S')} looking for the data")
         while True:
             reports = service.poll()
             fresh = [r for r in reports if r.values_stored]
@@ -163,7 +163,7 @@ def main(argv: list[str] | None = None) -> int:
 
         if args.once:
             return 0
-        expected = next_expected(dt.datetime.now(dt.UTC), delay)
+        expected = next_expected(dt.datetime.now(dt.timezone.utc), delay)
 
 
 if __name__ == "__main__":

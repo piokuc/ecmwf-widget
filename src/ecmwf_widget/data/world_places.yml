@@ -11,6 +11,7 @@ places:
     flag: 🇦🇫
     kind: capital
     region: Asia
+    timezone: Asia/Kabul
   - id: tirana
     name: Tirana
     country: Albania
@@ -21,6 +22,7 @@ places:
     flag: 🇦🇱
     kind: capital
     region: Europe
+    timezone: Europe/Tirane
   - id: algiers
     name: Algiers
     country: Algeria
@@ -31,6 +33,7 @@ places:
     flag: 🇩🇿
     kind: capital
     region: Africa
+    timezone: Africa/Algiers
   - id: pago-pago
     name: Pago Pago
     country: American Samoa
@@ -41,6 +44,7 @@ places:
     flag: 🇦🇸
     kind: capital
     region: Oceania
+    timezone: Pacific/Pago_Pago
   - id: andorra-la-vella
     name: Andorra la Vella
     country: Andorra
@@ -51,6 +55,7 @@ places:
     flag: 🇦🇩
     kind: capital
     region: Europe
+    timezone: Europe/Andorra
   - id: andorra-la-vella-2
     name: Andorra la Vella
     country: Andorra
@@ -61,6 +66,7 @@ places:
     flag: 🇦🇩
     kind: city
     region: Europe
+    timezone: Europe/Andorra
   - id: luanda
     name: Luanda
     country: Angola
@@ -71,6 +77,7 @@ places:
     flag: 🇦🇴
     kind: capital
     region: Africa
+    timezone: Africa/Luanda
   - id: the-valley
     name: The Valley
     country: Anguilla
@@ -81,6 +88,7 @@ places:
     flag: 🇦🇮
     kind: capital
     region: Americas
+    timezone: America/Anguilla
   - id: saint-john-s
     name: Saint John's
     country: Antigua and Barbuda
@@ -91,6 +99,7 @@ places:
     flag: 🇦🇬
     kind: capital
     region: Americas
+    timezone: America/Antigua
   - id: aconcagua
     name: Aconcagua
     country: Argentina
@@ -101,6 +110,7 @@ places:
     flag: 🇦🇷
     kind: peak
     region: Americas
+    timezone: America/Argentina/Mendoza
   - id: bariloche
     name: Bariloche
     country: Argentina
@@ -111,6 +121,7 @@ places:
     flag: 🇦🇷
     kind: city
     region: Americas
+    timezone: America/Argentina/Salta
   - id: buenos-aires
     name: Buenos Aires
     country: Argentina
@@ -121,6 +132,7 @@ places:
     flag: 🇦🇷
     kind: capital
     region: Americas
+    timezone: America/Argentina/Buenos_Aires
   - id: cordoba
     name: Cordoba
     country: Argentina
@@ -131,6 +143,7 @@ places:
     flag: 🇦🇷
     kind: city
     region: Americas
+    timezone: America/Argentina/Cordoba
   - id: mendoza
     name: Mendoza
     country: Argentina
@@ -141,6 +154,7 @@ places:
     flag: 🇦🇷
     kind: city
     region: Americas
+    timezone: America/Argentina/Mendoza
   - id: yerevan
     name: Yerevan
     country: Armenia
@@ -151,6 +165,7 @@ places:
     flag: 🇦🇲
     kind: capital
     region: Asia
+    timezone: Asia/Yerevan
   - id: oranjestad
     name: Oranjestad
     country: Aruba
@@ -161,6 +176,7 @@ places:
     flag: 🇦🇼
     kind: capital
     region: Americas
+    timezone: America/Aruba
   - id: brisbane
     name: Brisbane
     country: Australia
@@ -171,6 +187,7 @@ places:
     flag: 🇦🇺
     kind: city
     region: Oceania
+    timezone: Australia/Brisbane
   - id: canberra
     name: Canberra
     country: Australia
@@ -181,6 +198,7 @@ places:
     flag: 🇦🇺
     kind: capital
     region: Oceania
+    timezone: Australia/Sydney
   - id: darwin
     name: Darwin
     country: Australia
@@ -191,6 +209,7 @@ places:
     flag: 🇦🇺
     kind: city
     region: Oceania
+    timezone: Australia/Darwin
   - id: melbourne
     name: Melbourne
     country: Australia
@@ -201,6 +220,7 @@ places:
     flag: 🇦🇺
     kind: city
     region: Oceania
+    timezone: Australia/Melbourne
   - id: mount-kosciuszko
     name: Mount Kosciuszko
     country: Australia
@@ -211,6 +231,7 @@ places:
     flag: 🇦🇺
     kind: peak
     region: Oceania
+    timezone: Australia/Sydney
   - id: perth
     name: Perth
     country: Australia
@@ -221,6 +242,7 @@ places:
     flag: 🇦🇺
     kind: city
     region: Oceania
+    timezone: Australia/Perth
   - id: sydney
     name: Sydney
     country: Australia
@@ -231,6 +253,7 @@ places:
     flag: 🇦🇺
     kind: city
     region: Oceania
+    timezone: Australia/Sydney
   - id: innsbruck
     name: Innsbruck
     country: Austria
@@ -241,6 +264,7 @@ places:
     flag: 🇦🇹
     kind: city
     region: Europe
+    timezone: Europe/Vienna
   - id: salzburg
     name: Salzburg
     country: Austria
@@ -251,6 +275,7 @@ places:
     flag: 🇦🇹
     kind: city
     region: Europe
+    timezone: Europe/Vienna
   - id: vienna
     name: Vienna
     country: Austria
@@ -261,6 +286,7 @@ places:
     flag: 🇦🇹
     kind: capital
     region: Europe
+    timezone: Europe/Vienna
   - id: vienna-2
     name: Vienna
     country: Austria
@@ -271,6 +297,7 @@ places:
     flag: 🇦🇹
     kind: city
     region: Europe
+    timezone: Europe/Vienna
   - id: baku
     name: Baku
     country: Azerbaijan
@@ -281,6 +308,7 @@ places:
     flag: 🇦🇿
     kind: capital
     region: Asia
+    timezone: Asia/Baku
   - id: nassau
     name: Nassau
     country: Bahamas
@@ -291,6 +319,7 @@ places:
     flag: 🇧🇸
     kind: capital
     region: Americas
+    timezone: America/Nassau
   - id: manama
     name: Manama
     country: Bahrain
@@ -301,6 +330,7 @@ places:
     flag: 🇧🇭
     kind: capital
     region: Asia
+    timezone: Asia/Bahrain
   - id: dhaka
     name: Dhaka
     country: Bangladesh
@@ -311,6 +341,7 @@ places:
     flag: 🇧🇩
     kind: capital
     region: Asia
+    timezone: Asia/Dhaka
   - id: bridgetown
     name: Bridgetown
     country: Barbados
@@ -321,6 +352,7 @@ places:
     flag: 🇧🇧
     kind: capital
     region: Americas
+    timezone: America/Barbados
   - id: minsk
     name: Minsk
     country: Belarus
@@ -331,6 +363,7 @@ places:
     flag: 🇧🇾
     kind: capital
     region: Europe
+    timezone: Europe/Minsk
   - id: brussels
     name: Brussels
     country: Belgium
@@ -341,6 +374,7 @@ places:
     flag: 🇧🇪
     kind: capital
     region: Europe
+    timezone: Europe/Brussels
   - id: belmopan
     name: Belmopan
     country: Belize
@@ -351,6 +385,7 @@ places:
     flag: 🇧🇿
     kind: capital
     region: Americas
+    timezone: America/Belize
   - id: porto-novo
     name: Porto-Novo
     country: Benin
@@ -361,6 +396,7 @@ places:
     flag: 🇧🇯
     kind: capital
     region: Africa
+    timezone: Africa/Porto-Novo
   - id: hamilton
     name: Hamilton
     country: Bermuda
@@ -371,6 +407,7 @@ places:
     flag: 🇧🇲
     kind: capital
     region: Americas
+    timezone: Atlantic/Bermuda
   - id: thimphu
     name: Thimphu
     country: Bhutan
@@ -381,6 +418,7 @@ places:
     flag: 🇧🇹
     kind: capital
     region: Asia
+    timezone: Asia/Thimphu
   - id: sucre
     name: Sucre
     country: Bolivia
@@ -391,6 +429,7 @@ places:
     flag: 🇧🇴
     kind: capital
     region: Americas
+    timezone: America/La_Paz
   - id: sarajevo
     name: Sarajevo
     country: Bosnia and Herzegovina
@@ -401,6 +440,7 @@ places:
     flag: 🇧🇦
     kind: capital
     region: Europe
+    timezone: Europe/Sarajevo
   - id: gaborone
     name: Gaborone
     country: Botswana
@@ -411,6 +451,7 @@ places:
     flag: 🇧🇼
     kind: capital
     region: Africa
+    timezone: Africa/Gaborone
   - id: brasilia-2
     name: Brasilia
     country: Brazil
@@ -421,6 +462,7 @@ places:
     flag: 🇧🇷
     kind: city
     region: Americas
+    timezone: America/Sao_Paulo
   - id: brasilia
     name: Brasília
     country: Brazil
@@ -431,6 +473,7 @@ places:
     flag: 🇧🇷
     kind: capital
     region: Americas
+    timezone: America/Sao_Paulo
   - id: foz-do-iguacu
     name: Foz do Iguacu
     country: Brazil
@@ -441,6 +484,7 @@ places:
     flag: 🇧🇷
     kind: city
     region: Americas
+    timezone: America/Sao_Paulo
   - id: rio-de-janeiro
     name: Rio de Janeiro
     country: Brazil
@@ -451,6 +495,7 @@ places:
     flag: 🇧🇷
     kind: city
     region: Americas
+    timezone: America/Sao_Paulo
   - id: salvador
     name: Salvador
     country: Brazil
@@ -461,6 +506,7 @@ places:
     flag: 🇧🇷
     kind: city
     region: Americas
+    timezone: America/Bahia
   - id: diego-garcia
     name: Diego Garcia
     country: British Indian Ocean Territory
@@ -471,6 +517,7 @@ places:
     flag: 🇮🇴
     kind: capital
     region: 
+    timezone: Etc/GMT-5
   - id: road-town
     name: Road Town
     country: British Virgin Islands
@@ -481,6 +528,7 @@ places:
     flag: 🇻🇬
     kind: capital
     region: Americas
+    timezone: America/Tortola
   - id: bandar-seri-begawan
     name: Bandar Seri Begawan
     country: Brunei
@@ -491,6 +539,7 @@ places:
     flag: 🇧🇳
     kind: capital
     region: Asia
+    timezone: Asia/Brunei
   - id: sofia
     name: Sofia
     country: Bulgaria
@@ -501,6 +550,7 @@ places:
     flag: 🇧🇬
     kind: capital
     region: Europe
+    timezone: Europe/Sofia
   - id: ouagadougou
     name: Ouagadougou
     country: Burkina Faso
@@ -511,6 +561,7 @@ places:
     flag: 🇧🇫
     kind: capital
     region: Africa
+    timezone: Africa/Ouagadougou
   - id: gitega
     name: Gitega
     country: Burundi
@@ -521,6 +572,7 @@ places:
     flag: 🇧🇮
     kind: capital
     region: Africa
+    timezone: Africa/Bujumbura
   - id: phnom-penh
     name: Phnom Penh
     country: Cambodia
@@ -531,6 +583,7 @@ places:
     flag: 🇰🇭
     kind: capital
     region: Asia
+    timezone: Asia/Phnom_Penh
   - id: siem-reap
     name: Siem Reap
     country: Cambodia
@@ -541,6 +594,7 @@ places:
     flag: 🇰🇭
     kind: city
     region: Asia
+    timezone: Asia/Phnom_Penh
   - id: yaounde
     name: Yaoundé
     country: Cameroon
@@ -551,6 +605,7 @@ places:
     flag: 🇨🇲
     kind: capital
     region: Africa
+    timezone: Africa/Douala
   - id: calgary
     name: Calgary
     country: Canada
@@ -561,6 +616,7 @@ places:
     flag: 🇨🇦
     kind: city
     region: Americas
+    timezone: America/Edmonton
   - id: montreal
     name: Montreal
     country: Canada
@@ -571,6 +627,7 @@ places:
     flag: 🇨🇦
     kind: city
     region: Americas
+    timezone: America/Toronto
   - id: ottawa
     name: Ottawa
     country: Canada
@@ -581,6 +638,7 @@ places:
     flag: 🇨🇦
     kind: capital
     region: Americas
+    timezone: America/Toronto
   - id: toronto
     name: Toronto
     country: Canada
@@ -591,6 +649,7 @@ places:
     flag: 🇨🇦
     kind: city
     region: Americas
+    timezone: America/Toronto
   - id: vancouver
     name: Vancouver
     country: Canada
@@ -601,6 +660,7 @@ places:
     flag: 🇨🇦
     kind: city
     region: Americas
+    timezone: America/Vancouver
   - id: praia
     name: Praia
     country: Cape Verde
@@ -611,6 +671,7 @@ places:
     flag: 🇨🇻
     kind: capital
     region: Africa
+    timezone: Atlantic/Cape_Verde
   - id: kralendijk
     name: Kralendijk
     country: Caribbean Netherlands
@@ -621,6 +682,7 @@ places:
     flag: 
     kind: capital
     region: Americas
+    timezone: America/Kralendijk
   - id: george-town
     name: George Town
     country: Cayman Islands
@@ -631,6 +693,7 @@ places:
     flag: 🇰🇾
     kind: capital
     region: Americas
+    timezone: America/Cayman
   - id: bangui
     name: Bangui
     country: Central African Republic
@@ -641,6 +704,7 @@ places:
     flag: 🇨🇫
     kind: capital
     region: Africa
+    timezone: Africa/Bangui
   - id: n-djamena
     name: N'Djamena
     country: Chad
@@ -651,6 +715,7 @@ places:
     flag: 🇹🇩
     kind: capital
     region: Africa
+    timezone: Africa/Ndjamena
   - id: punta-arenas
     name: Punta Arenas
     country: Chile
@@ -661,6 +726,7 @@ places:
     flag: 🇨🇱
     kind: city
     region: Americas
+    timezone: America/Punta_Arenas
   - id: santiago
     name: Santiago
     country: Chile
@@ -671,6 +737,7 @@ places:
     flag: 🇨🇱
     kind: capital
     region: Americas
+    timezone: America/Santiago
   - id: santiago-2
     name: Santiago
     country: Chile
@@ -681,6 +748,7 @@ places:
     flag: 🇨🇱
     kind: city
     region: Americas
+    timezone: America/Santiago
   - id: valparaiso
     name: Valparaiso
     country: Chile
@@ -691,6 +759,7 @@ places:
     flag: 🇨🇱
     kind: city
     region: Americas
+    timezone: America/Santiago
   - id: beijing
     name: Beijing
     country: China
@@ -701,6 +770,7 @@ places:
     flag: 🇨🇳
     kind: capital
     region: Asia
+    timezone: Asia/Shanghai
   - id: chengdu
     name: Chengdu
     country: China
@@ -711,6 +781,7 @@ places:
     flag: 🇨🇳
     kind: city
     region: Asia
+    timezone: Asia/Shanghai
   - id: guangzhou
     name: Guangzhou
     country: China
@@ -721,6 +792,7 @@ places:
     flag: 🇨🇳
     kind: city
     region: Asia
+    timezone: Asia/Shanghai
   - id: shanghai
     name: Shanghai
     country: China
@@ -731,6 +803,7 @@ places:
     flag: 🇨🇳
     kind: city
     region: Asia
+    timezone: Asia/Shanghai
   - id: shenzhen
     name: Shenzhen
     country: China
@@ -741,6 +814,7 @@ places:
     flag: 🇨🇳
     kind: city
     region: Asia
+    timezone: Asia/Shanghai
   - id: flying-fish-cove
     name: Flying Fish Cove
     country: Christmas Island
@@ -751,6 +825,7 @@ places:
     flag: 🇨🇽
     kind: capital
     region: Oceania
+    timezone: Indian/Christmas
   - id: west-island
     name: West Island
     country: Cocos (Keeling) Islands
@@ -761,6 +836,7 @@ places:
     flag: 🇨🇨
     kind: capital
     region: Oceania
+    timezone: Indian/Cocos
   - id: bogota-2
     name: Bogota
     country: Colombia
@@ -771,6 +847,7 @@ places:
     flag: 🇨🇴
     kind: city
     region: Americas
+    timezone: America/Bogota
   - id: bogota
     name: Bogotá
     country: Colombia
@@ -781,6 +858,7 @@ places:
     flag: 🇨🇴
     kind: capital
     region: Americas
+    timezone: America/Bogota
   - id: cartagena
     name: Cartagena
     country: Colombia
@@ -791,6 +869,7 @@ places:
     flag: 🇨🇴
     kind: city
     region: Americas
+    timezone: America/Bogota
   - id: medellin
     name: Medellin
     country: Colombia
@@ -801,6 +880,7 @@ places:
     flag: 🇨🇴
     kind: city
     region: Americas
+    timezone: America/Bogota
   - id: moroni
     name: Moroni
     country: Comoros
@@ -811,6 +891,7 @@ places:
     flag: 🇰🇲
     kind: capital
     region: Africa
+    timezone: Indian/Comoro
   - id: avarua
     name: Avarua
     country: Cook Islands
@@ -821,6 +902,7 @@ places:
     flag: 🇨🇰
     kind: capital
     region: Oceania
+    timezone: Pacific/Rarotonga
   - id: san-jose
     name: San José
     country: Costa Rica
@@ -831,6 +913,7 @@ places:
     flag: 🇨🇷
     kind: capital
     region: Americas
+    timezone: America/Costa_Rica
   - id: dubrovnik
     name: Dubrovnik
     country: Croatia
@@ -841,6 +924,7 @@ places:
     flag: 🇭🇷
     kind: city
     region: Europe
+    timezone: Europe/Zagreb
   - id: zagreb
     name: Zagreb
     country: Croatia
@@ -851,6 +935,7 @@ places:
     flag: 🇭🇷
     kind: capital
     region: Europe
+    timezone: Europe/Zagreb
   - id: zagreb-2
     name: Zagreb
     country: Croatia
@@ -861,6 +946,7 @@ places:
     flag: 🇭🇷
     kind: city
     region: Europe
+    timezone: Europe/Zagreb
   - id: havana
     name: Havana
     country: Cuba
@@ -871,6 +957,7 @@ places:
     flag: 🇨🇺
     kind: capital
     region: Americas
+    timezone: America/Havana
   - id: willemstad
     name: Willemstad
     country: Curaçao
@@ -881,6 +968,7 @@ places:
     flag: 🇨🇼
     kind: capital
     region: Americas
+    timezone: America/Curacao
   - id: nicosia
     name: Nicosia
     country: Cyprus
@@ -891,6 +979,7 @@ places:
     flag: 🇨🇾
     kind: capital
     region: Europe
+    timezone: Asia/Nicosia
   - id: nicosia-2
     name: Nicosia
     country: Cyprus
@@ -901,6 +990,7 @@ places:
     flag: 🇨🇾
     kind: city
     region: Europe
+    timezone: Asia/Nicosia
   - id: paphos
     name: Paphos
     country: Cyprus
@@ -911,6 +1001,7 @@ places:
     flag: 🇨🇾
     kind: city
     region: Europe
+    timezone: Asia/Nicosia
   - id: brno
     name: Brno
     country: Czechia
@@ -921,6 +1012,7 @@ places:
     flag: 🇨🇿
     kind: city
     region: Europe
+    timezone: Europe/Prague
   - id: ostrava
     name: Ostrava
     country: Czechia
@@ -931,6 +1023,7 @@ places:
     flag: 🇨🇿
     kind: city
     region: Europe
+    timezone: Europe/Prague
   - id: prague
     name: Prague
     country: Czechia
@@ -941,6 +1034,7 @@ places:
     flag: 🇨🇿
     kind: capital
     region: Europe
+    timezone: Europe/Prague
   - id: prague-2
     name: Prague
     country: Czechia
@@ -951,6 +1045,7 @@ places:
     flag: 🇨🇿
     kind: city
     region: Europe
+    timezone: Europe/Prague
   - id: kinshasa
     name: Kinshasa
     country: DR Congo
@@ -961,6 +1056,7 @@ places:
     flag: 🇨🇩
     kind: capital
     region: Africa
+    timezone: Africa/Kinshasa
   - id: copenhagen
     name: Copenhagen
     country: Denmark
@@ -971,6 +1067,7 @@ places:
     flag: 🇩🇰
     kind: capital
     region: Europe
+    timezone: Europe/Copenhagen
   - id: djibouti
     name: Djibouti
     country: Djibouti
@@ -981,6 +1078,7 @@ places:
     flag: 🇩🇯
     kind: capital
     region: Africa
+    timezone: Africa/Djibouti
   - id: roseau
     name: Roseau
     country: Dominica
@@ -991,6 +1089,7 @@ places:
     flag: 🇩🇲
     kind: capital
     region: Americas
+    timezone: America/Dominica
   - id: santo-domingo
     name: Santo Domingo
     country: Dominican Republic
@@ -1001,6 +1100,7 @@ places:
     flag: 🇩🇴
     kind: capital
     region: Americas
+    timezone: America/Santo_Domingo
   - id: quito
     name: Quito
     country: Ecuador
@@ -1011,6 +1111,7 @@ places:
     flag: 🇪🇨
     kind: capital
     region: Americas
+    timezone: America/Guayaquil
   - id: alexandria
     name: Alexandria
     country: Egypt
@@ -1021,6 +1122,7 @@ places:
     flag: 🇪🇬
     kind: city
     region: Africa
+    timezone: Africa/Cairo
   - id: cairo
     name: Cairo
     country: Egypt
@@ -1031,6 +1133,7 @@ places:
     flag: 🇪🇬
     kind: capital
     region: Africa
+    timezone: Africa/Cairo
   - id: luxor
     name: Luxor
     country: Egypt
@@ -1041,6 +1144,7 @@ places:
     flag: 🇪🇬
     kind: city
     region: Africa
+    timezone: Africa/Cairo
   - id: sharm-el-sheikh
     name: Sharm el Sheikh
     country: Egypt
@@ -1051,6 +1155,7 @@ places:
     flag: 🇪🇬
     kind: city
     region: Africa
+    timezone: Africa/Cairo
   - id: san-salvador
     name: San Salvador
     country: El Salvador
@@ -1061,6 +1166,7 @@ places:
     flag: 🇸🇻
     kind: capital
     region: Americas
+    timezone: America/El_Salvador
   - id: malabo
     name: Malabo
     country: Equatorial Guinea
@@ -1071,6 +1177,7 @@ places:
     flag: 🇬🇶
     kind: capital
     region: Africa
+    timezone: Africa/Malabo
   - id: asmara
     name: Asmara
     country: Eritrea
@@ -1081,6 +1188,7 @@ places:
     flag: 🇪🇷
     kind: capital
     region: Africa
+    timezone: Africa/Asmara
   - id: tallinn
     name: Tallinn
     country: Estonia
@@ -1091,6 +1199,7 @@ places:
     flag: 🇪🇪
     kind: capital
     region: Europe
+    timezone: Europe/Tallinn
   - id: tallinn-2
     name: Tallinn
     country: Estonia
@@ -1101,6 +1210,7 @@ places:
     flag: 🇪🇪
     kind: city
     region: Europe
+    timezone: Europe/Tallinn
   - id: tartu
     name: Tartu
     country: Estonia
@@ -1111,6 +1221,7 @@ places:
     flag: 🇪🇪
     kind: city
     region: Europe
+    timezone: Europe/Tallinn
   - id: lobamba
     name: Lobamba
     country: Eswatini
@@ -1121,6 +1232,7 @@ places:
     flag: 🇸🇿
     kind: capital
     region: Africa
+    timezone: Africa/Mbabane
   - id: addis-ababa
     name: Addis Ababa
     country: Ethiopia
@@ -1131,6 +1243,7 @@ places:
     flag: 🇪🇹
     kind: capital
     region: Africa
+    timezone: Africa/Addis_Ababa
   - id: stanley
     name: Stanley
     country: Falkland Islands
@@ -1141,6 +1254,7 @@ places:
     flag: 🇫🇰
     kind: capital
     region: Americas
+    timezone: Atlantic/Stanley
   - id: torshavn
     name: Tórshavn
     country: Faroe Islands
@@ -1151,6 +1265,7 @@ places:
     flag: 🇫🇴
     kind: capital
     region: Europe
+    timezone: Atlantic/Faroe
   - id: suva
     name: Suva
     country: Fiji
@@ -1161,6 +1276,7 @@ places:
     flag: 🇫🇯
     kind: capital
     region: Oceania
+    timezone: Pacific/Fiji
   - id: suva-2
     name: Suva
     country: Fiji
@@ -1171,6 +1287,7 @@ places:
     flag: 🇫🇯
     kind: city
     region: Oceania
+    timezone: Pacific/Fiji
   - id: helsinki
     name: Helsinki
     country: Finland
@@ -1181,6 +1298,7 @@ places:
     flag: 🇫🇮
     kind: capital
     region: Europe
+    timezone: Europe/Helsinki
   - id: helsinki-2
     name: Helsinki
     country: Finland
@@ -1191,6 +1309,7 @@ places:
     flag: 🇫🇮
     kind: city
     region: Europe
+    timezone: Europe/Helsinki
   - id: rovaniemi
     name: Rovaniemi
     country: Finland
@@ -1201,6 +1320,7 @@ places:
     flag: 🇫🇮
     kind: city
     region: Europe
+    timezone: Europe/Helsinki
   - id: lyon
     name: Lyon
     country: France
@@ -1211,6 +1331,7 @@ places:
     flag: 🇫🇷
     kind: city
     region: Europe
+    timezone: Europe/Paris
   - id: marseille
     name: Marseille
     country: France
@@ -1221,6 +1342,7 @@ places:
     flag: 🇫🇷
     kind: city
     region: Europe
+    timezone: Europe/Paris
   - id: mont-blanc
     name: Mont Blanc
     country: France
@@ -1231,6 +1353,7 @@ places:
     flag: 🇫🇷
     kind: peak
     region: Europe
+    timezone: Europe/Rome
   - id: nice
     name: Nice
     country: France
@@ -1241,6 +1364,7 @@ places:
     flag: 🇫🇷
     kind: city
     region: Europe
+    timezone: Europe/Paris
   - id: paris
     name: Paris
     country: France
@@ -1251,6 +1375,7 @@ places:
     flag: 🇫🇷
     kind: capital
     region: Europe
+    timezone: Europe/Paris
   - id: strasbourg
     name: Strasbourg
     country: France
@@ -1261,6 +1386,7 @@ places:
     flag: 🇫🇷
     kind: city
     region: Europe
+    timezone: Europe/Paris
   - id: cayenne
     name: Cayenne
     country: French Guiana
@@ -1271,6 +1397,7 @@ places:
     flag: 🇬🇫
     kind: capital
     region: Americas
+    timezone: America/Cayenne
   - id: papeete
     name: Papeetē
     country: French Polynesia
@@ -1281,6 +1408,7 @@ places:
     flag: 🇵🇫
     kind: capital
     region: Oceania
+    timezone: Pacific/Tahiti
   - id: port-aux-francais
     name: Port-aux-Français
     country: French Southern and Antarctic Lands
@@ -1291,6 +1419,7 @@ places:
     flag: 🇹🇫
     kind: capital
     region: Antarctic
+    timezone: Indian/Kerguelen
   - id: libreville
     name: Libreville
     country: Gabon
@@ -1301,6 +1430,7 @@ places:
     flag: 🇬🇦
     kind: capital
     region: Africa
+    timezone: Africa/Libreville
   - id: banjul
     name: Banjul
     country: Gambia
@@ -1311,6 +1441,7 @@ places:
     flag: 🇬🇲
     kind: capital
     region: Africa
+    timezone: Africa/Banjul
   - id: tbilisi
     name: Tbilisi
     country: Georgia
@@ -1321,6 +1452,7 @@ places:
     flag: 🇬🇪
     kind: capital
     region: Asia
+    timezone: Asia/Tbilisi
   - id: berlin
     name: Berlin
     country: Germany
@@ -1331,6 +1463,7 @@ places:
     flag: 🇩🇪
     kind: capital
     region: Europe
+    timezone: Europe/Berlin
   - id: cologne
     name: Cologne
     country: Germany
@@ -1341,6 +1474,7 @@ places:
     flag: 🇩🇪
     kind: city
     region: Europe
+    timezone: Europe/Berlin
   - id: dresden
     name: Dresden
     country: Germany
@@ -1351,6 +1485,7 @@ places:
     flag: 🇩🇪
     kind: city
     region: Europe
+    timezone: Europe/Berlin
   - id: frankfurt
     name: Frankfurt
     country: Germany
@@ -1361,6 +1496,7 @@ places:
     flag: 🇩🇪
     kind: city
     region: Europe
+    timezone: Europe/Berlin
   - id: hamburg
     name: Hamburg
     country: Germany
@@ -1371,6 +1507,7 @@ places:
     flag: 🇩🇪
     kind: city
     region: Europe
+    timezone: Europe/Berlin
   - id: munich
     name: Munich
     country: Germany
@@ -1381,6 +1518,7 @@ places:
     flag: 🇩🇪
     kind: city
     region: Europe
+    timezone: Europe/Berlin
   - id: zugspitze
     name: Zugspitze
     country: Germany
@@ -1391,6 +1529,7 @@ places:
     flag: 🇩🇪
     kind: peak
     region: Europe
+    timezone: Europe/Berlin
   - id: accra
     name: Accra
     country: Ghana
@@ -1401,6 +1540,7 @@ places:
     flag: 🇬🇭
     kind: capital
     region: Africa
+    timezone: Africa/Accra
   - id: gibraltar
     name: Gibraltar
     country: Gibraltar
@@ -1411,6 +1551,7 @@ places:
     flag: 🇬🇮
     kind: capital
     region: Europe
+    timezone: Europe/Gibraltar
   - id: athens
     name: Athens
     country: Greece
@@ -1421,6 +1562,7 @@ places:
     flag: 🇬🇷
     kind: capital
     region: Europe
+    timezone: Europe/Athens
   - id: athens-2
     name: Athens
     country: Greece
@@ -1431,6 +1573,7 @@ places:
     flag: 🇬🇷
     kind: city
     region: Europe
+    timezone: Europe/Athens
   - id: heraklion
     name: Heraklion
     country: Greece
@@ -1441,6 +1584,7 @@ places:
     flag: 🇬🇷
     kind: city
     region: Europe
+    timezone: Europe/Athens
   - id: thessaloniki
     name: Thessaloniki
     country: Greece
@@ -1451,6 +1595,7 @@ places:
     flag: 🇬🇷
     kind: city
     region: Europe
+    timezone: Europe/Athens
   - id: nuuk
     name: Nuuk
     country: Greenland
@@ -1461,6 +1606,7 @@ places:
     flag: 🇬🇱
     kind: capital
     region: Americas
+    timezone: America/Nuuk
   - id: nuuk-2
     name: Nuuk
     country: Greenland
@@ -1471,6 +1617,7 @@ places:
     flag: 🇬🇱
     kind: city
     region: Americas
+    timezone: America/Nuuk
   - id: st-george-s
     name: St. George's
     country: Grenada
@@ -1481,6 +1628,7 @@ places:
     flag: 🇬🇩
     kind: capital
     region: Americas
+    timezone: America/Grenada
   - id: basse-terre
     name: Basse-Terre
     country: Guadeloupe
@@ -1491,6 +1639,7 @@ places:
     flag: 🇬🇵
     kind: capital
     region: Americas
+    timezone: America/Guadeloupe
   - id: hagatna
     name: Hagåtña
     country: Guam
@@ -1501,6 +1650,7 @@ places:
     flag: 🇬🇺
     kind: capital
     region: Oceania
+    timezone: Pacific/Guam
   - id: guatemala-city
     name: Guatemala City
     country: Guatemala
@@ -1511,6 +1661,7 @@ places:
     flag: 🇬🇹
     kind: capital
     region: Americas
+    timezone: America/Guatemala
   - id: st-peter-port
     name: St. Peter Port
     country: Guernsey
@@ -1521,6 +1672,7 @@ places:
     flag: 🇬🇬
     kind: capital
     region: Europe
+    timezone: Europe/Guernsey
   - id: conakry
     name: Conakry
     country: Guinea
@@ -1531,6 +1683,7 @@ places:
     flag: 🇬🇳
     kind: capital
     region: Africa
+    timezone: Africa/Conakry
   - id: bissau
     name: Bissau
     country: Guinea-Bissau
@@ -1541,6 +1694,7 @@ places:
     flag: 🇬🇼
     kind: capital
     region: Africa
+    timezone: Africa/Bissau
   - id: georgetown
     name: Georgetown
     country: Guyana
@@ -1551,6 +1705,7 @@ places:
     flag: 🇬🇾
     kind: capital
     region: Americas
+    timezone: America/Guyana
   - id: port-au-prince
     name: Port-au-Prince
     country: Haiti
@@ -1561,6 +1716,7 @@ places:
     flag: 🇭🇹
     kind: capital
     region: Americas
+    timezone: America/Port-au-Prince
   - id: tegucigalpa
     name: Tegucigalpa
     country: Honduras
@@ -1571,6 +1727,7 @@ places:
     flag: 🇭🇳
     kind: capital
     region: Americas
+    timezone: America/Tegucigalpa
   - id: city-of-victoria
     name: City of Victoria
     country: Hong Kong
@@ -1581,6 +1738,7 @@ places:
     flag: 🇭🇰
     kind: capital
     region: Asia
+    timezone: Asia/Hong_Kong
   - id: budapest
     name: Budapest
     country: Hungary
@@ -1591,6 +1749,7 @@ places:
     flag: 🇭🇺
     kind: capital
     region: Europe
+    timezone: Europe/Budapest
   - id: budapest-2
     name: Budapest
     country: Hungary
@@ -1601,6 +1760,7 @@ places:
     flag: 🇭🇺
     kind: city
     region: Europe
+    timezone: Europe/Budapest
   - id: eger
     name: Eger
     country: Hungary
@@ -1611,6 +1771,7 @@ places:
     flag: 🇭🇺
     kind: city
     region: Europe
+    timezone: Europe/Budapest
   - id: keszthely
     name: Keszthely
     country: Hungary
@@ -1621,6 +1782,7 @@ places:
     flag: 🇭🇺
     kind: city
     region: Europe
+    timezone: Europe/Budapest
   - id: reykjavik
     name: Reykjavik
     country: Iceland
@@ -1631,6 +1793,7 @@ places:
     flag: 🇮🇸
     kind: capital
     region: Europe
+    timezone: Atlantic/Reykjavik
   - id: reykjavik-2
     name: Reykjavik
     country: Iceland
@@ -1641,6 +1804,7 @@ places:
     flag: 🇮🇸
     kind: city
     region: Europe
+    timezone: Atlantic/Reykjavik
   - id: bangalore
     name: Bangalore
     country: India
@@ -1651,6 +1815,7 @@ places:
     flag: 🇮🇳
     kind: city
     region: Asia
+    timezone: Asia/Kolkata
   - id: chennai
     name: Chennai
     country: India
@@ -1661,6 +1826,7 @@ places:
     flag: 🇮🇳
     kind: city
     region: Asia
+    timezone: Asia/Kolkata
   - id: delhi
     name: Delhi
     country: India
@@ -1671,6 +1837,7 @@ places:
     flag: 🇮🇳
     kind: city
     region: Asia
+    timezone: Asia/Kolkata
   - id: kolkata
     name: Kolkata
     country: India
@@ -1681,6 +1848,7 @@ places:
     flag: 🇮🇳
     kind: city
     region: Asia
+    timezone: Asia/Kolkata
   - id: mumbai
     name: Mumbai
     country: India
@@ -1691,6 +1859,7 @@ places:
     flag: 🇮🇳
     kind: city
     region: Asia
+    timezone: Asia/Kolkata
   - id: new-delhi
     name: New Delhi
     country: India
@@ -1701,6 +1870,7 @@ places:
     flag: 🇮🇳
     kind: capital
     region: Asia
+    timezone: Asia/Kolkata
   - id: jakarta
     name: Jakarta
     country: Indonesia
@@ -1711,6 +1881,7 @@ places:
     flag: 🇮🇩
     kind: capital
     region: Asia
+    timezone: Asia/Jakarta
   - id: tehran
     name: Tehran
     country: Iran
@@ -1721,6 +1892,7 @@ places:
     flag: 🇮🇷
     kind: capital
     region: Asia
+    timezone: Asia/Tehran
   - id: baghdad
     name: Baghdad
     country: Iraq
@@ -1731,6 +1903,7 @@ places:
     flag: 🇮🇶
     kind: capital
     region: Asia
+    timezone: Asia/Baghdad
   - id: dublin
     name: Dublin
     country: Ireland
@@ -1741,6 +1914,7 @@ places:
     flag: 🇮🇪
     kind: capital
     region: Europe
+    timezone: Europe/Dublin
   - id: dublin-2
     name: Dublin
     country: Ireland
@@ -1751,6 +1925,7 @@ places:
     flag: 🇮🇪
     kind: city
     region: Europe
+    timezone: Europe/Dublin
   - id: galway
     name: Galway
     country: Ireland
@@ -1761,6 +1936,7 @@ places:
     flag: 🇮🇪
     kind: city
     region: Europe
+    timezone: Europe/Dublin
   - id: douglas
     name: Douglas
     country: Isle of Man
@@ -1771,6 +1947,7 @@ places:
     flag: 🇮🇲
     kind: capital
     region: Europe
+    timezone: Europe/Isle_of_Man
   - id: eilat
     name: Eilat
     country: Israel
@@ -1781,6 +1958,7 @@ places:
     flag: 🇮🇱
     kind: city
     region: Asia
+    timezone: Asia/Jerusalem
   - id: jerusalem
     name: Jerusalem
     country: Israel
@@ -1791,6 +1969,7 @@ places:
     flag: 🇮🇱
     kind: capital
     region: Asia
+    timezone: Asia/Jerusalem
   - id: jerusalem-2
     name: Jerusalem
     country: Israel
@@ -1801,6 +1980,7 @@ places:
     flag: 🇮🇱
     kind: city
     region: Asia
+    timezone: Asia/Jerusalem
   - id: tel-aviv
     name: Tel Aviv
     country: Israel
@@ -1811,6 +1991,7 @@ places:
     flag: 🇮🇱
     kind: city
     region: Asia
+    timezone: Asia/Jerusalem
   - id: florence
     name: Florence
     country: Italy
@@ -1821,6 +2002,7 @@ places:
     flag: 🇮🇹
     kind: city
     region: Europe
+    timezone: Europe/Rome
   - id: milan
     name: Milan
     country: Italy
@@ -1831,6 +2013,7 @@ places:
     flag: 🇮🇹
     kind: city
     region: Europe
+    timezone: Europe/Rome
   - id: naples
     name: Naples
     country: Italy
@@ -1841,6 +2024,7 @@ places:
     flag: 🇮🇹
     kind: city
     region: Europe
+    timezone: Europe/Rome
   - id: rome
     name: Rome
     country: Italy
@@ -1851,6 +2035,7 @@ places:
     flag: 🇮🇹
     kind: capital
     region: Europe
+    timezone: Europe/Rome
   - id: turin
     name: Turin
     country: Italy
@@ -1861,6 +2046,7 @@ places:
     flag: 🇮🇹
     kind: city
     region: Europe
+    timezone: Europe/Rome
   - id: venice
     name: Venice
     country: Italy
@@ -1871,6 +2057,7 @@ places:
     flag: 🇮🇹
     kind: city
     region: Europe
+    timezone: Europe/Rome
   - id: yamoussoukro
     name: Yamoussoukro
     country: Ivory Coast
@@ -1881,6 +2068,7 @@ places:
     flag: 🇨🇮
     kind: capital
     region: Africa
+    timezone: Africa/Abidjan
   - id: kingston
     name: Kingston
     country: Jamaica
@@ -1891,6 +2079,7 @@ places:
     flag: 🇯🇲
     kind: capital
     region: Americas
+    timezone: America/Jamaica
   - id: fukuoka
     name: Fukuoka
     country: Japan
@@ -1901,6 +2090,7 @@ places:
     flag: 🇯🇵
     kind: city
     region: Asia
+    timezone: Asia/Tokyo
   - id: kyoto
     name: Kyoto
     country: Japan
@@ -1911,6 +2101,7 @@ places:
     flag: 🇯🇵
     kind: city
     region: Asia
+    timezone: Asia/Tokyo
   - id: mount-fuji
     name: Mount Fuji
     country: Japan
@@ -1921,6 +2112,7 @@ places:
     flag: 🇯🇵
     kind: peak
     region: Asia
+    timezone: Asia/Tokyo
   - id: osaka
     name: Osaka
     country: Japan
@@ -1931,6 +2123,7 @@ places:
     flag: 🇯🇵
     kind: city
     region: Asia
+    timezone: Asia/Tokyo
   - id: sapporo
     name: Sapporo
     country: Japan
@@ -1941,6 +2134,7 @@ places:
     flag: 🇯🇵
     kind: city
     region: Asia
+    timezone: Asia/Tokyo
   - id: tokyo
     name: Tokyo
     country: Japan
@@ -1951,6 +2145,7 @@ places:
     flag: 🇯🇵
     kind: capital
     region: Asia
+    timezone: Asia/Tokyo
   - id: saint-helier
     name: Saint Helier
     country: Jersey
@@ -1961,6 +2156,7 @@ places:
     flag: 🇯🇪
     kind: capital
     region: Europe
+    timezone: Europe/Jersey
   - id: amman
     name: Amman
     country: Jordan
@@ -1971,6 +2167,7 @@ places:
     flag: 🇯🇴
     kind: capital
     region: Asia
+    timezone: Asia/Amman
   - id: nur-sultan
     name: Nur-Sultan
     country: Kazakhstan
@@ -1981,6 +2178,7 @@ places:
     flag: 🇰🇿
     kind: capital
     region: Asia
+    timezone: Asia/Almaty
   - id: mombasa
     name: Mombasa
     country: Kenya
@@ -1991,6 +2189,7 @@ places:
     flag: 🇰🇪
     kind: city
     region: Africa
+    timezone: Africa/Nairobi
   - id: nairobi
     name: Nairobi
     country: Kenya
@@ -2001,6 +2200,7 @@ places:
     flag: 🇰🇪
     kind: capital
     region: Africa
+    timezone: Africa/Nairobi
   - id: south-tarawa
     name: South Tarawa
     country: Kiribati
@@ -2011,6 +2211,7 @@ places:
     flag: 🇰🇮
     kind: capital
     region: Oceania
+    timezone: Pacific/Tarawa
   - id: pristina
     name: Pristina
     country: Kosovo
@@ -2021,6 +2222,7 @@ places:
     flag: 🇽🇰
     kind: capital
     region: Europe
+    timezone: Europe/Belgrade
   - id: kuwait-city
     name: Kuwait City
     country: Kuwait
@@ -2031,6 +2233,7 @@ places:
     flag: 🇰🇼
     kind: capital
     region: Asia
+    timezone: Asia/Kuwait
   - id: bishkek
     name: Bishkek
     country: Kyrgyzstan
@@ -2041,6 +2244,7 @@ places:
     flag: 🇰🇬
     kind: capital
     region: Asia
+    timezone: Asia/Bishkek
   - id: luang-prabang
     name: Luang Prabang
     country: Laos
@@ -2051,6 +2255,7 @@ places:
     flag: 🇱🇦
     kind: city
     region: Asia
+    timezone: Asia/Vientiane
   - id: vientiane
     name: Vientiane
     country: Laos
@@ -2061,6 +2266,7 @@ places:
     flag: 🇱🇦
     kind: capital
     region: Asia
+    timezone: Asia/Vientiane
   - id: riga
     name: Riga
     country: Latvia
@@ -2071,6 +2277,7 @@ places:
     flag: 🇱🇻
     kind: capital
     region: Europe
+    timezone: Europe/Riga
   - id: riga-2
     name: Riga
     country: Latvia
@@ -2081,6 +2288,7 @@ places:
     flag: 🇱🇻
     kind: city
     region: Europe
+    timezone: Europe/Riga
   - id: sigulda
     name: Sigulda
     country: Latvia
@@ -2091,6 +2299,7 @@ places:
     flag: 🇱🇻
     kind: city
     region: Europe
+    timezone: Europe/Riga
   - id: beirut
     name: Beirut
     country: Lebanon
@@ -2101,6 +2310,7 @@ places:
     flag: 🇱🇧
     kind: capital
     region: Asia
+    timezone: Asia/Beirut
   - id: maseru
     name: Maseru
     country: Lesotho
@@ -2111,6 +2321,7 @@ places:
     flag: 🇱🇸
     kind: capital
     region: Africa
+    timezone: Africa/Maseru
   - id: monrovia
     name: Monrovia
     country: Liberia
@@ -2121,6 +2332,7 @@ places:
     flag: 🇱🇷
     kind: capital
     region: Africa
+    timezone: Africa/Monrovia
   - id: tripoli
     name: Tripoli
     country: Libya
@@ -2131,6 +2343,7 @@ places:
     flag: 🇱🇾
     kind: capital
     region: Africa
+    timezone: Africa/Tripoli
   - id: vaduz
     name: Vaduz
     country: Liechtenstein
@@ -2141,6 +2354,7 @@ places:
     flag: 🇱🇮
     kind: capital
     region: Europe
+    timezone: Europe/Vaduz
   - id: vaduz-2
     name: Vaduz
     country: Liechtenstein
@@ -2151,6 +2365,7 @@ places:
     flag: 🇱🇮
     kind: city
     region: Europe
+    timezone: Europe/Vaduz
   - id: nida
     name: Nida
     country: Lithuania
@@ -2161,6 +2376,7 @@ places:
     flag: 🇱🇹
     kind: city
     region: Europe
+    timezone: Europe/Vilnius
   - id: vilnius
     name: Vilnius
     country: Lithuania
@@ -2171,6 +2387,7 @@ places:
     flag: 🇱🇹
     kind: capital
     region: Europe
+    timezone: Europe/Vilnius
   - id: vilnius-2
     name: Vilnius
     country: Lithuania
@@ -2181,6 +2398,7 @@ places:
     flag: 🇱🇹
     kind: city
     region: Europe
+    timezone: Europe/Vilnius
   - id: luxembourg
     name: Luxembourg
     country: Luxembourg
@@ -2191,6 +2409,7 @@ places:
     flag: 🇱🇺
     kind: capital
     region: Europe
+    timezone: Europe/Luxembourg
   - id: antananarivo
     name: Antananarivo
     country: Madagascar
@@ -2201,6 +2420,7 @@ places:
     flag: 🇲🇬
     kind: capital
     region: Africa
+    timezone: Indian/Antananarivo
   - id: lilongwe
     name: Lilongwe
     country: Malawi
@@ -2211,6 +2431,7 @@ places:
     flag: 🇲🇼
     kind: capital
     region: Africa
+    timezone: Africa/Blantyre
   - id: kuala-lumpur
     name: Kuala Lumpur
     country: Malaysia
@@ -2221,6 +2442,7 @@ places:
     flag: 🇲🇾
     kind: capital
     region: Asia
+    timezone: Asia/Kuala_Lumpur
   - id: male
     name: Malé
     country: Maldives
@@ -2231,6 +2453,7 @@ places:
     flag: 🇲🇻
     kind: capital
     region: Asia
+    timezone: Indian/Maldives
   - id: bamako
     name: Bamako
     country: Mali
@@ -2241,6 +2464,7 @@ places:
     flag: 🇲🇱
     kind: capital
     region: Africa
+    timezone: Africa/Bamako
   - id: valletta
     name: Valletta
     country: Malta
@@ -2251,6 +2475,7 @@ places:
     flag: 🇲🇹
     kind: capital
     region: Europe
+    timezone: Europe/Malta
   - id: valletta-2
     name: Valletta
     country: Malta
@@ -2261,6 +2486,7 @@ places:
     flag: 🇲🇹
     kind: city
     region: Europe
+    timezone: Europe/Malta
   - id: majuro
     name: Majuro
     country: Marshall Islands
@@ -2271,6 +2497,7 @@ places:
     flag: 🇲🇭
     kind: capital
     region: Oceania
+    timezone: Pacific/Majuro
   - id: fort-de-france
     name: Fort-de-France
     country: Martinique
@@ -2281,6 +2508,7 @@ places:
     flag: 🇲🇶
     kind: capital
     region: Americas
+    timezone: America/Martinique
   - id: nouakchott
     name: Nouakchott
     country: Mauritania
@@ -2291,6 +2519,7 @@ places:
     flag: 🇲🇷
     kind: capital
     region: Africa
+    timezone: Africa/Nouakchott
   - id: port-louis
     name: Port Louis
     country: Mauritius
@@ -2301,6 +2530,7 @@ places:
     flag: 🇲🇺
     kind: capital
     region: Africa
+    timezone: Indian/Mauritius
   - id: mamoudzou
     name: Mamoudzou
     country: Mayotte
@@ -2311,6 +2541,7 @@ places:
     flag: 🇾🇹
     kind: capital
     region: Africa
+    timezone: Indian/Mayotte
   - id: cancun
     name: Cancun
     country: Mexico
@@ -2321,6 +2552,7 @@ places:
     flag: 🇲🇽
     kind: city
     region: Americas
+    timezone: America/Cancun
   - id: guadalajara
     name: Guadalajara
     country: Mexico
@@ -2331,6 +2563,7 @@ places:
     flag: 🇲🇽
     kind: city
     region: Americas
+    timezone: America/Mexico_City
   - id: mexico-city
     name: Mexico City
     country: Mexico
@@ -2341,6 +2574,7 @@ places:
     flag: 🇲🇽
     kind: capital
     region: Americas
+    timezone: America/Mexico_City
   - id: monterrey
     name: Monterrey
     country: Mexico
@@ -2351,6 +2585,7 @@ places:
     flag: 🇲🇽
     kind: city
     region: Americas
+    timezone: America/Mexico_City
   - id: palikir
     name: Palikir
     country: Micronesia
@@ -2361,6 +2596,7 @@ places:
     flag: 🇫🇲
     kind: capital
     region: Oceania
+    timezone: Pacific/Pohnpei
   - id: chisinau
     name: Chișinău
     country: Moldova
@@ -2371,6 +2607,7 @@ places:
     flag: 🇲🇩
     kind: capital
     region: Europe
+    timezone: Europe/Chisinau
   - id: monaco
     name: Monaco
     country: Monaco
@@ -2381,6 +2618,7 @@ places:
     flag: 🇲🇨
     kind: capital
     region: Europe
+    timezone: Europe/Monaco
   - id: monaco-2
     name: Monaco
     country: Monaco
@@ -2391,6 +2629,7 @@ places:
     flag: 🇲🇨
     kind: city
     region: Europe
+    timezone: Europe/Monaco
   - id: ulan-bator
     name: Ulan Bator
     country: Mongolia
@@ -2401,6 +2640,7 @@ places:
     flag: 🇲🇳
     kind: capital
     region: Asia
+    timezone: Asia/Ulaanbaatar
   - id: podgorica
     name: Podgorica
     country: Montenegro
@@ -2411,6 +2651,7 @@ places:
     flag: 🇲🇪
     kind: capital
     region: Europe
+    timezone: Europe/Podgorica
   - id: plymouth
     name: Plymouth
     country: Montserrat
@@ -2421,6 +2662,7 @@ places:
     flag: 🇲🇸
     kind: capital
     region: Americas
+    timezone: America/Montserrat
   - id: chefchaouen
     name: Chefchaouen
     country: Morocco
@@ -2431,6 +2673,7 @@ places:
     flag: 🇲🇦
     kind: city
     region: Africa
+    timezone: Africa/Casablanca
   - id: fes
     name: Fes
     country: Morocco
@@ -2441,6 +2684,7 @@ places:
     flag: 🇲🇦
     kind: city
     region: Africa
+    timezone: Africa/Casablanca
   - id: marrakesh
     name: Marrakesh
     country: Morocco
@@ -2451,6 +2695,7 @@ places:
     flag: 🇲🇦
     kind: city
     region: Africa
+    timezone: Africa/Casablanca
   - id: rabat
     name: Rabat
     country: Morocco
@@ -2461,6 +2706,7 @@ places:
     flag: 🇲🇦
     kind: capital
     region: Africa
+    timezone: Africa/Casablanca
   - id: maputo
     name: Maputo
     country: Mozambique
@@ -2471,6 +2717,7 @@ places:
     flag: 🇲🇿
     kind: capital
     region: Africa
+    timezone: Africa/Maputo
   - id: naypyidaw
     name: Naypyidaw
     country: Myanmar
@@ -2481,6 +2728,7 @@ places:
     flag: 🇲🇲
     kind: capital
     region: Asia
+    timezone: Asia/Yangon
   - id: windhoek
     name: Windhoek
     country: Namibia
@@ -2491,6 +2739,7 @@ places:
     flag: 🇳🇦
     kind: capital
     region: Africa
+    timezone: Africa/Windhoek
   - id: yaren
     name: Yaren
     country: Nauru
@@ -2501,6 +2750,7 @@ places:
     flag: 🇳🇷
     kind: capital
     region: Oceania
+    timezone: Pacific/Nauru
   - id: kathmandu
     name: Kathmandu
     country: Nepal
@@ -2511,6 +2761,7 @@ places:
     flag: 🇳🇵
     kind: capital
     region: Asia
+    timezone: Asia/Kathmandu
   - id: mount-everest
     name: Mount Everest
     country: Nepal
@@ -2521,6 +2772,7 @@ places:
     flag: 🇳🇵
     kind: peak
     region: Asia
+    timezone: Asia/Kathmandu
   - id: pokhara
     name: Pokhara
     country: Nepal
@@ -2531,6 +2783,7 @@ places:
     flag: 🇳🇵
     kind: city
     region: Asia
+    timezone: Asia/Kathmandu
   - id: amsterdam
     name: Amsterdam
     country: Netherlands
@@ -2541,6 +2794,7 @@ places:
     flag: 🇳🇱
     kind: capital
     region: Europe
+    timezone: Europe/Amsterdam
   - id: noumea
     name: Nouméa
     country: New Caledonia
@@ -2551,6 +2805,7 @@ places:
     flag: 🇳🇨
     kind: capital
     region: Oceania
+    timezone: Pacific/Noumea
   - id: auckland
     name: Auckland
     country: New Zealand
@@ -2561,6 +2816,7 @@ places:
     flag: 🇳🇿
     kind: city
     region: Oceania
+    timezone: Pacific/Auckland
   - id: queenstown
     name: Queenstown
     country: New Zealand
@@ -2571,6 +2827,7 @@ places:
     flag: 🇳🇿
     kind: city
     region: Oceania
+    timezone: Pacific/Auckland
   - id: wellington
     name: Wellington
     country: New Zealand
@@ -2581,6 +2838,7 @@ places:
     flag: 🇳🇿
     kind: capital
     region: Oceania
+    timezone: Pacific/Auckland
   - id: wellington-2
     name: Wellington
     country: New Zealand
@@ -2591,6 +2849,7 @@ places:
     flag: 🇳🇿
     kind: city
     region: Oceania
+    timezone: Pacific/Auckland
   - id: managua
     name: Managua
     country: Nicaragua
@@ -2601,6 +2860,7 @@ places:
     flag: 🇳🇮
     kind: capital
     region: Americas
+    timezone: America/Managua
   - id: niamey
     name: Niamey
     country: Niger
@@ -2611,6 +2871,7 @@ places:
     flag: 🇳🇪
     kind: capital
     region: Africa
+    timezone: Africa/Niamey
   - id: abuja
     name: Abuja
     country: Nigeria
@@ -2621,6 +2882,7 @@ places:
     flag: 🇳🇬
     kind: capital
     region: Africa
+    timezone: Africa/Lagos
   - id: alofi
     name: Alofi
     country: Niue
@@ -2631,6 +2893,7 @@ places:
     flag: 🇳🇺
     kind: capital
     region: Oceania
+    timezone: Pacific/Niue
   - id: kingston-2
     name: Kingston
     country: Norfolk Island
@@ -2641,6 +2904,7 @@ places:
     flag: 🇳🇫
     kind: capital
     region: Oceania
+    timezone: Pacific/Norfolk
   - id: pyongyang
     name: Pyongyang
     country: North Korea
@@ -2651,6 +2915,7 @@ places:
     flag: 🇰🇵
     kind: capital
     region: Asia
+    timezone: Asia/Pyongyang
   - id: skopje
     name: Skopje
     country: North Macedonia
@@ -2661,6 +2926,7 @@ places:
     flag: 🇲🇰
     kind: capital
     region: Europe
+    timezone: Europe/Skopje
   - id: saipan
     name: Saipan
     country: Northern Mariana Islands
@@ -2671,6 +2937,7 @@ places:
     flag: 🇲🇵
     kind: capital
     region: Oceania
+    timezone: Pacific/Saipan
   - id: bergen
     name: Bergen
     country: Norway
@@ -2681,6 +2948,7 @@ places:
     flag: 🇳🇴
     kind: city
     region: Europe
+    timezone: Europe/Oslo
   - id: oslo
     name: Oslo
     country: Norway
@@ -2691,6 +2959,7 @@ places:
     flag: 🇳🇴
     kind: capital
     region: Europe
+    timezone: Europe/Oslo
   - id: oslo-2
     name: Oslo
     country: Norway
@@ -2701,6 +2970,7 @@ places:
     flag: 🇳🇴
     kind: city
     region: Europe
+    timezone: Europe/Oslo
   - id: tromso
     name: Tromso
     country: Norway
@@ -2711,6 +2981,7 @@ places:
     flag: 🇳🇴
     kind: city
     region: Europe
+    timezone: Europe/Oslo
   - id: muscat
     name: Muscat
     country: Oman
@@ -2721,6 +2992,7 @@ places:
     flag: 🇴🇲
     kind: capital
     region: Asia
+    timezone: Asia/Muscat
   - id: islamabad
     name: Islamabad
     country: Pakistan
@@ -2731,6 +3003,7 @@ places:
     flag: 🇵🇰
     kind: capital
     region: Asia
+    timezone: Asia/Karachi
   - id: k2
     name: K2
     country: Pakistan
@@ -2741,6 +3014,7 @@ places:
     flag: 🇵🇰
     kind: peak
     region: Asia
+    timezone: Asia/Karachi
   - id: ngerulmud
     name: Ngerulmud
     country: Palau
@@ -2751,6 +3025,7 @@ places:
     flag: 🇵🇼
     kind: capital
     region: Oceania
+    timezone: Pacific/Palau
   - id: ramallah
     name: Ramallah
     country: Palestine
@@ -2761,6 +3036,7 @@ places:
     flag: 🇵🇸
     kind: capital
     region: Asia
+    timezone: Asia/Hebron
   - id: panama-city
     name: Panama City
     country: Panama
@@ -2771,6 +3047,7 @@ places:
     flag: 🇵🇦
     kind: capital
     region: Americas
+    timezone: America/Panama
   - id: port-moresby
     name: Port Moresby
     country: Papua New Guinea
@@ -2781,6 +3058,7 @@ places:
     flag: 🇵🇬
     kind: capital
     region: Oceania
+    timezone: Pacific/Port_Moresby
   - id: asuncion
     name: Asunción
     country: Paraguay
@@ -2791,6 +3069,7 @@ places:
     flag: 🇵🇾
     kind: capital
     region: Americas
+    timezone: America/Asuncion
   - id: cusco
     name: Cusco
     country: Peru
@@ -2801,6 +3080,7 @@ places:
     flag: 🇵🇪
     kind: city
     region: Americas
+    timezone: America/Lima
   - id: lima
     name: Lima
     country: Peru
@@ -2811,6 +3091,7 @@ places:
     flag: 🇵🇪
     kind: capital
     region: Americas
+    timezone: America/Lima
   - id: lima-2
     name: Lima
     country: Peru
@@ -2821,6 +3102,7 @@ places:
     flag: 🇵🇪
     kind: city
     region: Americas
+    timezone: America/Lima
   - id: manila
     name: Manila
     country: Philippines
@@ -2831,6 +3113,7 @@ places:
     flag: 🇵🇭
     kind: capital
     region: Asia
+    timezone: Asia/Manila
   - id: adamstown
     name: Adamstown
     country: Pitcairn Islands
@@ -2841,6 +3124,7 @@ places:
     flag: 🇵🇳
     kind: capital
     region: Oceania
+    timezone: Pacific/Pitcairn
   - id: gdansk
     name: Gdańsk
     country: Poland
@@ -2851,6 +3135,7 @@ places:
     flag: 🇵🇱
     kind: city
     region: Europe
+    timezone: Europe/Warsaw
   - id: giewont
     name: Giewont
     country: Poland
@@ -2861,6 +3146,7 @@ places:
     flag: 🇵🇱
     kind: peak
     region: Europe
+    timezone: Europe/Warsaw
   - id: gliwice
     name: Gliwice
     country: Poland
@@ -2871,6 +3157,7 @@ places:
     flag: 🇵🇱
     kind: city
     region: Europe
+    timezone: Europe/Warsaw
   - id: gorki-wielkie
     name: Górki Wielkie
     country: Poland
@@ -2881,6 +3168,7 @@ places:
     flag: 🇵🇱
     kind: city
     region: Europe
+    timezone: Europe/Warsaw
   - id: krakow
     name: Kraków
     country: Poland
@@ -2891,6 +3179,7 @@ places:
     flag: 🇵🇱
     kind: city
     region: Europe
+    timezone: Europe/Warsaw
   - id: poznan
     name: Poznań
     country: Poland
@@ -2901,6 +3190,7 @@ places:
     flag: 🇵🇱
     kind: city
     region: Europe
+    timezone: Europe/Warsaw
   - id: rysy
     name: Rysy
     country: Poland
@@ -2911,6 +3201,7 @@ places:
     flag: 🇵🇱
     kind: peak
     region: Europe
+    timezone: Europe/Bratislava
   - id: warsaw
     name: Warsaw
     country: Poland
@@ -2921,6 +3212,7 @@ places:
     flag: 🇵🇱
     kind: capital
     region: Europe
+    timezone: Europe/Warsaw
   - id: wrocaw
     name: Wrocław
     country: Poland
@@ -2931,6 +3223,7 @@ places:
     flag: 🇵🇱
     kind: city
     region: Europe
+    timezone: Europe/Warsaw
   - id: zakopane
     name: Zakopane
     country: Poland
@@ -2941,6 +3234,7 @@ places:
     flag: 🇵🇱
     kind: city
     region: Europe
+    timezone: Europe/Warsaw
   - id: sniezka
     name: Śnieżka
     country: Poland
@@ -2951,6 +3245,7 @@ places:
     flag: 🇵🇱
     kind: peak
     region: Europe
+    timezone: Europe/Warsaw
   - id: faro
     name: Faro
     country: Portugal
@@ -2961,6 +3256,7 @@ places:
     flag: 🇵🇹
     kind: city
     region: Europe
+    timezone: Europe/Lisbon
   - id: lisbon
     name: Lisbon
     country: Portugal
@@ -2971,6 +3267,7 @@ places:
     flag: 🇵🇹
     kind: capital
     region: Europe
+    timezone: Europe/Lisbon
   - id: lisbon-2
     name: Lisbon
     country: Portugal
@@ -2981,6 +3278,7 @@ places:
     flag: 🇵🇹
     kind: city
     region: Europe
+    timezone: Europe/Lisbon
   - id: porto
     name: Porto
     country: Portugal
@@ -2991,6 +3289,7 @@ places:
     flag: 🇵🇹
     kind: city
     region: Europe
+    timezone: Europe/Lisbon
   - id: san-juan
     name: San Juan
     country: Puerto Rico
@@ -3001,6 +3300,7 @@ places:
     flag: 🇵🇷
     kind: capital
     region: Americas
+    timezone: America/Puerto_Rico
   - id: doha
     name: Doha
     country: Qatar
@@ -3011,6 +3311,7 @@ places:
     flag: 🇶🇦
     kind: capital
     region: Asia
+    timezone: Asia/Qatar
   - id: brazzaville
     name: Brazzaville
     country: Republic of the Congo
@@ -3021,6 +3322,7 @@ places:
     flag: 🇨🇬
     kind: capital
     region: Africa
+    timezone: Africa/Brazzaville
   - id: brasov
     name: Brasov
     country: Romania
@@ -3031,6 +3333,7 @@ places:
     flag: 🇷🇴
     kind: city
     region: Europe
+    timezone: Europe/Bucharest
   - id: bucharest
     name: Bucharest
     country: Romania
@@ -3041,6 +3344,7 @@ places:
     flag: 🇷🇴
     kind: capital
     region: Europe
+    timezone: Europe/Bucharest
   - id: bucharest-2
     name: Bucharest
     country: Romania
@@ -3051,6 +3355,7 @@ places:
     flag: 🇷🇴
     kind: city
     region: Europe
+    timezone: Europe/Bucharest
   - id: cluj-napoca
     name: Cluj-Napoca
     country: Romania
@@ -3061,6 +3366,7 @@ places:
     flag: 🇷🇴
     kind: city
     region: Europe
+    timezone: Europe/Bucharest
   - id: moscow
     name: Moscow
     country: Russia
@@ -3071,6 +3377,7 @@ places:
     flag: 🇷🇺
     kind: capital
     region: Europe
+    timezone: Europe/Moscow
   - id: saint-petersburg
     name: Saint Petersburg
     country: Russia
@@ -3081,6 +3388,7 @@ places:
     flag: 🇷🇺
     kind: city
     region: Europe
+    timezone: Europe/Moscow
   - id: sochi
     name: Sochi
     country: Russia
@@ -3091,6 +3399,7 @@ places:
     flag: 🇷🇺
     kind: city
     region: Europe
+    timezone: Europe/Moscow
   - id: vladivostok
     name: Vladivostok
     country: Russia
@@ -3101,6 +3410,7 @@ places:
     flag: 🇷🇺
     kind: city
     region: Europe
+    timezone: Asia/Vladivostok
   - id: kigali
     name: Kigali
     country: Rwanda
@@ -3111,6 +3421,7 @@ places:
     flag: 🇷🇼
     kind: capital
     region: Africa
+    timezone: Africa/Kigali
   - id: saint-denis
     name: Saint-Denis
     country: Réunion
@@ -3121,6 +3432,7 @@ places:
     flag: 🇷🇪
     kind: capital
     region: Africa
+    timezone: Indian/Reunion
   - id: gustavia
     name: Gustavia
     country: Saint Barthélemy
@@ -3131,6 +3443,7 @@ places:
     flag: 🇧🇱
     kind: capital
     region: Americas
+    timezone: America/St_Barthelemy
   - id: jamestown
     name: Jamestown
     country: Saint Helena, Ascension and Tristan da Cunha
@@ -3141,6 +3454,7 @@ places:
     flag: 🇸🇭
     kind: capital
     region: Africa
+    timezone: Atlantic/St_Helena
   - id: basseterre
     name: Basseterre
     country: Saint Kitts and Nevis
@@ -3151,6 +3465,7 @@ places:
     flag: 🇰🇳
     kind: capital
     region: Americas
+    timezone: America/St_Kitts
   - id: castries
     name: Castries
     country: Saint Lucia
@@ -3161,6 +3476,7 @@ places:
     flag: 🇱🇨
     kind: capital
     region: Americas
+    timezone: America/St_Lucia
   - id: marigot
     name: Marigot
     country: Saint Martin
@@ -3171,6 +3487,7 @@ places:
     flag: 🇲🇫
     kind: capital
     region: Americas
+    timezone: America/Marigot
   - id: saint-pierre
     name: Saint-Pierre
     country: Saint Pierre and Miquelon
@@ -3181,6 +3498,7 @@ places:
     flag: 🇵🇲
     kind: capital
     region: Americas
+    timezone: America/Miquelon
   - id: kingstown
     name: Kingstown
     country: Saint Vincent and the Grenadines
@@ -3191,6 +3509,7 @@ places:
     flag: 🇻🇨
     kind: capital
     region: Americas
+    timezone: America/St_Vincent
   - id: apia
     name: Apia
     country: Samoa
@@ -3201,6 +3520,7 @@ places:
     flag: 🇼🇸
     kind: capital
     region: Oceania
+    timezone: Pacific/Apia
   - id: city-of-san-marino
     name: City of San Marino
     country: San Marino
@@ -3211,6 +3531,7 @@ places:
     flag: 🇸🇲
     kind: capital
     region: Europe
+    timezone: Europe/San_Marino
   - id: san-marino
     name: San Marino
     country: San Marino
@@ -3221,6 +3542,7 @@ places:
     flag: 🇸🇲
     kind: city
     region: Europe
+    timezone: Europe/San_Marino
   - id: riyadh
     name: Riyadh
     country: Saudi Arabia
@@ -3231,6 +3553,7 @@ places:
     flag: 🇸🇦
     kind: capital
     region: Asia
+    timezone: Asia/Riyadh
   - id: dakar
     name: Dakar
     country: Senegal
@@ -3241,6 +3564,7 @@ places:
     flag: 🇸🇳
     kind: capital
     region: Africa
+    timezone: Africa/Dakar
   - id: belgrade
     name: Belgrade
     country: Serbia
@@ -3251,6 +3575,7 @@ places:
     flag: 🇷🇸
     kind: capital
     region: Europe
+    timezone: Europe/Belgrade
   - id: victoria
     name: Victoria
     country: Seychelles
@@ -3261,6 +3586,7 @@ places:
     flag: 🇸🇨
     kind: capital
     region: Africa
+    timezone: Indian/Mahe
   - id: freetown
     name: Freetown
     country: Sierra Leone
@@ -3271,6 +3597,7 @@ places:
     flag: 🇸🇱
     kind: capital
     region: Africa
+    timezone: Africa/Freetown
   - id: singapore
     name: Singapore
     country: Singapore
@@ -3281,6 +3608,7 @@ places:
     flag: 🇸🇬
     kind: capital
     region: Asia
+    timezone: Asia/Singapore
   - id: philipsburg
     name: Philipsburg
     country: Sint Maarten
@@ -3291,6 +3619,7 @@ places:
     flag: 🇸🇽
     kind: capital
     region: Americas
+    timezone: America/Lower_Princes
   - id: bratislava
     name: Bratislava
     country: Slovakia
@@ -3301,6 +3630,7 @@ places:
     flag: 🇸🇰
     kind: capital
     region: Europe
+    timezone: Europe/Bratislava
   - id: bratislava-2
     name: Bratislava
     country: Slovakia
@@ -3311,6 +3641,7 @@ places:
     flag: 🇸🇰
     kind: city
     region: Europe
+    timezone: Europe/Bratislava
   - id: poprad
     name: Poprad
     country: Slovakia
@@ -3321,6 +3652,7 @@ places:
     flag: 🇸🇰
     kind: city
     region: Europe
+    timezone: Europe/Bratislava
   - id: bled
     name: Bled
     country: Slovenia
@@ -3331,6 +3663,7 @@ places:
     flag: 🇸🇮
     kind: city
     region: Europe
+    timezone: Europe/Ljubljana
   - id: ljubljana
     name: Ljubljana
     country: Slovenia
@@ -3341,6 +3674,7 @@ places:
     flag: 🇸🇮
     kind: capital
     region: Europe
+    timezone: Europe/Ljubljana
   - id: ljubljana-2
     name: Ljubljana
     country: Slovenia
@@ -3351,6 +3685,7 @@ places:
     flag: 🇸🇮
     kind: city
     region: Europe
+    timezone: Europe/Ljubljana
   - id: honiara
     name: Honiara
     country: Solomon Islands
@@ -3361,6 +3696,7 @@ places:
     flag: 🇸🇧
     kind: capital
     region: Oceania
+    timezone: Pacific/Guadalcanal
   - id: mogadishu
     name: Mogadishu
     country: Somalia
@@ -3371,6 +3707,7 @@ places:
     flag: 🇸🇴
     kind: capital
     region: Africa
+    timezone: Africa/Mogadishu
   - id: cape-town
     name: Cape Town
     country: South Africa
@@ -3381,6 +3718,7 @@ places:
     flag: 🇿🇦
     kind: city
     region: Africa
+    timezone: Africa/Johannesburg
   - id: durban
     name: Durban
     country: South Africa
@@ -3391,6 +3729,7 @@ places:
     flag: 🇿🇦
     kind: city
     region: Africa
+    timezone: Africa/Johannesburg
   - id: johannesburg
     name: Johannesburg
     country: South Africa
@@ -3401,6 +3740,7 @@ places:
     flag: 🇿🇦
     kind: city
     region: Africa
+    timezone: Africa/Johannesburg
   - id: pretoria
     name: Pretoria
     country: South Africa
@@ -3411,6 +3751,7 @@ places:
     flag: 🇿🇦
     kind: capital
     region: Africa
+    timezone: Africa/Johannesburg
   - id: king-edward-point
     name: King Edward Point
     country: South Georgia
@@ -3421,6 +3762,7 @@ places:
     flag: 🇬🇸
     kind: capital
     region: 
+    timezone: Atlantic/South_Georgia
   - id: seoul
     name: Seoul
     country: South Korea
@@ -3431,6 +3773,7 @@ places:
     flag: 🇰🇷
     kind: capital
     region: Asia
+    timezone: Asia/Seoul
   - id: juba
     name: Juba
     country: South Sudan
@@ -3441,6 +3784,7 @@ places:
     flag: 🇸🇸
     kind: capital
     region: Africa
+    timezone: Africa/Juba
   - id: barcelona
     name: Barcelona
     country: Spain
@@ -3451,6 +3795,7 @@ places:
     flag: 🇪🇸
     kind: city
     region: Europe
+    timezone: Europe/Madrid
   - id: bilbao
     name: Bilbao
     country: Spain
@@ -3461,6 +3806,7 @@ places:
     flag: 🇪🇸
     kind: city
     region: Europe
+    timezone: Europe/Madrid
   - id: madrid
     name: Madrid
     country: Spain
@@ -3471,6 +3817,7 @@ places:
     flag: 🇪🇸
     kind: capital
     region: Europe
+    timezone: Europe/Madrid
   - id: seville
     name: Seville
     country: Spain
@@ -3481,6 +3828,7 @@ places:
     flag: 🇪🇸
     kind: city
     region: Europe
+    timezone: Europe/Madrid
   - id: valencia
     name: Valencia
     country: Spain
@@ -3491,6 +3839,7 @@ places:
     flag: 🇪🇸
     kind: city
     region: Europe
+    timezone: Europe/Madrid
   - id: colombo
     name: Colombo
     country: Sri Lanka
@@ -3501,6 +3850,7 @@ places:
     flag: 🇱🇰
     kind: capital
     region: Asia
+    timezone: Asia/Colombo
   - id: khartoum
     name: Khartoum
     country: Sudan
@@ -3511,6 +3861,7 @@ places:
     flag: 🇸🇩
     kind: capital
     region: Africa
+    timezone: Africa/Khartoum
   - id: paramaribo
     name: Paramaribo
     country: Suriname
@@ -3521,6 +3872,7 @@ places:
     flag: 🇸🇷
     kind: capital
     region: Americas
+    timezone: America/Paramaribo
   - id: longyearbyen
     name: Longyearbyen
     country: Svalbard and Jan Mayen
@@ -3531,6 +3883,7 @@ places:
     flag: 🇸🇯
     kind: capital
     region: Europe
+    timezone: Arctic/Longyearbyen
   - id: gothenburg
     name: Gothenburg
     country: Sweden
@@ -3541,6 +3894,7 @@ places:
     flag: 🇸🇪
     kind: city
     region: Europe
+    timezone: Europe/Stockholm
   - id: stockholm
     name: Stockholm
     country: Sweden
@@ -3551,6 +3905,7 @@ places:
     flag: 🇸🇪
     kind: capital
     region: Europe
+    timezone: Europe/Stockholm
   - id: stockholm-2
     name: Stockholm
     country: Sweden
@@ -3561,6 +3916,7 @@ places:
     flag: 🇸🇪
     kind: city
     region: Europe
+    timezone: Europe/Stockholm
   - id: bern
     name: Bern
     country: Switzerland
@@ -3571,6 +3927,7 @@ places:
     flag: 🇨🇭
     kind: capital
     region: Europe
+    timezone: Europe/Zurich
   - id: bern-2
     name: Bern
     country: Switzerland
@@ -3581,6 +3938,7 @@ places:
     flag: 🇨🇭
     kind: city
     region: Europe
+    timezone: Europe/Zurich
   - id: geneva
     name: Geneva
     country: Switzerland
@@ -3591,6 +3949,7 @@ places:
     flag: 🇨🇭
     kind: city
     region: Europe
+    timezone: Europe/Zurich
   - id: interlaken
     name: Interlaken
     country: Switzerland
@@ -3601,6 +3960,7 @@ places:
     flag: 🇨🇭
     kind: city
     region: Europe
+    timezone: Europe/Zurich
   - id: matterhorn
     name: Matterhorn
     country: Switzerland
@@ -3611,6 +3971,7 @@ places:
     flag: 🇨🇭
     kind: peak
     region: Europe
+    timezone: Europe/Rome
   - id: monte-rosa
     name: Monte Rosa
     country: Switzerland
@@ -3621,6 +3982,7 @@ places:
     flag: 🇨🇭
     kind: peak
     region: Europe
+    timezone: Europe/Rome
   - id: zermatt
     name: Zermatt
     country: Switzerland
@@ -3631,6 +3993,7 @@ places:
     flag: 🇨🇭
     kind: city
     region: Europe
+    timezone: Europe/Zurich
   - id: zurich
     name: Zurich
     country: Switzerland
@@ -3641,6 +4004,7 @@ places:
     flag: 🇨🇭
     kind: city
     region: Europe
+    timezone: Europe/Zurich
   - id: damascus
     name: Damascus
     country: Syria
@@ -3651,6 +4015,7 @@ places:
     flag: 🇸🇾
     kind: capital
     region: Asia
+    timezone: Asia/Damascus
   - id: sao-tome
     name: São Tomé
     country: São Tomé and Príncipe
@@ -3661,6 +4026,7 @@ places:
     flag: 🇸🇹
     kind: capital
     region: Africa
+    timezone: Africa/Sao_Tome
   - id: taipei
     name: Taipei
     country: Taiwan
@@ -3671,6 +4037,7 @@ places:
     flag: 🇹🇼
     kind: capital
     region: Asia
+    timezone: Asia/Taipei
   - id: dushanbe
     name: Dushanbe
     country: Tajikistan
@@ -3681,6 +4048,7 @@ places:
     flag: 🇹🇯
     kind: capital
     region: Asia
+    timezone: Asia/Dushanbe
   - id: arusha
     name: Arusha
     country: Tanzania
@@ -3691,6 +4059,7 @@ places:
     flag: 🇹🇿
     kind: city
     region: Africa
+    timezone: Africa/Dar_es_Salaam
   - id: dodoma
     name: Dodoma
     country: Tanzania
@@ -3701,6 +4070,7 @@ places:
     flag: 🇹🇿
     kind: capital
     region: Africa
+    timezone: Africa/Dar_es_Salaam
   - id: mount-kilimanjaro
     name: Mount Kilimanjaro
     country: Tanzania
@@ -3711,6 +4081,7 @@ places:
     flag: 🇹🇿
     kind: peak
     region: Africa
+    timezone: Africa/Dar_es_Salaam
   - id: zanzibar-city
     name: Zanzibar City
     country: Tanzania
@@ -3721,6 +4092,7 @@ places:
     flag: 🇹🇿
     kind: city
     region: Africa
+    timezone: Africa/Dar_es_Salaam
   - id: bangkok
     name: Bangkok
     country: Thailand
@@ -3731,6 +4103,7 @@ places:
     flag: 🇹🇭
     kind: capital
     region: Asia
+    timezone: Asia/Bangkok
   - id: dili
     name: Dili
     country: Timor-Leste
@@ -3741,6 +4114,7 @@ places:
     flag: 🇹🇱
     kind: capital
     region: Asia
+    timezone: Asia/Dili
   - id: lome
     name: Lomé
     country: Togo
@@ -3751,6 +4125,7 @@ places:
     flag: 🇹🇬
     kind: capital
     region: Africa
+    timezone: Africa/Lome
   - id: fakaofo
     name: Fakaofo
     country: Tokelau
@@ -3761,6 +4136,7 @@ places:
     flag: 🇹🇰
     kind: capital
     region: 
+    timezone: Pacific/Fakaofo
   - id: nuku-alofa
     name: Nuku'alofa
     country: Tonga
@@ -3771,6 +4147,7 @@ places:
     flag: 🇹🇴
     kind: capital
     region: Oceania
+    timezone: Pacific/Tongatapu
   - id: port-of-spain
     name: Port of Spain
     country: Trinidad and Tobago
@@ -3781,6 +4158,7 @@ places:
     flag: 🇹🇹
     kind: capital
     region: Americas
+    timezone: America/Port_of_Spain
   - id: tunis
     name: Tunis
     country: Tunisia
@@ -3791,6 +4169,7 @@ places:
     flag: 🇹🇳
     kind: capital
     region: Africa
+    timezone: Africa/Tunis
   - id: ankara
     name: Ankara
     country: Turkey
@@ -3801,6 +4180,7 @@ places:
     flag: 🇹🇷
     kind: capital
     region: Asia
+    timezone: Europe/Istanbul
   - id: ankara-2
     name: Ankara
     country: Turkey
@@ -3811,6 +4191,7 @@ places:
     flag: 🇹🇷
     kind: city
     region: Asia
+    timezone: Europe/Istanbul
   - id: antalya
     name: Antalya
     country: Turkey
@@ -3821,6 +4202,7 @@ places:
     flag: 🇹🇷
     kind: city
     region: Asia
+    timezone: Europe/Istanbul
   - id: istanbul
     name: Istanbul
     country: Turkey
@@ -3831,6 +4213,7 @@ places:
     flag: 🇹🇷
     kind: city
     region: Asia
+    timezone: Europe/Istanbul
   - id: ashgabat
     name: Ashgabat
     country: Turkmenistan
@@ -3841,6 +4224,7 @@ places:
     flag: 🇹🇲
     kind: capital
     region: Asia
+    timezone: Asia/Ashgabat
   - id: cockburn-town
     name: Cockburn Town
     country: Turks and Caicos Islands
@@ -3851,6 +4235,7 @@ places:
     flag: 🇹🇨
     kind: capital
     region: Americas
+    timezone: America/Grand_Turk
   - id: funafuti
     name: Funafuti
     country: Tuvalu
@@ -3861,6 +4246,7 @@ places:
     flag: 🇹🇻
     kind: capital
     region: Oceania
+    timezone: Pacific/Funafuti
   - id: kampala
     name: Kampala
     country: Uganda
@@ -3871,6 +4257,7 @@ places:
     flag: 🇺🇬
     kind: capital
     region: Africa
+    timezone: Africa/Kampala
   - id: kyiv
     name: Kyiv
     country: Ukraine
@@ -3881,6 +4268,7 @@ places:
     flag: 🇺🇦
     kind: capital
     region: Europe
+    timezone: Europe/Kyiv
   - id: abu-dhabi
     name: Abu Dhabi
     country: United Arab Emirates
@@ -3891,6 +4279,7 @@ places:
     flag: 🇦🇪
     kind: capital
     region: Asia
+    timezone: Asia/Dubai
   - id: abu-dhabi-2
     name: Abu Dhabi
     country: United Arab Emirates
@@ -3901,6 +4290,7 @@ places:
     flag: 🇦🇪
     kind: city
     region: Asia
+    timezone: Asia/Dubai
   - id: dubai
     name: Dubai
     country: United Arab Emirates
@@ -3911,6 +4301,7 @@ places:
     flag: 🇦🇪
     kind: city
     region: Asia
+    timezone: Asia/Dubai
   - id: ben-nevis
     name: Ben Nevis
     country: United Kingdom
@@ -3921,6 +4312,7 @@ places:
     flag: 🇬🇧
     kind: peak
     region: Europe
+    timezone: Europe/London
   - id: birmingham
     name: Birmingham
     country: United Kingdom
@@ -3931,6 +4323,7 @@ places:
     flag: 🇬🇧
     kind: city
     region: Europe
+    timezone: Europe/London
   - id: edinburgh
     name: Edinburgh
     country: United Kingdom
@@ -3941,6 +4334,7 @@ places:
     flag: 🇬🇧
     kind: city
     region: Europe
+    timezone: Europe/London
   - id: glasgow
     name: Glasgow
     country: United Kingdom
@@ -3951,6 +4345,7 @@ places:
     flag: 🇬🇧
     kind: city
     region: Europe
+    timezone: Europe/London
   - id: london
     name: London
     country: United Kingdom
@@ -3961,6 +4356,7 @@ places:
     flag: 🇬🇧
     kind: capital
     region: Europe
+    timezone: Europe/London
   - id: manchester
     name: Manchester
     country: United Kingdom
@@ -3971,6 +4367,7 @@ places:
     flag: 🇬🇧
     kind: city
     region: Europe
+    timezone: Europe/London
   - id: chicago
     name: Chicago
     country: United States
@@ -3981,6 +4378,7 @@ places:
     flag: 🇺🇸
     kind: city
     region: Americas
+    timezone: America/Chicago
   - id: denali
     name: Denali
     country: United States
@@ -3991,6 +4389,7 @@ places:
     flag: 🇺🇸
     kind: peak
     region: Americas
+    timezone: America/Anchorage
   - id: denver
     name: Denver
     country: United States
@@ -4001,6 +4400,7 @@ places:
     flag: 🇺🇸
     kind: city
     region: Americas
+    timezone: America/New_York
   - id: houston
     name: Houston
     country: United States
@@ -4011,6 +4411,7 @@ places:
     flag: 🇺🇸
     kind: city
     region: Americas
+    timezone: America/Chicago
   - id: los-angeles
     name: Los Angeles
     country: United States
@@ -4021,6 +4422,7 @@ places:
     flag: 🇺🇸
     kind: city
     region: Americas
+    timezone: America/Los_Angeles
   - id: miami
     name: Miami
     country: United States
@@ -4031,6 +4433,7 @@ places:
     flag: 🇺🇸
     kind: city
     region: Americas
+    timezone: America/New_York
   - id: new-york
     name: New York
     country: United States
@@ -4041,6 +4444,7 @@ places:
     flag: 🇺🇸
     kind: city
     region: Americas
+    timezone: America/Chicago
   - id: seattle
     name: Seattle
     country: United States
@@ -4051,6 +4455,7 @@ places:
     flag: 🇺🇸
     kind: city
     region: Americas
+    timezone: America/Los_Angeles
   - id: washington-d-c
     name: Washington D.C.
     country: United States
@@ -4061,6 +4466,7 @@ places:
     flag: 🇺🇸
     kind: capital
     region: Americas
+    timezone: America/New_York
   - id: charlotte-amalie
     name: Charlotte Amalie
     country: United States Virgin Islands
@@ -4071,6 +4477,7 @@ places:
     flag: 🇻🇮
     kind: capital
     region: Americas
+    timezone: America/St_Thomas
   - id: montevideo
     name: Montevideo
     country: Uruguay
@@ -4081,6 +4488,7 @@ places:
     flag: 🇺🇾
     kind: capital
     region: Americas
+    timezone: America/Montevideo
   - id: tashkent
     name: Tashkent
     country: Uzbekistan
@@ -4091,6 +4499,7 @@ places:
     flag: 🇺🇿
     kind: capital
     region: Asia
+    timezone: Asia/Tashkent
   - id: port-vila
     name: Port Vila
     country: Vanuatu
@@ -4101,6 +4510,7 @@ places:
     flag: 🇻🇺
     kind: capital
     region: Oceania
+    timezone: Pacific/Efate
   - id: vatican-city
     name: Vatican City
     country: Vatican City
@@ -4111,6 +4521,7 @@ places:
     flag: 🇻🇦
     kind: capital
     region: Europe
+    timezone: Europe/Vatican
   - id: vatican-city-2
     name: Vatican City
     country: Vatican City
@@ -4121,6 +4532,7 @@ places:
     flag: 🇻🇦
     kind: city
     region: Europe
+    timezone: Europe/Vatican
   - id: caracas
     name: Caracas
     country: Venezuela
@@ -4131,6 +4543,7 @@ places:
     flag: 🇻🇪
     kind: capital
     region: Americas
+    timezone: America/Caracas
   - id: hanoi
     name: Hanoi
     country: Vietnam
@@ -4141,6 +4554,7 @@ places:
     flag: 🇻🇳
     kind: capital
     region: Asia
+    timezone: Asia/Bangkok
   - id: mata-utu
     name: Mata-Utu
     country: Wallis and Futuna
@@ -4151,6 +4565,7 @@ places:
     flag: 🇼🇫
     kind: capital
     region: Oceania
+    timezone: Pacific/Wallis
   - id: el-aaiun
     name: El Aaiún
     country: Western Sahara
@@ -4161,6 +4576,7 @@ places:
     flag: 🇪🇭
     kind: capital
     region: 
+    timezone: Africa/El_Aaiun
   - id: sana-a
     name: Sana'a
     country: Yemen
@@ -4171,6 +4587,7 @@ places:
     flag: 🇾🇪
     kind: capital
     region: Asia
+    timezone: Asia/Aden
   - id: lusaka
     name: Lusaka
     country: Zambia
@@ -4181,6 +4598,7 @@ places:
     flag: 🇿🇲
     kind: capital
     region: Africa
+    timezone: Africa/Lusaka
   - id: harare
     name: Harare
     country: Zimbabwe
@@ -4191,6 +4609,7 @@ places:
     flag: 🇿🇼
     kind: capital
     region: Africa
+    timezone: Africa/Harare
   - id: mariehamn
     name: Mariehamn
     country: Åland Islands
@@ -4201,3 +4620,4 @@ places:
     flag: 🇦🇽
     kind: capital
     region: Europe
+    timezone: Europe/Mariehamn

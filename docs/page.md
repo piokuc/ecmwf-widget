@@ -136,8 +136,11 @@ the direction are worked out from them.
 
 The table has a **Wind (u, v)** row where each column holds an arrow built
 from the two components: it points the way the wind blows, its length grows
-with the speed, and it is coloured by the Beaufort force. Below it, the wind
-speed and the direction are given as numbers.
+with the speed, and it is coloured by the Beaufort force.
+
+The rows **Wind speed** and **Wind direction** then give the numbers: the
+direction of a column is its degrees, and the speed of a column is the one
+of that column.
 
 The arrow is the direction the wind blows **towards**, which is the opposite
 of the meteorological direction, where 90 degrees means a wind from the
@@ -157,3 +160,16 @@ The table and the plots share that scroll container, so they stay in step.
 
 The page is also an installable web app, with a manifest and an icon, so it
 can be added to the home screen of a phone.
+
+
+## Tooltips and selections
+
+Forecast tooltips are off by default. The **Tooltips: off/on** button enables
+or disables them and remembers the choice in this browser. Hovering still
+updates the highlighted hour and summary when tooltips are disabled.
+
+The static bundle carries the data for every run offered by its selector.
+Changing a run updates the values as well as the timestamp. Model, run, place
+and parameter selections are reflected in the URL; theme, time mode and
+parameter visibility are also remembered locally. Deselecting every parameter
+shows an empty state with a **Use the default set** button.

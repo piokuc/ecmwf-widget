@@ -7,6 +7,9 @@ build/
 dist/
 
 # Tooling
+.venv/
+.playwright/
+test-results/
 .pytest_cache/
 .ruff_cache/
 .coverage
@@ -15,7 +18,7 @@ htmlcov/
 .mypy_cache/
 
 # The state of the machine: the database, the GRIB cache and the logs.
-data/
+/data/
 
 # The two source lists of the catalogue of world places.
 cities.json

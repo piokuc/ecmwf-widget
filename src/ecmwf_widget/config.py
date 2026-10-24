@@ -44,6 +44,21 @@ class Config:
     backfill_runs: int = 1
     path: str = ""
 
+    def __post_init__(self):
+        if self.method not in ("bilinear", "nearest"):
+            raise ValueError("method must be bilinear or nearest")
+        if self.poll_interval <= 0 or self.keep_runs < 1 or self.backfill_runs < 1:
+            raise ValueError("poll_interval, keep_runs and backfill_runs must be positive")
+        if any(step < 0 for step in self.steps):
+            raise ValueError("forecast steps must be nonnegative")
+        if any(level not in parameters.PRESSURE_LEVELS for level in self.pressure_levels):
+            raise ValueError("unsupported pressure level")
+        self.steps = sorted(set(self.steps))
+        self.models = list(dict.fromkeys(self.models))
+        for place in self.all_places:
+            if not (-90 <= place.latitude <= 90 and -180 <= place.longitude <= 360):
+                raise ValueError(f"invalid coordinates for {place.id}")
+
     @property
     def all_places(self) -> list[Place]:
         """The places that are followed, own ones first."""
@@ -208,7 +223,7 @@ def load_config(path: str | os.PathLike[str] | None = None) -> Config:
         catalogue=catalogue,
         parameters=_resolve_parameters(raw.get("parameters")),
         pressure_levels=[int(level) for level in _as_list(raw.get("pressure_levels"))],
-        steps=[int(step) for step in _as_list(raw.get("steps"))],
+        steps=[int(step) for step in _as_list(raw.get("steps", range(0, 361, 6)))],
         models=models.resolve(raw.get("models", "ifs")),
         source=str(raw.get("source", "ecmwf")),
         fallback_sources=[str(s) for s in _as_list(raw.get("fallback_sources"))],
