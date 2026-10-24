@@ -291,6 +291,7 @@ def test_poll_retries_incomplete_runs(tmp_path, store, monkeypatch):
     service = Service(config, store)
     store.upsert_run(RUN, RUN[:8], RUN[8:], model="ifs", status="partial")
     monkeypatch.setattr(service, "_published", lambda model, run: True)
+    monkeypatch.setattr(service, "candidate_runs", lambda count=12: [RUN])
     polled = []
     monkeypatch.setattr(
         service, "ingest_run", lambda model, run: polled.append(run) or
