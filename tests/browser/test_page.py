@@ -144,6 +144,41 @@ def test_empty_selection_search_and_recovery(browser_page, forecast_app, deliver
     expect(page.locator('table')).to_be_visible()
 
 
+def test_mobile_layout(browser_page, forecast_app):
+    """The phone layout has its own proportions, not the desktop ones squeezed."""
+    page, mobile = browser_page
+    if not mobile:
+        pytest.skip("the desktop half of the pair is covered by the test above")
+    page.goto(forecast_app["static"] + "?place=warsaw")
+    expect(page.locator(".place")).to_have_count(1)
+
+    # Nothing sticks out of the viewport.
+    assert page.evaluate("document.documentElement.scrollWidth <= innerWidth + 1")
+
+    # The name keeps the width of the card; the timestamp sits below it.
+    title_width = page.locator(".place-head > div").first.evaluate(
+        "node => node.getBoundingClientRect().width"
+    )
+    assert title_width > 250, title_width
+    assert page.locator(".stamp .time").evaluate(
+        "node => getComputedStyle(node).display") == "block"
+
+    # The label column is narrow enough for three hours to fit on a phone.
+    assert page.locator("tbody th").first.evaluate(
+        "node => node.getBoundingClientRect().width") <= 130
+    assert page.locator(".now").evaluate(
+        "node => getComputedStyle(node).gridTemplateColumns.split(' ').length") == 2
+
+    # The parameters open as a sheet at the bottom of the screen.
+    page.locator("#params").click()
+    box = page.locator("#panel").bounding_box()
+    assert box is not None
+    assert box["width"] > 300
+    assert box["y"] + box["height"] <= 844 + 1
+    page.locator("#params").click()
+    expect(page.locator("#panel")).not_to_have_class(re.compile("open"))
+
+
 def test_live_error_and_refresh(browser_page, forecast_app):
     page, _ = browser_page
     page.goto(forecast_app['live'] + '?model=invalid')

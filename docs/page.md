@@ -154,9 +154,17 @@ the name and the country.
 
 ## Responsiveness
 
-One layout for everything. On a phone the header wraps, the cards go two
-across, and the table scrolls sideways with the first column stuck in place.
-The table and the plots share that scroll container, so they stay in step.
+The same page at every size, laid out for the width it has. The header and
+the toolbar wrap, and on a phone the controls fill the width and the
+parameter panel opens as a sheet over the bottom of the screen. The
+temperature, wind and rain cards go two across.
+
+The forecast table fits about three hours on a phone before it scrolls
+sideways, with the label column stuck in place and the day headers still
+naming each column. The table and the plots share that scroll container, so
+they stay in step. Below about 1100 px the date and time move to their own
+line under the place, rather than squeezing the coordinates into a narrow
+strip.
 
 The page is also an installable web app, with a manifest and an icon, so it
 can be added to the home screen of a phone.

@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### The page
+
+- The page has a phone layout of its own. The toolbar fills the width, the
+  parameter panel opens as a sheet over the bottom of the screen, and the
+  cards sit two across at a comfortable size.
+- The forecast table shows more hours on a phone, and the label column stays
+  in place while the hours scroll. The date and time of the place move to
+  their own line on narrow windows instead of squeezing the title.
+
 ## 1.1.0
 
 The project was put in the usual shape of a Python package, and the way it

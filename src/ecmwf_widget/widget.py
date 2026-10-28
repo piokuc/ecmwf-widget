@@ -221,6 +221,7 @@ PAGE = r"""<!DOCTYPE html>
     font-size: 25px; font-weight: 600; letter-spacing: -.015em;
     color: var(--fg); line-height: 1.2; white-space: nowrap;
   }
+  .stamp .time { margin-left: .35em; }
   .now {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 10px; margin: 0 0 20px;
@@ -262,15 +263,19 @@ PAGE = r"""<!DOCTYPE html>
   .tip .r b { margin-left: auto; font-variant-numeric: tabular-nums; }
 
   /* Table -------------------------------------------------------------- */
-  .grid { overflow-x: auto; scrollbar-width: thin; }
+  /* The narrowest a time column may be. The page reads it back to size the
+     plots, so the numbers and the charts stay on the same grid. */
+  .grid { --col-min: 70px; overflow-x: auto; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
   .inner { min-width: 100%; }
   /* Fixed columns, so the chart can be drawn on exactly the same grid. */
   table { border-collapse: collapse; width: 100%; min-width: 640px; table-layout: fixed; }
-  thead th:first-child, tbody th { width: 190px; min-width: 190px; }
+  thead th.corner, tbody th { width: 190px; min-width: 190px; }
   th, td { padding: 7px 6px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
   thead th {
     color: var(--muted); font-weight: 500; position: sticky; background: var(--card);
   }
+  /* The label column stays in place while the hours scroll sideways. */
+  thead th.corner { left: 0; z-index: 3; }
   thead tr.days th {
     font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: .05em;
     color: var(--muted); padding-bottom: 3px; text-align: center;
@@ -332,15 +337,77 @@ PAGE = r"""<!DOCTYPE html>
   .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 7px; vertical-align: 1px; }
   .conds td { padding-top: 8px; padding-bottom: 8px; }
   .conds svg, .conds img.icon { vertical-align: middle; }
+  /* A narrower window: the time gets a line of its own under the name, so
+     the name and the coordinates are never squeezed into a sliver. */
+  @media (max-width: 1100px) {
+    .place-head { flex-wrap: wrap; gap: 12px 16px; }
+    .place-head > div:first-child { flex: 1 1 100%; }
+    .when { flex: 1 1 auto; min-width: 0; text-align: left; }
+    .stamp { font-size: clamp(20px, 3vw, 25px); white-space: normal; }
+    .condition { flex: none; text-align: center; }
+  }
+
+  /* A phone: the toolbar fills the width, the cards go two across, and the
+     forecast table shows more hours before it has to scroll sideways. */
   @media (max-width: 620px) {
     body { padding: 16px 12px 40px; }
+    header.top { gap: 6px 10px; margin-bottom: 14px; }
+    header.top h1 { font-size: 18px; }
+    .meta { font-size: 12.5px; }
+    .tools { width: 100%; gap: 8px; }
+    #model { flex: 0 0 auto; }
+    .picker { flex: 1 1 150px; min-width: 0; }
+    #run { flex: 1 1 100%; width: 100%; }
+    #clock, #params, #theme { flex: 1 1 auto; min-height: 38px; padding: 8px 10px; }
+    .check { min-height: 38px; padding: 0 2px; }
+    /* 16px keeps iOS from zooming into a field when it is focused. */
+    select, input { font-size: 16px; }
+    .picker li { padding: 10px 9px; font-size: 15px; }
+    .panel {
+      position: fixed; left: 8px; right: 8px; bottom: 8px; top: auto;
+      width: auto; max-height: min(78vh, 620px); z-index: 80;
+      padding-bottom: max(14px, env(safe-area-inset-bottom));
+      overscroll-behavior: contain;
+    }
+    .panel .items { grid-template-columns: 1fr; gap: 0; }
+    .panel label { padding: 8px 0; font-size: 15px; }
+    .panel .search { font-size: 16px; padding: 7px 9px; }
     .place { padding: 16px 14px 18px; border-radius: 12px; }
-    .place-head { flex-wrap: wrap; gap: 10px 14px; }
-    .place-head > div:first-child { flex: 1 1 100%; }
-    .when { flex: 1; text-align: left; order: 3; }
-    .stamp { font-size: 21px; white-space: normal; }
-    .condition { order: 2; margin-left: auto; text-align: right; }
-    .panel { right: 8px; left: 8px; width: auto; }
+    .place-head { gap: 8px 12px; }
+    .place-head h2 { font-size: 18px; }
+    .sub { font-size: 12px; }
+    .when { flex: 1 1 0; }
+    .stamp { font-size: 20px; line-height: 1.25; }
+    .stamp .time { display: block; margin-left: 0; }
+    .condition { flex: none; }
+    .banner { font-size: 12px; max-width: 100%; }
+    .now {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px; margin-bottom: 16px;
+    }
+    .stat { padding: 9px 10px; }
+    .stat .k { font-size: 10px; }
+    .stat .v { font-size: 18px; }
+    .stat.big .v { font-size: 26px; }
+    .grid { --col-min: 58px; margin-left: -14px; margin-right: -14px; }
+    table { min-width: 0; }
+    thead th.corner, tbody th {
+      width: 118px; min-width: 118px; padding-right: 8px;
+    }
+    th, td { padding: 6px 4px; }
+    thead tr.days th { font-size: 11px; }
+    thead tr.times th { font-size: 12.5px; }
+    tbody td { font-size: 13px; }
+    tbody th { font-size: 13.5px; }
+    tbody tr.summary td { font-size: 11.5px; }
+    .chart svg { min-width: 420px; }
+  }
+
+  @media (max-width: 360px) {
+    .stamp { font-size: 18px; }
+    .now { gap: 6px; }
+    .stat { padding: 8px; }
+    .stat .k { font-size: 9.5px; }
   }
 </style>
 </head>
@@ -919,7 +986,7 @@ function renderPlace(place, nowStep, order) {
   // The time the values below belong to, big and clear, on the right.
   const when = el("div", "when");
   const stamp = el("div", "stamp");
-  stamp.appendChild(el("span", null, bigStamp(place, current)));
+  fillStamp(stamp, place, current);
   when.appendChild(stamp);
   head.appendChild(when);
 
@@ -1025,7 +1092,7 @@ function renderPlace(place, nowStep, order) {
   dayGroups(place, times).forEach((group) => { dayStart[group.from] = true; });
   const dayRow = el("tr", "days");
   const timeRow = el("tr", "times");
-  const corner = el("th", null, "");
+  const corner = el("th", "corner", "");
   corner.rowSpan = 2;
   dayRow.appendChild(corner);
   let at = 0;
@@ -1301,17 +1368,27 @@ function moveSparkMarkers(index) {
   });
 }
 
-// The title of the card: the time in the chosen zone, with the other one
-// in brackets.
-function bigStamp(place, index) {
+// The date and the time on separate pieces, so a phone can put them on
+// separate lines without breaking a day name in half. The title of the
+// card carries both zones, the chosen one first.
+function stampParts(place, index) {
   const local = localStamp(place.run, place.steps[index], place.timezone);
   const utc = localStamp(place.run, place.steps[index], "UTC");
-  const shortUtc = utc.split(" at ")[1] || utc;
-  const shortLocal = local.split(" at ")[1] || local;
+  const localParts = local.split(" at ");
+  const utcParts = utc.split(" at ");
+  const localTime = localParts[1] || local;
+  const utcTime = utcParts[1] || utc;
   if (state.clock === "utc") {
-    return utc + " UTC (" + shortLocal + " local)";
+    return [utcParts[0] || utc, utcTime + " UTC (" + localTime + " local)"];
   }
-  return local + " (" + shortUtc + " UTC)";
+  return [localParts[0] || local, "at " + localTime + " (" + utcTime + " UTC)"];
+}
+
+function fillStamp(node, place, index) {
+  const parts = stampParts(place, index);
+  node.innerHTML = "";
+  node.appendChild(el("span", "day", parts[0]));
+  node.appendChild(el("span", "time", parts[1]));
 }
 
 // The local date and time of a forecast step.
@@ -1357,8 +1434,8 @@ function updateSummary(place, series, index) {
     const target = card.querySelector(".v .num");
     if (target) target.textContent = formatValue(entry, entry.values[index]);
   });
-  const stamp = document.querySelector(".stamp span");
-  if (stamp) stamp.textContent = bigStamp(place, index);
+  const stamp = document.querySelector(".stamp");
+  if (stamp) fillStamp(stamp, place, index);
 
   // The big icon shows the weather of that hour.
   const box = document.querySelector('[data-role="condition"]');
@@ -1559,8 +1636,10 @@ function render() {
     const labelWidth = built.table.querySelector("tbody th")
       ? built.table.querySelector("tbody th").getBoundingClientRect().width
       : 190;
-    // Every column needs room for a value like "1024 hPa".
-    const column = Math.max(70, (built.inner.clientWidth - labelWidth) / built.place.steps.length);
+    // Every column needs room for a value like "1024 hPa". A phone asks for
+    // narrower columns, so more hours fit before the table has to scroll.
+    const wanted = parseFloat(getComputedStyle(built.wrap).getPropertyValue("--col-min"));
+    const column = Math.max(wanted || 70, (built.inner.clientWidth - labelWidth) / built.place.steps.length);
     built.inner.style.minWidth = Math.ceil(labelWidth + column * built.place.steps.length) + "px";
 
     sparkMarkers = [];
